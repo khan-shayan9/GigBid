@@ -12,10 +12,12 @@
 the API on port 8000, Postgres with pgvector, and Redis. `GET /health` answers once the API is up.
 
 ## Public deploy (Phase 0)
-The thin `/health` deploy runs on Render's free tier from `render.yaml`. To set it up:
-1. Push the repo to GitHub.
-2. In Render: New, then Blueprint, then pick the repo. Render builds `infra/docker/api.Dockerfile`.
-3. Open `https://<service>.onrender.com/health`.
+The thin `/health` deploy runs on Render's free tier at https://gigbid-7txm.onrender.com/health.
+It redeploys on every push to `main`. It was created as a Render Web Service with these settings
+(`render.yaml` holds the same settings as a Blueprint):
+- Runtime: Docker; branch `main`; root directory empty
+- Dockerfile path `./infra/docker/api.Dockerfile`; build context `.`
+- Health check path `/health`; instance type Free; no environment variables
 
 Free services sleep when idle, so the first request after a pause takes longer. The full stack
 moves to a VPS running `docker compose` in Phase 7.

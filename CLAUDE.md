@@ -10,7 +10,7 @@ These three docs are the source of truth. Read them before any work and follow t
 
 ## Current phase
 
-**Phase 0: Scaffold** (see `1.PROJECT_SPECIFICATION.md` §8). Work on nothing beyond this phase until the user accepts it.
+**Phase 1: Data** (see `1.PROJECT_SPECIFICATION.md` §8). Phase 0 (Scaffold) was accepted on 2026-11-15. Work on nothing beyond this phase until the user accepts it.
 
 ## Quick reminders
 
