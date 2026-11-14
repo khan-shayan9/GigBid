@@ -1,0 +1,9 @@
+# Default gitleaks rules plus reviewed false positives only. Add an entry only after reading
+# the finding; never allowlist whole files or rules.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Scraped job text in historical_jobs.jsonl: skill 'LinkedIn' runs into 'Country: Lithuania' (not a credential)"
+regexTarget = "match"
+regexes = ['''LinkedInCountry: Lithuaniaclick''']

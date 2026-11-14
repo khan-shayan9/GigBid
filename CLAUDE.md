@@ -19,3 +19,6 @@ These three docs are the source of truth. Read them before any work and follow t
 - Never send, submit or spend Connects without an approved `interrupt()`.
 - Never invent numbers. Cite `evals/results/`.
 - Propose a commit at the end of each phase. Never add AI attribution to commits.
+- After every major milestone (end of a phase or a large slice of one), report the work to the
+  advisor model (Fable) and have it check the work before reporting to the user or proposing a
+  commit. Fix what it finds; re-check large fixes with it.
