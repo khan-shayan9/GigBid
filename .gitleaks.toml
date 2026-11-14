@@ -1,9 +1,10 @@
 # Default gitleaks rules plus reviewed false positives only. Add an entry only after reading
 # the finding; never allowlist whole files or rules.
+# Uses the single [allowlist] table because gitleaks-action@v2 runs gitleaks 8.24.x.
 [extend]
 useDefault = true
 
-[[allowlists]]
+[allowlist]
 description = "Scraped job text in historical_jobs.jsonl: skill 'LinkedIn' runs into 'Country: Lithuania' (not a credential)"
 regexTarget = "match"
 regexes = ['''LinkedInCountry: Lithuaniaclick''']
