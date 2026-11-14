@@ -1,0 +1,38 @@
+{
+  "source": "synthetic",
+  "persona_id": "fullstack_dev",
+  "openings_personal": [
+    "I read your post about \"{title}\"; the part I would nail down first is who logs in and what each of them may see.",
+    "\"{title}\" sounds like something I have shipped before, so I can tell you early where the time usually goes.",
+    "For \"{title}\", I would start with a click-through prototype of the main flow so we agree on scope before the backend.",
+    "On \"{title}\": I can work from your existing stack rather than rewriting it, if that suits you better.",
+    "Re \"{title}\": happy to look at the current code or Figma first and give you a fixed quote after."
+  ],
+  "openings_generic": [
+    "Hello, I am a top-rated full stack developer with expertise in every web technology.",
+    "Dear Hiring Manager, I am very interested in your job and can complete it perfectly.",
+    "Hi! I have 10+ years of experience and can build any website you need.",
+    "Greetings, please check my profile; I am the best fit for this job."
+  ],
+  "evidence": [
+    {"evidence_id": "web-cs-01", "keywords": ["booking", "scheduling", "stripe", "payments", "next.js", "subscription", "appointment"], "line": "I built class booking with Stripe passes and automatic waitlists for a yoga studio (web-cs-01)."},
+    {"evidence_id": "web-cs-02", "keywords": ["dashboard", "saas", "django", "react", "multi-tenant", "property", "admin"], "line": "I built a Django + React dashboard where every query is scoped per landlord account (web-cs-02)."},
+    {"evidence_id": "web-cs-03", "keywords": ["shopify", "ecommerce", "e-commerce", "store", "headless", "next.js"], "line": "I built a headless Shopify storefront in Next.js that stayed fast during product drops (web-cs-03)."},
+    {"evidence_id": "web-cs-04", "keywords": ["laravel", "php", "upgrade", "legacy", "migration", "security"], "line": "I upgraded a Laravel 5.4 app to 10 with tests written first around payments (web-cs-04)."},
+    {"evidence_id": "web-cs-05", "keywords": ["realtime", "real-time", "websocket", "socket.io", "node.js", "tracking", "map", "delivery"], "line": "I built live order tracking with Node, Socket.IO and Redis that runs on more than one instance (web-cs-05)."},
+    {"evidence_id": "web-cs-06", "keywords": ["accessibility", "wcag", "a11y", "website", "audit"], "line": "I took a charity site's main templates to zero axe violations and wrote a guide for their editors (web-cs-06)."},
+    {"evidence_id": "web-cs-07", "keywords": ["admin", "panel", "react", "rest", "api", "internal tool", "permissions"], "line": "I built a permission-aware admin panel on top of a courier company's REST API (web-cs-07)."},
+    {"evidence_id": "web-cs-08", "keywords": ["performance", "speed", "lighthouse", "seo", "optimization", "core web vitals"], "line": "I took a news site's mobile Lighthouse score from the 30s to the 90s (web-cs-08)."},
+    {"evidence_id": "web-cs-09", "keywords": ["wordpress", "next.js", "migration", "cms", "headless", "website"], "line": "I moved a law firm from WordPress to Next.js while keeping URLs and rankings (web-cs-09)."},
+    {"evidence_id": "web-cs-10", "keywords": ["integration", "api", "xero", "accounting", "webhook", "node.js", "sync"], "line": "I built a Node service that syncs invoices to Xero with retries and a dead-letter table (web-cs-10)."},
+    {"evidence_id": "web-cs-11", "keywords": ["security", "authentication", "2fa", "express", "api", "rate limiting"], "line": "I added two-factor login and rate limiting to an Express API (web-cs-11)."},
+    {"evidence_id": "web-cs-12", "keywords": ["ci/cd", "github actions", "docker", "devops", "deployment", "pipeline"], "line": "I set up CI/CD with preview deploys per pull request for a SaaS startup (web-cs-12)."},
+    {"evidence_id": "web-cs-15", "keywords": ["checkout", "ux", "mobile", "responsive", "figma", "ecommerce", "frontend"], "line": "I rebuilt a mobile checkout from five steps to two, working from the client's Figma (web-cs-15)."}
+  ],
+  "closings": [
+    "Happy to jump on a short call and walk through how I would structure it.",
+    "If you share the repo or designs, I can give you a fixed quote within a day.",
+    "I can start with the riskiest piece first so you see progress early.",
+    "Thanks, and good luck with the launch either way."
+  ]
+}

@@ -19,7 +19,7 @@ eval:
 	uv run python -m evals.runners.run_demo_eval
 
 seed:
-	@echo "make seed is built in Phase 1 (data pipeline)." && exit 1
+	uv run python -m data.pipeline.build_seed
 
 demo:
 	@echo "make demo is built once the bid graph runs end to end (Phase 5)." && exit 1

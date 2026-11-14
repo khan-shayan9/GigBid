@@ -1,0 +1,37 @@
+{
+  "source": "synthetic",
+  "persona_id": "data_analyst",
+  "openings_personal": [
+    "I read your post about \"{title}\"; before building anything I would agree the definitions of your key numbers with you.",
+    "\"{title}\" is close to work I do every month, so I can tell you early where the data usually breaks.",
+    "For \"{title}\", could you share a sample export? Ten minutes with the real data saves days later.",
+    "On \"{title}\": I would aim for something your team refreshes in one click, not a report only I can update.",
+    "Re \"{title}\": happy to start with a quick audit of your current sheets and suggest the smallest fix first."
+  ],
+  "openings_generic": [
+    "Hello, I am a professional data analyst expert with excellent skills in all data tools.",
+    "Dear Sir, I can do your data job with high quality and fast delivery.",
+    "Hi, I have read your requirements and I am confident I am the right person.",
+    "Greetings! I have done hundreds of similar projects with 100% client satisfaction."
+  ],
+  "evidence": [
+    {"evidence_id": "data-cs-01", "keywords": ["power bi", "dashboard", "dax", "sales", "report", "row-level security"], "line": "I replaced 30 weekly spreadsheets with one Power BI report where each rep sees only their region (data-cs-01)."},
+    {"evidence_id": "data-cs-02", "keywords": ["excel", "power query", "automation", "spreadsheet", "workbook"], "line": "I turned a 40-tab hand-fed workbook into a Power Query refresh a volunteer runs in minutes (data-cs-02)."},
+    {"evidence_id": "data-cs-03", "keywords": ["sql", "postgresql", "postgres", "views", "reporting", "ecommerce", "database"], "line": "I wrote documented SQL reporting views over an online shop's Postgres database (data-cs-03)."},
+    {"evidence_id": "data-cs-04", "keywords": ["tableau", "hr", "attrition", "analysis", "visualization", "story"], "line": "I found what drove attrition at a call centre and presented it as a Tableau story for the board (data-cs-04)."},
+    {"evidence_id": "data-cs-05", "keywords": ["google sheets", "apps script", "automation", "inventory", "spreadsheet"], "line": "I built a Google Sheets stock tool with Apps Script that suggests and emails daily orders (data-cs-05)."},
+    {"evidence_id": "data-cs-06", "keywords": ["survey", "statistics", "weighting", "pandas", "python", "research"], "line": "I weighted a 12,000-response survey to census margins and reported results with confidence intervals (data-cs-06)."},
+    {"evidence_id": "data-cs-07", "keywords": ["ga4", "google analytics", "bigquery", "attribution", "marketing", "looker studio"], "line": "I joined GA4 and Shopify data in BigQuery to compare attribution models for a skincare brand (data-cs-07)."},
+    {"evidence_id": "data-cs-08", "keywords": ["inventory", "excel", "pivot", "abc analysis", "retail"], "line": "I ran an ABC stock analysis for a pharmacy in plain Excel so the owner could keep using it (data-cs-08)."},
+    {"evidence_id": "data-cs-09", "keywords": ["saas", "mrr", "stripe", "bigquery", "looker studio", "cohort", "dashboard"], "line": "I built an MRR and cohort dashboard from Stripe data after agreeing the metric definitions in writing (data-cs-09)."},
+    {"evidence_id": "data-cs-10", "keywords": ["data cleaning", "crm", "duplicates", "deduplication", "matching"], "line": "I fuzzy-matched 25,000 CRM contacts into a merge list for the sales team to approve (data-cs-10)."},
+    {"evidence_id": "data-cs-11", "keywords": ["a/b test", "statistics", "experiment", "significance", "email"], "line": "I analysed an A/B test with proper significance testing and reported that the result was noise (data-cs-11)."},
+    {"evidence_id": "data-cs-12", "keywords": ["python", "automation", "report", "kpi", "sql server", "pdf"], "line": "I automated a monthly KPI PDF pack in Python that used to take two days by hand (data-cs-12)."}
+  ],
+  "closings": [
+    "Happy to have a quick call to look at your data together.",
+    "If you share a sample, I can send a short plan and fixed quote the same day.",
+    "I can deliver a first draft early so you can react before the final version.",
+    "Thanks for considering me."
+  ]
+}

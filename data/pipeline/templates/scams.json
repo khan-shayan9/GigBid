@@ -1,0 +1,59 @@
+{
+  "note": "Authored synthetic scam job templates. Label-generation input: never copy into agent/.",
+  "topics": {
+    "ai_ml": ["AI chatbot", "machine learning model", "GPT integration", "computer vision app"],
+    "web": ["React website", "full stack web app", "Next.js site", "e-commerce website"],
+    "data": ["Power BI dashboard", "Excel data project", "SQL reporting", "data analysis"],
+    "other": ["data entry", "virtual assistant", "product listing", "online research"]
+  },
+  "families": {
+    "off_platform": {
+      "titles": ["{topic} expert needed urgently", "Long term {topic} partner wanted", "{topic} developer for quick project"],
+      "descriptions": [
+        "We need someone for a {topic} job. Budget is flexible for the right person. Please do not reply here, message me directly on WhatsApp so we can discuss faster and avoid platform fees.",
+        "Looking for a {topic} specialist for ongoing work. Our manager will explain details on Telegram. Send your Telegram username in the first line of your proposal.",
+        "Simple {topic} task, very good pay. We pay by bank transfer outside the platform to save the 10% fee for both of us. Contact me by email to start today."
+      ]
+    },
+    "free_work": {
+      "titles": ["{topic} test task before hiring", "Paid trial for {topic} (after review)", "Build a {topic} sample to win long contract"],
+      "descriptions": [
+        "To choose a freelancer we ask every applicant to build a complete {topic} as a test. The best one gets a long term contract. The test itself is not paid.",
+        "Please deliver a working {topic} first. If we like it we will hire you and pay for the next projects. We have 20 more projects waiting.",
+        "Send us the full source code of a {topic} you made before so we can check your quality. We will use it as the base for our product."
+      ]
+    },
+    "upfront_payment": {
+      "titles": ["{topic} job with equipment provided", "Remote {topic} position, setup required", "{topic} contractor, onboarding this week"],
+      "descriptions": [
+        "We will send you a cheque to buy the software licence for the {topic} work from our approved vendor. Keep the rest as your first payment.",
+        "Before starting the {topic} project you must pay a small registration fee of $50 for our training portal. It is refunded with your first salary.",
+        "Our accountant will send you money for the {topic} tools. Please forward the remaining amount to our partner by gift cards."
+      ]
+    },
+    "too_good": {
+      "titles": ["Earn $5000/week on {topic}, no experience", "Easy {topic} work from phone", "{topic} job, huge pay, 1 hour a day"],
+      "descriptions": [
+        "No experience needed. Earn $5000 per week doing simple {topic} tasks from your phone. Limited spots, apply now and start immediately.",
+        "We pay $200 per hour for very easy {topic} work, only one hour per day. Just copy and paste. Hurry, offer ends today.",
+        "Make big money fast with our {topic} system. Everyone accepted. Send your full name, address and date of birth to register."
+      ]
+    },
+    "account_access": {
+      "titles": ["{topic} freelancer, account manager role", "Help with {topic} on our account", "{topic} expert to manage profile"],
+      "descriptions": [
+        "We need you to log in to our client's accounts to do the {topic} work. Send us your platform username and password so our manager can set up the contract for you.",
+        "Our company will use your freelancer profile to apply for {topic} jobs and share the money 50/50. You only need to give us access to your account.",
+        "Install our remote desktop app so we can verify your identity for the {topic} contract. Also send a photo of your ID card."
+      ]
+    },
+    "crypto_wallet": {
+      "titles": ["{topic} + crypto payments", "{topic} for our token project", "Crypto {topic} task, paid in USDT"],
+      "descriptions": [
+        "We pay only in crypto for this {topic} work. You need to create a wallet and deposit a small amount to activate it before we can pay you.",
+        "Help us with {topic} for our new token. Payment is in our token, which will 10x after launch. Connect your wallet to our site to receive it.",
+        "{topic} work paid in USDT. First verify your wallet by sending 20 USDT to our address; it comes back with your first payment."
+      ]
+    }
+  }
+}

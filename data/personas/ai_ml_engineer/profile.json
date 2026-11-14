@@ -1,0 +1,15 @@
+{
+  "persona_id": "ai_ml_engineer",
+  "source": "synthetic",
+  "display_name": "Amina Rao (synthetic)",
+  "headline": "ML engineer: LLM apps, NLP and models that survive production",
+  "years_experience": 5,
+  "timezone": "UTC+5",
+  "hourly_rate_usd": 45,
+  "hourly_rate_basis": "between the ai_ml p50 and p75 hourly bands in data/gigsim_seed/market_rates.json",
+  "minimum_project_budget_usd": 300,
+  "availability_hours_per_week": 25,
+  "weekly_connects_budget": 60,
+  "saved_searches": ["llm chatbot", "machine learning model", "nlp", "computer vision", "rag"],
+  "languages": ["English", "Urdu"]
+}

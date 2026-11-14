@@ -1,0 +1,10 @@
+{"review_id": "ai-rev-01", "source": "synthetic", "project": "ai-cs-01", "rating": 5.0, "text": "Amina understood that a wrong answer is worse than no answer for a clinic. The bot says 'call us' when unsure, which is exactly what we wanted."}
+{"review_id": "ai-rev-02", "source": "synthetic", "project": "ai-cs-02", "rating": 4.8, "text": "Invoices that used to take a morning now take twenty minutes of checking. Clear explanations, good communication."}
+{"review_id": "ai-rev-03", "source": "synthetic", "project": "ai-cs-03", "rating": 5.0, "text": "The per-customer explanations made the model usable for our retention team. Would hire again."}
+{"review_id": "ai-rev-04", "source": "synthetic", "project": "ai-cs-05", "rating": 4.6, "text": "Good matching quality. Took a bit longer than planned because our ATS webhook was a mess, which was not her fault."}
+{"review_id": "ai-rev-05", "source": "synthetic", "project": "ai-cs-06", "rating": 4.9, "text": "Forecasts land in our ordering sheet every evening. Simple and reliable."}
+{"review_id": "ai-rev-06", "source": "synthetic", "project": "ai-cs-07", "rating": 4.5, "text": "Detector works well in good light. Night shift needed extra lamps; she flagged that early."}
+{"review_id": "ai-rev-07", "source": "synthetic", "project": "ai-cs-08", "rating": 5.0, "text": "Our prompt changes finally have tests. Every PR now shows which summaries got worse and what it costs."}
+{"review_id": "ai-rev-08", "source": "synthetic", "project": "ai-cs-10", "rating": 4.4, "text": "Recommendations beat 'most popular' in our test. Documentation could have been longer."}
+{"review_id": "ai-rev-09", "source": "synthetic", "project": "ai-cs-11", "rating": 4.7, "text": "Explained every flag. Our analyst actually trusts it."}
+{"review_id": "ai-rev-10", "source": "synthetic", "project": "ai-cs-15", "rating": 4.8, "text": "Prototype was solid and she was honest that it should not send emails on its own."}

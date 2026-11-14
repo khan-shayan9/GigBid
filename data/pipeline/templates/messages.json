@@ -1,0 +1,33 @@
+{
+  "note": "Authored synthetic client message templates by intent. {title} is the job title. Label-generation input: never copy into agent/.",
+  "intents": {
+    "question": [
+      "Thanks for your proposal on {title}. Have you worked with a team our size before?",
+      "Hi, quick question about {title}: how would you handle changes to the scope halfway through?",
+      "Can you share an example of something similar to {title} that you built?",
+      "What would you need from us to get started on {title}?",
+      "How do you usually report progress on a project like {title}?"
+    ],
+    "negotiation": [
+      "Your proposal for {title} looks good but it is above our budget. Could you do it for 20% less?",
+      "We like your approach to {title}. Would you accept a fixed price instead of hourly?",
+      "Can you split {title} into two milestones so we pay half up front and half on delivery?",
+      "Another freelancer offered {title} for much less. Can you match their price?",
+      "If we extend {title} to three months, can you give us a lower rate?"
+    ],
+    "interview_request": [
+      "We would like to interview you for {title}. Are you free for a 30 minute call this week?",
+      "You are on our shortlist for {title}. Can we schedule a video call on Tuesday or Wednesday?",
+      "Let's talk about {title}. Please suggest two time slots that work for you.",
+      "Could we do a quick call tomorrow about {title}? Morning works best for us.",
+      "We'd like to meet before deciding on {title}. What times are you available next week?"
+    ],
+    "scam_signal": [
+      "Great, let's continue {title} on WhatsApp, it is easier for me. Send your number.",
+      "Before we start {title}, please do a small unpaid test to show your skills.",
+      "For {title} I will pay you outside the platform to save fees. Send your bank details.",
+      "Please send me your account login so my manager can add you to the {title} contract.",
+      "We will send a cheque for {title} equipment, buy it from our vendor and keep the rest."
+    ]
+  }
+}

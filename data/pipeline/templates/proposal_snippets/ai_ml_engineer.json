@@ -1,0 +1,38 @@
+{
+  "source": "synthetic",
+  "persona_id": "ai_ml_engineer",
+  "openings_personal": [
+    "I read your post about \"{title}\" and the part that stood out was how you want it to work on your own data, not a demo.",
+    "Your \"{title}\" project is close to something I shipped last year, so I already know where the hard parts are.",
+    "For \"{title}\", I would start by looking at a sample of your data before promising anything about accuracy.",
+    "Quick thought on \"{title}\": the model is usually the easy part; getting reliable inputs is where these projects slip.",
+    "I can help with \"{title}\". Before quoting a timeline I would want to see ten real examples of what you expect as output."
+  ],
+  "openings_generic": [
+    "Hello, I am a highly skilled AI expert with many years of experience in all areas of machine learning.",
+    "Dear Sir/Madam, I have read your job and I am the perfect candidate for it.",
+    "Hi, I am an experienced developer and can do this job with 100% satisfaction.",
+    "Greetings! I am interested in your project and have done similar work many times."
+  ],
+  "evidence": [
+    {"evidence_id": "ai-cs-01", "keywords": ["chatbot", "faq", "llm", "gpt", "retrieval", "rag", "documents", "pdf", "assistant", "ai"], "line": "I built a clinic assistant that answers only from the clinic's leaflets and shows the source under every answer (ai-cs-01)."},
+    {"evidence_id": "ai-cs-02", "keywords": ["ocr", "invoice", "pdf", "extraction", "documents", "scan", "parsing"], "line": "I set up invoice extraction for an accounting firm, with checks that send doubtful rows to a review queue (ai-cs-02)."},
+    {"evidence_id": "ai-cs-03", "keywords": ["churn", "prediction", "classification", "model", "customer", "xgboost", "machine learning"], "line": "I delivered a churn model with per-customer explanations so the retention team knew why someone was flagged (ai-cs-03)."},
+    {"evidence_id": "ai-cs-04", "keywords": ["sentiment", "nlp", "reviews", "text classification", "bert", "fine-tune"], "line": "I fine-tuned a transformer on a seller's own reviews to separate delivery complaints from product complaints (ai-cs-04)."},
+    {"evidence_id": "ai-cs-05", "keywords": ["matching", "embeddings", "search", "semantic", "resume", "cv", "recruitment", "similarity"], "line": "I built an embedding-based CV matcher that explains each match with the closest CV sentences (ai-cs-05)."},
+    {"evidence_id": "ai-cs-06", "keywords": ["forecast", "forecasting", "time series", "demand", "sales", "prediction"], "line": "I replaced a Prophet forecast with LightGBM for a bakery chain and fed it into their daily ordering sheet (ai-cs-06)."},
+    {"evidence_id": "ai-cs-07", "keywords": ["computer vision", "image", "detection", "yolo", "camera", "defect", "opencv"], "line": "I trained a defect detector for a textile mill that runs on an edge box beside the loom (ai-cs-07)."},
+    {"evidence_id": "ai-cs-08", "keywords": ["llm", "prompt", "evaluation", "testing", "gpt", "openai", "quality"], "line": "I built a regression test suite for LLM prompts so every prompt change shows what got worse and what it costs (ai-cs-08)."},
+    {"evidence_id": "ai-cs-09", "keywords": ["speech", "transcription", "whisper", "audio", "summarization", "meeting"], "line": "I built call transcription and summarisation with action items for a consulting team (ai-cs-09)."},
+    {"evidence_id": "ai-cs-10", "keywords": ["recommendation", "recommender", "personalization", "e-learning", "collaborative filtering"], "line": "I built course recommendations for an e-learning platform and A/B tested them against 'most popular' (ai-cs-10)."},
+    {"evidence_id": "ai-cs-11", "keywords": ["fraud", "anomaly", "payments", "risk", "detection"], "line": "I combined an anomaly model with the analyst's own rules to flag odd payments, each flag with its reason (ai-cs-11)."},
+    {"evidence_id": "ai-cs-12", "keywords": ["fastapi", "api", "deploy", "deployment", "docker", "mlops", "production", "mlflow"], "line": "I have a tested template for turning a trained model into a Dockerised FastAPI service with MLflow (ai-cs-12)."},
+    {"evidence_id": "ai-cs-15", "keywords": ["agent", "automation", "email", "langchain", "tool", "workflow", "ai agent"], "line": "I prototyped an email triage agent with tool calls and a human approval step before any reply goes out (ai-cs-15)."}
+  ],
+  "closings": [
+    "Happy to do a short call to look at your data first.",
+    "If useful, I can start with a two-day paid scoping step so you see results before committing to the full budget.",
+    "Let me know which part matters most to you and I will start there.",
+    "Thanks for reading; I can share the relevant code on request."
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "source": "kaggle:sarveshchhetri/freelancer-success-earnings-and-churn-prediction",
+  "primary_skills": {
+    "AI & Machine Learning": {
+      "freelancers": 1296,
+      "median_job_success_rate": 86.4,
+      "median_avg_response_time_hrs": 13.1
+    },
+    "Accounting & Finance": {
+      "freelancers": 430,
+      "median_job_success_rate": 85.75,
+      "median_avg_response_time_hrs": 12.4
+    },
+    "Content Writing / Copywriting": {
+      "freelancers": 1238,
+      "median_job_success_rate": 86.8,
+      "median_avg_response_time_hrs": 12.9
+    },
+    "Data Science & Analytics": {
+      "freelancers": 974,
+      "median_job_success_rate": 86.5,
+      "median_avg_response_time_hrs": 13.3
+    },
+    "Digital Marketing": {
+      "freelancers": 1464,
+      "median_job_success_rate": 86.75,
+      "median_avg_response_time_hrs": 12.8
+    },
+    "Graphic Design": {
+      "freelancers": 1034,
+      "median_job_success_rate": 86.7,
+      "median_avg_response_time_hrs": 12.9
+    },
+    "Mobile App Development": {
+      "freelancers": 1201,
+      "median_job_success_rate": 86.2,
+      "median_avg_response_time_hrs": 13.2
+    },
+    "SEO / SEM": {
+      "freelancers": 221,
+      "median_job_success_rate": 87.0,
+      "median_avg_response_time_hrs": 13.2
+    },
+    "Video Editing": {
+      "freelancers": 957,
+      "median_job_success_rate": 86.9,
+      "median_avg_response_time_hrs": 12.9
+    },
+    "Virtual Assistant": {
+      "freelancers": 621,
+      "median_job_success_rate": 86.9,
+      "median_avg_response_time_hrs": 13.3
+    },
+    "Web Development": {
+      "freelancers": 1720,
+      "median_job_success_rate": 86.7,
+      "median_avg_response_time_hrs": 13.0
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "persona_id": "data_analyst",
+  "source": "synthetic",
+  "display_name": "Sam Okafor (synthetic)",
+  "headline": "Data analyst: SQL, Power BI and spreadsheets people actually trust",
+  "years_experience": 4,
+  "timezone": "UTC+1",
+  "hourly_rate_usd": 28,
+  "hourly_rate_basis": "between the data p25 and p50 hourly bands in data/gigsim_seed/market_rates.json",
+  "minimum_project_budget_usd": 150,
+  "availability_hours_per_week": 20,
+  "weekly_connects_budget": 50,
+  "saved_searches": ["power bi dashboard", "data analysis", "sql reporting", "excel automation", "tableau"],
+  "languages": ["English", "French"]
+}

@@ -1,0 +1,57 @@
+{
+  "source": "kaggle:asaniczka/freelance-contracts-dataset-1-3-million-entries",
+  "domains": {
+    "ai_ml": {
+      "contracts": 15465,
+      "hourly_usd": {
+        "p25": 20.0,
+        "p50": 30.0,
+        "p75": 50.0
+      },
+      "total_paid_usd": {
+        "p25": 89.0,
+        "p50": 300.0,
+        "p75": 1223.93
+      }
+    },
+    "data": {
+      "contracts": 28569,
+      "hourly_usd": {
+        "p25": 15.0,
+        "p50": 30.0,
+        "p75": 50.0
+      },
+      "total_paid_usd": {
+        "p25": 50.0,
+        "p50": 166.67,
+        "p75": 630.14
+      }
+    },
+    "other": {
+      "contracts": 978446,
+      "hourly_usd": {
+        "p25": 10.0,
+        "p50": 20.0,
+        "p75": 40.0
+      },
+      "total_paid_usd": {
+        "p25": 54.0,
+        "p50": 180.0,
+        "p75": 622.89
+      }
+    },
+    "web": {
+      "contracts": 43893,
+      "hourly_usd": {
+        "p25": 15.0,
+        "p50": 22.0,
+        "p75": 35.0
+      },
+      "total_paid_usd": {
+        "p25": 109.33,
+        "p50": 480.0,
+        "p75": 2225.0
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "persona_id": "fullstack_dev",
+  "source": "synthetic",
+  "display_name": "Diego Marín (synthetic)",
+  "headline": "Full-stack developer: Next.js, Node and Django apps that load fast and stay up",
+  "years_experience": 6,
+  "timezone": "UTC-3",
+  "hourly_rate_usd": 32,
+  "hourly_rate_basis": "between the web p50 and p75 hourly bands in data/gigsim_seed/market_rates.json",
+  "minimum_project_budget_usd": 250,
+  "availability_hours_per_week": 30,
+  "weekly_connects_budget": 70,
+  "saved_searches": ["next.js", "react developer", "full stack web app", "django", "node.js api"],
+  "languages": ["English", "Spanish", "Portuguese"]
+}
