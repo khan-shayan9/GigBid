@@ -6,6 +6,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: GigSim frozen at gigsim-v1
+        run: git diff --exit-code refs/tags/gigsim-v1 -- gigsim/
       - uses: astral-sh/setup-uv@v6
         with:
           version: "0.11.8"

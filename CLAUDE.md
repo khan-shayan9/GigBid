@@ -10,7 +10,7 @@ These three docs are the source of truth. Read them before any work and follow t
 
 ## Current phase
 
-**Phase 2: GigSim** (see `1.PROJECT_SPECIFICATION.md` §8). Phase 0 (Scaffold) and Phase 1 (Data) were accepted on 2026-11-15. Work on nothing beyond this phase until the user accepts it.
+**Phase 3: MCP (Part A)** (see `1.PROJECT_SPECIFICATION.md` §8). Phase 0 (Scaffold), Phase 1 (Data) and Phase 2 (GigSim) were accepted on 2026-11-15. GigSim is frozen at tag `gigsim-v1`; CI fails if anything under `gigsim/` changes. Work on nothing beyond this phase until the user accepts it.
 
 ## Quick reminders
 
