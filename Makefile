@@ -1,15 +1,25 @@
-.PHONY: install api test lint eval
+.PHONY: install dev api test lint eval seed demo
+
 install:
-	python -m pip install -e ".[dev]"
+	uv sync --frozen
+
+dev:
+	docker compose up --build
 
 api:
-	uvicorn apps.api.main:app --reload --port 8000
+	uv run uvicorn apps.api.main:app --reload --port 8000
 
 test:
-	pytest -q
+	uv run pytest -q
 
 lint:
-	ruff check .
+	uv run ruff check .
 
 eval:
-	python -m evals.runners.run_demo_eval
+	uv run python -m evals.runners.run_demo_eval
+
+seed:
+	@echo "make seed is built in Phase 1 (data pipeline)." && exit 1
+
+demo:
+	@echo "make demo is built once the bid graph runs end to end (Phase 5)." && exit 1

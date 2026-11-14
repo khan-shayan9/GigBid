@@ -45,5 +45,10 @@ replacement for the instructor-provided GigSim data or evaluation sets.
 - Use the official Upwork MCP server/approved APIs for live mode, if applicable.
 - Keep secrets and real client data out of Git.
 
+## Setup and key versions
+See `docs/RUNBOOK.md` for setup. Pinned with uv 0.11.8 (full lock in `uv.lock`):
+Python 3.11+, FastAPI 0.163.0, Pydantic 2.14.3, LangGraph 1.2.22, LangChain 1.5.0,
+langchain-mcp-adapters 0.3.2, MCP SDK 1.30.0, pytest 9.2.0, ruff 0.17.5.
+
 ## Repository map
 See `docs/GETTING_STARTED.md` for the purpose of each major folder.

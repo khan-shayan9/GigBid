@@ -1,3 +1,50 @@
-# TODO: Define web, API, worker, MCP servers, GigSim, Postgres, Redis,
-# vector store and local model service as appropriate.
-services: {}
+# Phase 0 skeleton: API, Postgres (pgvector) and Redis. Worker, MCP servers, GigSim, web and
+# Langfuse are added in the phases that build them.
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: infra/docker/api.Dockerfile
+    env_file:
+      - path: ../.env
+        required: false
+    environment:
+      DATABASE_URL: postgresql+psycopg://gigbid:${POSTGRES_PASSWORD:-gigbid}@postgres:5432/gigbid
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: gigbid
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gigbid}
+      POSTGRES_DB: gigbid
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gigbid -d gigbid"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:

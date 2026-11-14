@@ -1,18 +1,44 @@
 marketplace:
-  mode: gigsim
+  mode: gigsim  # gigsim | upwork_live
   max_requests_per_minute: 20
 
 models:
+  # Default profile; the MODEL_PROFILE env var overrides it.
   profile: open
-  nodes:
-    scout: qwen3-4b
-    analyst: qwen3-4b
-    risk_assessor: qwen3-4b
-    fit_matcher: qwen3-4b
-    pricing: qwen3-4b
-    writer: configure-your-model
-    critic: configure-your-model
-    client_liaison: configure-your-model
+  profiles:
+    # open: open-weight models only (required; the deployed link runs on this).
+    # Groq IDs checked on Groq's model list (2026-11-14). OpenRouter uses different IDs, so the
+    # fallback needs its own node map (Phase 4-5, with the comparison of two open configurations).
+    open:
+      provider: groq
+      fallback_provider: openrouter
+      nodes:
+        scout: &open_small llama-3.1-8b-instant
+        analyst: *open_small
+        risk_assessor: *open_small
+        fit_matcher: *open_small
+        pricing: *open_small
+        verifier: *open_small
+        compliance: *open_small
+        writer: &open_strong llama-3.3-70b-versatile
+        critic: *open_strong
+        client_liaison: *open_strong
+    # paid: optional; used only where it beats `open` enough to justify the cost.
+    paid:
+      provider: configure-me
+      fallback_provider: groq
+      nodes:
+        scout: *open_small
+        analyst: *open_small
+        risk_assessor: *open_small
+        fit_matcher: *open_small
+        pricing: *open_small
+        verifier: *open_small
+        compliance: *open_small
+        writer: &paid_strong configure-me
+        critic: *paid_strong
+        client_liaison: *paid_strong
+  # Open models in both profiles.
   embeddings: nomic-embed-text
   reranker: bge-reranker-v2-m3
 
