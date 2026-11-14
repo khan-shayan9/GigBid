@@ -19,6 +19,14 @@ advanced RAG variants, claim verification, human approval flow, persistence, UI,
 deployment, and your own research findings. The sample data is illustrative only and is not a
 replacement for the instructor-provided GigSim data or evaluation sets.
 
+## GigSim is ours (deviation from the brief)
+The brief describes GigSim, the personas and the policy pack as provided. The course shipped
+only this starter kit and Kaggle datasets, so we built GigSim ourselves (`gigsim/`, Phase 2),
+with seed data from our pipeline (`data/gigsim_seed/`, see `docs/DATA_CARD.md`) and a
+machine-readable policy pack (`data/policy_pack/v1.yaml`; `v2.yaml` is an assumed version of
+the 2 Nov 2026 update). GigSim is frozen at tag `gigsim-v1`; new jobs, clients and policy
+versions are data changes. Running it: `docs/RUNBOOK.md`.
+
 ## Quick start
 1. Create your own public GitHub repository.
 2. Copy this starter kit into the repository.
@@ -26,7 +34,7 @@ replacement for the instructor-provided GigSim data or evaluation sets.
 4. Install dependencies from `pyproject.toml` (adjust/pin versions after checking compatibility).
 5. Copy `.env.example` to `.env` and fill local values. **Never commit `.env`.**
 6. Read `docs/GETTING_STARTED.md` and work through the TODO checklist.
-7. Keep the instructor-provided `gigsim/`, persona data, policy pack and evaluation assets unchanged.
+7. Keep `gigsim/` unchanged after the `gigsim-v1` tag (CI checks this).
 
 ## Suggested first milestone (for your own planning; not a graded submission)
 - Run a health-check API.

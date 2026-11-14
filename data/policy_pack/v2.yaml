@@ -1,0 +1,34 @@
+# GigSim platform policy v2: the 2 Nov 2026 update.
+# ASSUMED: the real text is unknown; these two rules are our assumption until the instructor confirms.
+# Finalised in Phase 5 as its own commit. Switching versions is GIGSIM_POLICY only, no code change.
+version: v2
+assumed: true
+default_connects_cost: 4
+cost_rules:
+  - id: large_budget_surcharge
+    min_budget_usd: 1000
+    add: 4
+  - id: high_rate_surcharge
+    min_hourly_max_usd: 60
+    add: 2
+max_length:
+  proposal: 5000
+  message: 3000
+forbidden:
+  - id: no_email
+    pattern: '[\w.+-]+@[\w-]+\.[\w.]+'
+    applies_to: [proposal, message]
+    message: Contact details (email) are not allowed.
+  - id: no_phone
+    pattern: '\+?\d(?:[\s().-]{0,2}\d){9,14}'
+    applies_to: [proposal, message]
+    message: Contact details (phone) are not allowed.
+  - id: no_off_platform
+    pattern: '(?i)\b(whatsapp|telegram|skype|signal app|pay (me )?outside)\b'
+    applies_to: [proposal, message]
+    message: Off-platform contact or payment is not allowed.
+required:
+  - id: ai_assist_disclosure
+    any_of: ["AI-assisted", "drafted with AI", "AI assistance"]
+    applies_to: [proposal]
+    message: Proposals must disclose AI assistance (e.g. "AI-assisted").

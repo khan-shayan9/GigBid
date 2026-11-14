@@ -1,0 +1,22 @@
+# GigSim platform policy v1 (machine-readable form of marketplace_policy.md rules GigSim enforces).
+version: v1
+assumed: false
+default_connects_cost: 4   # used when a job record has no connects_cost
+cost_rules: []             # each: {id, min_budget_usd?, min_hourly_max_usd?, add}
+max_length:
+  proposal: 5000
+  message: 3000
+forbidden:
+  - id: no_email
+    pattern: '[\w.+-]+@[\w-]+\.[\w.]+'
+    applies_to: [proposal, message]
+    message: Contact details (email) are not allowed.
+  - id: no_phone
+    pattern: '\+?\d(?:[\s().-]{0,2}\d){9,14}'
+    applies_to: [proposal, message]
+    message: Contact details (phone) are not allowed.
+  - id: no_off_platform
+    pattern: '(?i)\b(whatsapp|telegram|skype|signal app|pay (me )?outside)\b'
+    applies_to: [proposal, message]
+    message: Off-platform contact or payment is not allowed.
+required: []               # each: {id, any_of: [phrases], applies_to, message}

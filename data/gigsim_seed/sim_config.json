@@ -1,0 +1,67 @@
+{
+  "random_seed": 4016,
+  "time_scale": 60,
+  "fault_rate": 0.03,
+  "rate_limit": {
+    "capacity": 30,
+    "refill_per_second": 1.0
+  },
+  "users": {
+    "ai_ml_engineer": {
+      "starting_connects": 120
+    },
+    "fullstack_dev": {
+      "starting_connects": 120
+    },
+    "data_analyst": {
+      "starting_connects": 120
+    }
+  },
+  "default_client_prefs": {
+    "behaviour": "genuine",
+    "must_have_skills": [],
+    "budget_ceiling": {
+      "type": null,
+      "usd": null
+    },
+    "dislikes_generic_opening": false,
+    "reply_propensity": 0.5
+  },
+  "client_sim": {
+    "mode": "rules",
+    "weights": {
+      "personal_opening": 1.0,
+      "any_must_have": 0.8,
+      "most_must_haves": 0.4,
+      "over_budget": -0.6,
+      "noise_sd": 0.5
+    },
+    "thresholds": {
+      "hired": 2.3,
+      "interview": 1.8,
+      "replied": 1.0
+    },
+    "delays_min": {
+      "viewed": 60,
+      "replied": 240,
+      "interview": 720,
+      "decision": 2880
+    },
+    "generic_openings": [
+      "hello, i am",
+      "hi, i am",
+      "dear sir",
+      "dear hiring manager",
+      "greetings!",
+      "to whom it may concern",
+      "i am interested in your",
+      "i have read your job"
+    ],
+    "replies": {
+      "replied": "Thanks for your proposal. Could you share a bit more about how you would approach this?",
+      "interview": "We would like to schedule a short call. Which times work for you this week?",
+      "hired": "Great news: we would like to hire you for this job. Please accept the offer.",
+      "scam": "Before we start, add me on WhatsApp and we will handle payment outside the platform."
+    }
+  }
+}

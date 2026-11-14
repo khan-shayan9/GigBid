@@ -1,4 +1,4 @@
-.PHONY: install dev api test lint eval seed demo
+.PHONY: install dev api gigsim test lint eval seed demo
 
 install:
 	uv sync --frozen
@@ -8,6 +8,9 @@ dev:
 
 api:
 	uv run uvicorn apps.api.main:app --reload --port 8000
+
+gigsim:
+	uv run uvicorn --factory gigsim.app:create_app --port 8081
 
 test:
 	uv run pytest -q

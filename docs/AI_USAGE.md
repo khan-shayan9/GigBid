@@ -3,6 +3,13 @@
 Record the AI coding assistant/tool used, the files or tasks it helped with, and at least
 one incorrect suggestion you identified and corrected. You remain responsible for all code.
 
+## GigSim (Phase 2)
+- Tool: Claude Code wrote `gigsim/`, its tests, `sim_config.json`, the client-simulation prompt
+  and the policy files `v1.yaml` and `v2.yaml` (v2 is an assumed policy, marked as such).
+- Corrected during review: seeded conversation messages were timed before their job was
+  released, so `/messages` named jobs that `/jobs/{id}` still hid. Messages now appear at the
+  later of the two times.
+
 ## Synthetic data authored by the AI assistant (Phase 1)
 - Tool: Claude Code.
 - Authored: the three persona corpora in `data/personas/*/` (CVs, case studies, repo READMEs

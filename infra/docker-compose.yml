@@ -1,5 +1,5 @@
-# Phase 0 skeleton: API, Postgres (pgvector) and Redis. Worker, MCP servers, GigSim, web and
-# Langfuse are added in the phases that build them.
+# API, GigSim (Phase 2), Postgres (pgvector) and Redis. Worker, MCP servers, web and Langfuse are
+# added in the phases that build them.
 services:
   api:
     build:
@@ -20,6 +20,25 @@ services:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  gigsim:
+    build:
+      context: ..
+      dockerfile: infra/docker/gigsim.Dockerfile
+    env_file:
+      - path: ../.env
+        required: false
+    environment:
+      GIGSIM_DB_PATH: /var/lib/gigsim/gigsim.sqlite
+    ports:
+      - "8081:8081"
+    volumes:
+      - gigsimdata:/var/lib/gigsim
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8081/health')"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -48,3 +67,4 @@ services:
 
 volumes:
   pgdata:
+  gigsimdata:

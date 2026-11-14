@@ -128,6 +128,16 @@ New jobs and clients (for example, grader data) use the same JSONL records as `j
 `clients.jsonl`, plus a `stream.jsonl` entry per job. The GigSim loader (Phase 2) reads these
 files; no code change is needed to add data.
 
+Loader rules (`gigsim/store.py`, folders listed in `GIGSIM_SEED_DIRS`):
+- Every file is optional per folder; records from all folders are merged.
+- Required job fields: `job_id`, `title`, `description`, `payment_type`, `client_id`. A missing
+  `connects_cost` takes the active policy's `default_connects_cost`.
+- Required client field: `client_id`; `payment_verified` and `enterprise` default to false.
+- A client with no `client_prefs.jsonl` row gets `default_client_prefs` from `sim_config.json`.
+- A job with no `stream.jsonl` entry is released at minute 0.
+- Seeded conversation messages appear at the later of `sent_after_min` and the job's release.
+- Startup fails on invalid JSON, a duplicate id, or a reference to a missing job or client.
+
 GigSim never serves the provenance fields `source`, `derived_from` and `history_source`: they
 would tell the agent which jobs are synthetic (scams, injections, duplicates). Job and client ids
 are assigned at random after the stream is assembled, so id order is no tell either
