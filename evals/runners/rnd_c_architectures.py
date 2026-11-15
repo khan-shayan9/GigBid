@@ -27,17 +27,26 @@ from langgraph.checkpoint.memory import MemorySaver
 from langgraph.errors import GraphRecursionError
 from langgraph.prebuilt import create_react_agent
 from langgraph_supervisor import create_supervisor
-from openai import BadRequestError
+from openai import BadRequestError, RateLimitError
 
 from agent.config import load_config, load_prompt
 from agent.graphs.bid_graph import build_bid_graph
 from agent.llm import chat_model
-from evals.runners.common import CACHE, RESULTS, SEED, corpora, job_post, jobs, jsonl, labels
-from evals.runners.common import percentile
+from evals.runners.common import (
+    CACHE,
+    RESULTS,
+    SEED,
+    corpora,
+    job_post,
+    jobs,
+    jsonl,
+    labels,
+    percentile,
+)
 from rag.retriever import Retriever
 
 ARCHITECTURES = ("react", "supervisor", "graph")
-MODEL_NODE = "risk_assessor"  # baselines run on the small model our triage nodes are routed to
+MODEL_NODE = "critic"  # gpt-oss-20b (the triage nodes' model) had no daily quota left; see docs
 MAX_TOKENS = 1500  # Groq counts requested max_tokens against its per-minute output limit
 SAMPLE_SEED = 4016
 STRATA = {"scam": 12, "injection": 8, "bid": 15, "other_skip": 15}  # 50 jobs
@@ -271,11 +280,19 @@ async def run(total: int, only: list[str]) -> dict[str, Any]:
     path = CACHE.parent / "rnd_c" / f"{model.model_name.replace('/', '_')}.jsonl"
     path.parent.mkdir(parents=True, exist_ok=True)
     cached = {(r["architecture"], r["job_id"]): r for r in jsonl(path)} if path.exists() else {}
+    stopped = False
     for row in rows:  # job by job, so a partial run covers the same jobs in every architecture
+        if stopped:
+            break
         for architecture in only:
             if (architecture, row["job_id"]) in cached:
                 continue
-            result = await run_one(architecture, row, backend, model)
+            try:
+                result = await run_one(architecture, row, backend, model)
+            except RateLimitError as error:  # the daily quota is gone: report the jobs done
+                print("stopped:", str(error)[:160], flush=True)
+                stopped = True
+                break
             cached[(architecture, row["job_id"])] = result
             with path.open("a", encoding="utf-8") as cache:
                 cache.write(json.dumps(result) + "\n")
