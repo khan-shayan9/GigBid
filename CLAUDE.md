@@ -12,6 +12,11 @@ These three docs are the source of truth. Read them before any work and follow t
 
 **Phase 5: Graphs and memory (Part C)** (see `1.PROJECT_SPECIFICATION.md` §8). Phases 0 to 4 were accepted on 2026-11-15. GigSim is frozen at tag `gigsim-v1`; CI fails if anything under `gigsim/` changes. Work on nothing beyond this phase until the user accepts it.
 
+Phase 5 status (2026-11-15), awaiting acceptance:
+- Done on main: bid and conversation graphs (C1), typed state and reducers (C2), hand-offs (C3), Critic loop and Compliance block, step and token budgets with `needs_attention` (C4, `agent/graphs/guard.py`), interrupt approve/edit/reject (C5), Postgres checkpointer with a crash/resume/replay exactly-once test (C6, `agent/checkpointing.py`), retries, fallback model and dead-letter (C7), style and outcome memory behind promotion rules (R7, `agent/memory/`), policy v2 as its own commit (`evals/results/policy_v2_diff.json`).
+- Shortcuts: analyst, fit, pricing and critic nodes are rule-based (`shortcut:` comments). Outcome memory is promoted by `promote_outcome` but nothing calls it yet; the Phase 7 worker should, from GigSim proposal events. No live node uses the fallback model yet. The Postgres checkpointer test runs only in CI (no local Postgres).
+- R&D C (branch `claude/p5-rnd-c-917ee5`): runner and baseline prompts exist; only a 3-job smoke run has results, and our rule-based graph scored worst on it. The 50-job run is cached and resumable; `docs/RND_C.md` is not written. Decision-metric numbers (`evals/runners/decision_eval.py` with the bid graph) are not produced yet.
+
 Carried over from Phase 4:
 - Shipped retrieval is V1 (`rag.variant`); results and limits in `docs/RND_B.md`. Not run yet: the held-out split, full-dev check, judge calibration labels (user), USD prices (user).
 - Reranker is MiniLM-L-12, not bge-reranker-v2-m3 (ADR 0005). The verifier runs on gpt-oss-120b and `rag_query` on qwen3.8-27b (gpt-oss-20b's daily quota ran out).
