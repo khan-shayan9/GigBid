@@ -7,6 +7,9 @@ START -> (Job Analyst | Risk Assessor | Fit Matcher, in parallel) -> decision
           -> compliance  (blocked -> END, reason in state)
           -> approval (interrupt) -> approved -> submit -> END; rejected -> END
 
+Every node runs through agent/graphs/guard.py: retries, dead-letter and the step and token
+budgets (C4, C7); a thread that stops early has `status` and the reason in `errors`.
+
 `config["configurable"]` carries `mcp` (agent/mcp_client.py), `model` and `thread_id`.
 Compile with a checkpointer so an interrupted thread survives a restart.
 """
@@ -16,6 +19,7 @@ from typing import Any
 from langgraph.graph import END, START, StateGraph
 
 from agent.config import load_config
+from agent.graphs.guard import guarded, halts
 from agent.nodes.analyst import analyst
 from agent.nodes.compliance import compliance
 from agent.nodes.critic import critic
@@ -57,16 +61,15 @@ def build_bid_graph(checkpointer: Any = None) -> Any:
                        ("pricing", pricing), ("writer", writer), ("verifier", verifier),
                        ("critic", critic), ("compliance", compliance),
                        ("approval", approval), ("submit", submit)]:
-        graph.add_node(name, node)
+        graph.add_node(name, guarded(name, node))
     for name in PARALLEL:
         graph.add_edge(START, name)
     graph.add_edge(PARALLEL, "decision")  # waits for all three branches
-    graph.add_conditional_edges("decision", _after_decision, ["pricing", END])
-    graph.add_edge("pricing", "writer")
-    graph.add_edge("writer", "verifier")
-    graph.add_edge("verifier", "critic")
-    graph.add_conditional_edges("critic", _after_critic, ["writer", "compliance"])
-    graph.add_conditional_edges("compliance", _after_compliance, ["approval", END])
-    graph.add_conditional_edges("approval", _after_approval, ["submit", END])
+    graph.add_conditional_edges("decision", halts(_after_decision), ["pricing", END])
+    for source, target in [("pricing", "writer"), ("writer", "verifier"), ("verifier", "critic")]:
+        graph.add_conditional_edges(source, halts(lambda _, target=target: target), [target, END])
+    graph.add_conditional_edges("critic", halts(_after_critic), ["writer", "compliance", END])
+    graph.add_conditional_edges("compliance", halts(_after_compliance), ["approval", END])
+    graph.add_conditional_edges("approval", halts(_after_approval), ["submit", END])
     graph.add_edge("submit", END)
     return graph.compile(checkpointer=checkpointer)

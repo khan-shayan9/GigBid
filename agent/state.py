@@ -21,6 +21,10 @@ class GigBidState(TypedDict, total=False):
     submission: dict[str, Any]
     # Parallel branches may each add errors; the reducer appends instead of overwriting.
     errors: Annotated[list[str], operator.add]
+    # C4/C7 (agent/graphs/guard.py): counted per node; `status` is dead_letter or needs_attention.
+    steps: Annotated[int, operator.add]
+    tokens_used: Annotated[int, operator.add]
+    status: str
 
 
 class ConversationState(TypedDict, total=False):
