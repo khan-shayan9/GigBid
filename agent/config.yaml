@@ -1,26 +1,38 @@
 marketplace:
-  mode: gigsim  # gigsim | upwork_live
+  mode: gigsim  # gigsim | upwork_live; the MARKETPLACE_MODE env var overrides it
   max_requests_per_minute: 20
+  upwork_live:
+    url: https://mcp.upwork.com/mcp
+    # Port method -> Upwork MCP tool name. Empty until a real sign-in lists Upwork's tools
+    # (python -m mcp_servers.marketplace.adapters.upwork_live login --user <user>).
+    tools:
+      search_jobs: null
+      get_job: null
+      get_client_history: null
+      get_connects_balance: null
+      list_messages: null
+      create_proposal_draft: null
 
 models:
   # Default profile; the MODEL_PROFILE env var overrides it.
   profile: open
   profiles:
     # open: open-weight models only (required; the deployed link runs on this).
-    # Groq IDs checked on Groq's model list (2026-11-14). OpenRouter uses different IDs, so the
-    # fallback needs its own node map (Phase 4-5, with the comparison of two open configurations).
+    # Groq IDs checked against our key's /models list (2026-11-15; the Llama IDs are gone).
+    # qwen/qwen3.8-27b is the second open configuration to compare. OpenRouter uses different
+    # IDs, so the fallback needs its own node map (Phase 4-5, with the comparison of two open configurations).
     open:
       provider: groq
       fallback_provider: openrouter
       nodes:
-        scout: &open_small llama-3.1-8b-instant
+        scout: &open_small openai/gpt-oss-20b
         analyst: *open_small
         risk_assessor: *open_small
         fit_matcher: *open_small
         pricing: *open_small
         verifier: *open_small
         compliance: *open_small
-        writer: &open_strong llama-3.3-70b-versatile
+        writer: &open_strong openai/gpt-oss-120b
         critic: *open_strong
         client_liaison: *open_strong
     # paid: optional; used only where it beats `open` enough to justify the cost.
@@ -39,7 +51,11 @@ models:
         critic: *paid_strong
         client_liaison: *paid_strong
   # Open models in both profiles.
-  embeddings: nomic-embed-text
+  # fastembed runs nomic-embed-text on CPU in-process (no Ollama). `fake` is for tests only.
+  # The quantized nomic-ai/nomic-embed-text-v1.5-Q is smaller if memory is short.
+  embeddings:
+    provider: fastembed
+    model: nomic-ai/nomic-embed-text-v1.5
   reranker: bge-reranker-v2-m3
 
 budgets:
@@ -50,3 +66,44 @@ budgets:
 thresholds:
   minimum_fit_score: 0.60
   maximum_risk_score: 0.70
+
+# OpenAI-compatible endpoints for the providers named in the model profiles.
+llm_providers:
+  timeout_s: 60
+  max_retries: 2
+  groq:
+    base_url: https://api.groq.com/openai/v1
+    api_key_env: GROQ_API_KEY
+  openrouter:
+    base_url: https://openrouter.ai/api/v1
+    api_key_env: OPENROUTER_API_KEY
+
+mcp:
+  # stdio: agent/mcp_client.py starts each server as a local process for one user.
+  # http: it calls the running servers with that user's Bearer token (<PREFIX>_MCP_TOKENS).
+  transport: stdio
+  timeout_s: 30  # per tool call; run `mcp_servers.portfolio.server warm` so searches stay fast
+  retries: 2  # extra tries, only for read tools and writes that carry an idempotency key
+  servers:
+    portfolio: {module: mcp_servers.portfolio.server, url: http://localhost:8083/mcp, env_prefix: PORTFOLIO}
+    marketplace: {module: mcp_servers.marketplace.server, url: http://localhost:8082/mcp, env_prefix: MARKETPLACE}
+    workspace: {module: mcp_servers.workspace.server, url: http://localhost:8084/mcp, env_prefix: WORKSPACE}
+    # Third-party, always HTTP with one read-only token (docs/TOOLS.md has the trust rationale).
+    github:
+      url: https://api.githubcopilot.com/mcp/
+      token_env: GITHUB_PERSONAL_ACCESS_TOKEN
+      headers: {X-MCP-Toolsets: repos, X-MCP-Readonly: "true"}
+  # The only tools each node may call (A6). Real writes also need an approved interrupt().
+  allowlists:
+    scout: [search_jobs]
+    analyst: []
+    risk_assessor: [get_job, get_client_history]
+    fit_matcher: [search_evidence, get_case_study, list_skills]
+    pricing: [get_job, get_client_history, get_market_rates, get_connects_balance]
+    writer: [search_evidence, get_case_study]
+    verifier: [search_evidence, get_case_study]
+    critic: [search_evidence, get_case_study]
+    compliance: []
+    client_liaison: [list_messages, find_free_slots, hold_slot, draft_email, send_message]
+    submitter: [create_proposal_draft, submit_proposal]
+    github_ingest: [search_repositories, get_file_contents, list_commits]  # B1, Phase 4

@@ -1,0 +1,335 @@
+{
+  "get_case_study": {
+    "annotations": {
+      "openWorldHint": false,
+      "readOnlyHint": true
+    },
+    "description": "Get one case study in full.",
+    "inputSchema": {
+      "properties": {
+        "case_id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Case Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "case_id"
+      ],
+      "title": "get_case_studyArguments",
+      "type": "object"
+    },
+    "outputSchema": {
+      "properties": {
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "outcome": {
+          "anyOf": [
+            {
+              "enum": [
+                "won",
+                "replied",
+                "ignored"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Outcome"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "case_study",
+            "cv",
+            "repo",
+            "review",
+            "proposal"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "title",
+        "source",
+        "text"
+      ],
+      "title": "EvidenceItem",
+      "type": "object"
+    }
+  },
+  "list_skills": {
+    "annotations": {
+      "openWorldHint": false,
+      "readOnlyHint": true
+    },
+    "description": "List the skills on the freelancer's CV and the work they do not take.",
+    "inputSchema": {
+      "properties": {},
+      "title": "list_skillsArguments",
+      "type": "object"
+    },
+    "outputSchema": {
+      "properties": {
+        "not_offered": {
+          "description": "Work the freelancer says they do not take",
+          "title": "Not Offered",
+          "type": "string"
+        },
+        "skills": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Skills",
+          "type": "array"
+        }
+      },
+      "required": [
+        "skills",
+        "not_offered"
+      ],
+      "title": "Skills",
+      "type": "object"
+    }
+  },
+  "prompt:draft_proposal": {
+    "arguments": [
+      {
+        "name": "job_post",
+        "required": true
+      },
+      {
+        "name": "max_words",
+        "required": false
+      }
+    ],
+    "description": "Draft a proposal in which every claim cites portfolio evidence."
+  },
+  "prompt:map_requirements": {
+    "arguments": [
+      {
+        "name": "requirements",
+        "required": true
+      }
+    ],
+    "description": "Map each job requirement to its best portfolio evidence."
+  },
+  "resource:portfolio://case/{case_id}": {
+    "description": "One case study as Markdown.",
+    "mimeType": "text/markdown"
+  },
+  "resource:portfolio://proposal/{proposal_id}": {
+    "description": "One past proposal with its date and outcome (won, replied or ignored).",
+    "mimeType": "application/json"
+  },
+  "search_evidence": {
+    "annotations": {
+      "openWorldHint": false,
+      "readOnlyHint": true
+    },
+    "description": "Find portfolio evidence for one job requirement, best match first. Cite `id`.",
+    "inputSchema": {
+      "$defs": {
+        "EvidenceFilters": {
+          "properties": {
+            "outcomes": {
+              "default": [],
+              "description": "Past proposals with these outcomes",
+              "items": {
+                "enum": [
+                  "won",
+                  "replied",
+                  "ignored"
+                ],
+                "type": "string"
+              },
+              "title": "Outcomes",
+              "type": "array"
+            },
+            "types": {
+              "default": [
+                "case_study",
+                "cv",
+                "repo",
+                "review"
+              ],
+              "description": "Evidence types to search. Add 'proposal' for past proposals, which show what was pitched, not what was done.",
+              "items": {
+                "enum": [
+                  "case_study",
+                  "cv",
+                  "repo",
+                  "review",
+                  "proposal"
+                ],
+                "type": "string"
+              },
+              "minItems": 1,
+              "title": "Types",
+              "type": "array"
+            }
+          },
+          "title": "EvidenceFilters",
+          "type": "object"
+        }
+      },
+      "properties": {
+        "filters": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvidenceFilters"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "k": {
+          "default": 5,
+          "maximum": 20,
+          "minimum": 1,
+          "title": "K",
+          "type": "integer"
+        },
+        "requirement": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Requirement",
+          "type": "string"
+        }
+      },
+      "required": [
+        "requirement"
+      ],
+      "title": "search_evidenceArguments",
+      "type": "object"
+    },
+    "outputSchema": {
+      "$defs": {
+        "EvidenceHit": {
+          "properties": {
+            "date": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Date"
+            },
+            "id": {
+              "title": "Id",
+              "type": "string"
+            },
+            "outcome": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "won",
+                    "replied",
+                    "ignored"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Outcome"
+            },
+            "score": {
+              "description": "Cosine similarity to the requirement",
+              "title": "Score",
+              "type": "number"
+            },
+            "source": {
+              "title": "Source",
+              "type": "string"
+            },
+            "text": {
+              "title": "Text",
+              "type": "string"
+            },
+            "title": {
+              "title": "Title",
+              "type": "string"
+            },
+            "type": {
+              "enum": [
+                "case_study",
+                "cv",
+                "repo",
+                "review",
+                "proposal"
+              ],
+              "title": "Type",
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "type",
+            "title",
+            "source",
+            "text",
+            "score"
+          ],
+          "title": "EvidenceHit",
+          "type": "object"
+        }
+      },
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/EvidenceHit"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "EvidenceResults",
+      "type": "object"
+    }
+  }
+}

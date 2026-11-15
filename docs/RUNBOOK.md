@@ -41,6 +41,84 @@ the API on port 8000, Postgres with pgvector, and Redis. `GET /health` answers o
 - **Known limits:** sending a message never triggers a client reply (client messages come from
   seeded conversations and proposal lifecycles).
 
+## Marketplace MCP server (port 8082)
+- **Run:** `make mcp-marketplace` (Streamable HTTP at `/mcp`, needs GigSim running) or
+  `uv run python -m mcp_servers.marketplace.server` (stdio, for MCP Inspector and Claude Desktop;
+  acts as `MARKETPLACE_STDIO_USER`).
+- **Auth:** HTTP callers send `Authorization: Bearer <token>` from `MARKETPLACE_MCP_TOKENS`; the
+  server calls GigSim with that user's `GIGSIM_TOKENS` entry. No token, no call (401).
+- **Limits and retries:** `MARKETPLACE_RATE_PER_MINUTE` per user (default 20, under GigSim's
+  limit). Calls to GigSim retry 429 (after `Retry-After`, at most 10 s) and 5xx (0.5, 1, 2 s),
+  four tries in all; writes retry with the caller's idempotency key. After that the tool fails
+  with `marketplace_unavailable` (degraded mode).
+- **Writes** default to `dry_run=true`, which returns the exact draft, message or submission and
+  its Connects cost without changing anything.
+- **Audit log:** `MARKETPLACE_AUDIT_LOG`, one JSON line per call (user, tool, arguments, result,
+  trace id), PII masked, append-only. Callers pass `_meta.trace_id` to tie a call to their trace.
+
+## Portfolio MCP server (port 8083)
+- **Run:** `make mcp-portfolio` (HTTP, `PORTFOLIO_MCP_TOKENS`) or
+  `uv run python -m mcp_servers.portfolio.server` (stdio, acts as `PORTFOLIO_STDIO_USER`).
+- **What it serves:** read-only, and only `data/personas/<user>/` for the caller's user. Tools
+  `search_evidence`, `get_case_study`, `list_skills`; resources `portfolio://case/{id}` and
+  `portfolio://proposal/{id}`; prompts `draft_proposal` and `map_requirements`.
+- **Embeddings:** `models.embeddings` in `agent/config.yaml` (fastembed running
+  `nomic-ai/nomic-embed-text-v1.5` on CPU; no Ollama). The first search for a user downloads the
+  model once (about 0.5 GB, into `fastembed_cache` in the system temp folder; set
+  `FASTEMBED_CACHE_PATH` to keep it elsewhere) and embeds that user's portfolio; vectors are
+  cached in `data/processed/embeddings/`, so later starts reuse them. Tests use a fake embedder;
+  `REAL_EMBEDDINGS=1 uv run pytest mcp_servers/portfolio` also runs the real-model check.
+  Run `uv run python -m mcp_servers.portfolio.server warm` once after the portfolio changes, so
+  no first search waits on embedding (ADR 0004).
+- **Search defaults:** `search_evidence` searches case studies, CV sections, repo files and
+  reviews. Past proposals are opt-in (`filters.types=["proposal"]`), since they show what was
+  pitched, not what was done. The CV's "Not my thing" section is never evidence; `list_skills`
+  returns it as `not_offered`.
+- **Index:** V0 (dense top-k cosine) in process memory; pgvector replaces it in Phase 4.
+
+## Workspace MCP server (port 8084)
+- **Run:** `make mcp-workspace` (HTTP, `WORKSPACE_MCP_TOKENS`) or
+  `uv run python -m mcp_servers.workspace.server` (stdio, acts as `WORKSPACE_STDIO_USER`).
+- **Local mock:** working hours are weekdays 09:00-17:00 in the user's profile timezone; only
+  GigBid's own holds are busy. Holds and email drafts live in
+  `data/processed/workspace/<user>.json`. Email drafts are saved, never sent.
+- **Tools:** `find_free_slots` (timezone-aware window, at most 14 days), `hold_slot` (tentative)
+  and `draft_email`; both writes take an idempotency key and default to `dry_run=true`.
+
+## Agent MCP client and the Phase 3 acceptance run
+- **Client:** `agent/mcp_client.py`. Nodes reach MCP servers only through it, and only the tools in
+  their `mcp.allowlists` entry in `agent/config.yaml` (anything else raises `ToolNotAllowed`).
+  `mcp.transport: stdio` starts each server as a local process for one user; `http` calls the
+  running servers with that user's `<PREFIX>_MCP_TOKENS` token.
+  stdio is for local development only (each server loads `.env` itself); compose and the
+  deploy use `http`.
+- **Failures:** each call has a `mcp.timeout_s` limit. Timeouts and transport errors are retried
+  (`mcp.retries`, backoff 0.5 s, 1 s, ...) only for read-only tools and writes that carry an
+  idempotency key. A server that does not start, or a `marketplace_unavailable` /
+  `rate_limited` refusal, raises `ToolUnavailable` (degraded mode: queue the work, try later);
+  other refusals raise `ToolFailed` and are not retried.
+- **Models:** `agent/llm.py` builds each node's model from the active profile and
+  `llm_providers` (Groq by default; key from `GROQ_API_KEY`).
+- **Acceptance run:** with GigSim running (`make gigsim`), `make draft-one` lets the writer draft
+  one proposal for the first GigSim job matching `--query` (default `chatbot`), using only
+  `search_evidence` evidence, and writes `evals/results/phase3_grounded_draft.json`
+  (`grounded: true` when every cited id came from `search_evidence`).
+
+## Live mode (Upwork) and GitHub MCP
+- **Upwork live:** set `MARKETPLACE_MODE=upwork_live` and `TOKEN_ENCRYPTION_KEY`, then sign each
+  user in once with `uv run python -m mcp_servers.marketplace.adapters.upwork_live login --user
+  <user>` (open the printed URL, approve, paste the address you land on). Tokens are stored
+  encrypted in `data/processed/oauth/`. The command prints Upwork's tools; map them under
+  `marketplace.upwork_live.tools` in `agent/config.yaml`. Live mode only creates drafts.
+  Schedules stay conservative: read only through the Marketplace server's per-user limiter.
+- **GitHub:** set `GITHUB_PERSONAL_ACCESS_TOKEN` (fine-grained, public repos, read-only). The
+  client calls GitHub's hosted server read-only with the `repos` toolset (`docs/TOOLS.md`).
+
+## R&D A (tool granularity)
+`uv run python -m evals.runners.rnd_a_tool_granularity` runs 120 model calls (40 tasks x 3 tool
+sets). On Groq's free tier (8,000 tokens a minute) it takes about half an hour; it caches each
+call in `data/processed/rnd_a/` and resumes after an interruption.
+
 ## Public deploy (Phase 0)
 The thin `/health` deploy runs on Render's free tier at https://gigbid-7txm.onrender.com/health.
 It redeploys on every push to `main`. It was created as a Render Web Service with these settings

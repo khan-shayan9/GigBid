@@ -1,0 +1,29 @@
+{
+  "source": "synthetic",
+  "note": "R&D A 'best' set: rewritten tool and argument descriptions, written after reading the fine and allowlisted failures (a03, a16, a17, a30, a32, a37, a38, a40). Applied on top of the allowlisted tools.",
+  "tools": {
+    "search_jobs": {
+      "description": "Search open jobs, newest first. Put the topic words in `query` (e.g. 'chatbot'), required skills in `skills`, and a cut-off time in `since`. Combine them when the task names several.",
+      "arguments": {"query": "Topic words the post must contain, e.g. 'chatbot' or 'computer vision'"}
+    },
+    "search_evidence": {
+      "description": "Find portfolio evidence for one requirement, best match first. When the task asks for one kind of evidence, set `filters.types` (e.g. ['case_study']). For past proposals set filters.types=['proposal'] and, for won/replied/ignored ones, filters.outcomes.",
+      "arguments": {"requirement": "The requirement in a few words, e.g. 'invoice extraction'"}
+    },
+    "hold_slot": {
+      "description": "Place a tentative calendar hold. Keep dry_run=true for a preview. When the task says the user approved, call with dry_run=false. Copy the idempotency key exactly."
+    },
+    "draft_email": {
+      "description": "Save an email draft (never sent). Keep dry_run=true for a preview. When the task says the user approved, call with dry_run=false. Copy the idempotency key exactly."
+    },
+    "send_message": {
+      "description": "Send a message in a thread. Keep dry_run=true for a preview. When the task says the user approved, call with dry_run=false. Copy the idempotency key exactly."
+    },
+    "create_proposal_draft": {
+      "description": "Create a proposal draft on the marketplace (not sent, no Connects). Keep dry_run=true for a preview. When the task says the user approved, call with dry_run=false. Copy the idempotency key exactly."
+    },
+    "submit_proposal": {
+      "description": "Submit a drafted proposal; spends Connects. To quote the cost, keep dry_run=true. When the task says the user approved the spend, call with dry_run=false. Copy the idempotency key exactly, character for character."
+    }
+  }
+}

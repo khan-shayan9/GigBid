@@ -1,0 +1,1153 @@
+{
+  "create_proposal_draft": {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": false
+    },
+    "description": "Create a proposal draft on the marketplace (not sent to the client, costs nothing).",
+    "inputSchema": {
+      "properties": {
+        "bid_amount_usd": {
+          "exclusiveMinimum": 0,
+          "maximum": 1000000,
+          "title": "Bid Amount Usd",
+          "type": "number"
+        },
+        "bid_type": {
+          "enum": [
+            "fixed",
+            "hourly"
+          ],
+          "title": "Bid Type",
+          "type": "string"
+        },
+        "cover_letter": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "Cover Letter",
+          "type": "string"
+        },
+        "dry_run": {
+          "default": true,
+          "description": "True (default) returns exactly what would be sent and what it costs, and changes nothing. False is allowed only after the user approved.",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "idempotency_key": {
+          "description": "Reuse the same key when retrying; a repeated key never acts twice.",
+          "maxLength": 200,
+          "minLength": 8,
+          "pattern": "^[A-Za-z0-9._:-]+$",
+          "title": "Idempotency Key",
+          "type": "string"
+        },
+        "job_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_:~-]+$",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "screening_answers": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Screening Answers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "job_id",
+        "cover_letter",
+        "bid_type",
+        "bid_amount_usd",
+        "idempotency_key"
+      ],
+      "title": "create_proposal_draftArguments",
+      "type": "object"
+    },
+    "outputSchema": {
+      "$defs": {
+        "Bid": {
+          "properties": {
+            "amount_usd": {
+              "exclusiveMinimum": 0,
+              "maximum": 1000000,
+              "title": "Amount Usd",
+              "type": "number"
+            },
+            "type": {
+              "enum": [
+                "fixed",
+                "hourly"
+              ],
+              "title": "Type",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "amount_usd"
+          ],
+          "title": "Bid",
+          "type": "object"
+        }
+      },
+      "properties": {
+        "bid": {
+          "$ref": "#/$defs/Bid"
+        },
+        "connects_cost": {
+          "title": "Connects Cost",
+          "type": "integer"
+        },
+        "cover_letter": {
+          "title": "Cover Letter",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "dry_run": {
+          "default": false,
+          "description": "True: a preview; nothing was stored or sent",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "job_id": {
+          "title": "Job Id",
+          "type": "string"
+        },
+        "proposal_id": {
+          "title": "Proposal Id",
+          "type": "string"
+        },
+        "screening_answers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Screening Answers",
+          "type": "array"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "proposal_id",
+        "job_id",
+        "status",
+        "cover_letter",
+        "bid",
+        "screening_answers",
+        "connects_cost",
+        "created_at"
+      ],
+      "title": "Proposal",
+      "type": "object"
+    }
+  },
+  "get_client_history": {
+    "annotations": {
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Get a client's profile and past contracts (spend, rating, feedback).",
+    "inputSchema": {
+      "properties": {
+        "client_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_:~-]+$",
+          "title": "Client Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "get_client_historyArguments",
+      "type": "object"
+    },
+    "outputSchema": {
+      "$defs": {
+        "ClientContract": {
+          "properties": {
+            "paid_usd": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Paid Usd"
+            },
+            "rating": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Rating"
+            },
+            "title": {
+              "title": "Title",
+              "type": "string"
+            }
+          },
+          "required": [
+            "title"
+          ],
+          "title": "ClientContract",
+          "type": "object"
+        }
+      },
+      "properties": {
+        "client_id": {
+          "title": "Client Id",
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "enterprise": {
+          "default": false,
+          "title": "Enterprise",
+          "type": "boolean"
+        },
+        "feedback_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Feedback Count"
+        },
+        "history": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ClientContract"
+          },
+          "title": "History",
+          "type": "array"
+        },
+        "payment_verified": {
+          "default": false,
+          "title": "Payment Verified",
+          "type": "boolean"
+        },
+        "rating": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rating"
+        },
+        "total_spent_usd": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Spent Usd"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "ClientHistory",
+      "type": "object"
+    }
+  },
+  "get_connects_balance": {
+    "annotations": {
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Get the user's Connects balance.",
+    "inputSchema": {
+      "properties": {},
+      "title": "get_connects_balanceArguments",
+      "type": "object"
+    },
+    "outputSchema": {
+      "properties": {
+        "balance": {
+          "title": "Balance",
+          "type": "integer"
+        },
+        "user_id": {
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id",
+        "balance"
+      ],
+      "title": "ConnectsBalance",
+      "type": "object"
+    }
+  },
+  "get_job": {
+    "annotations": {
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Get one job post with its Connects cost.",
+    "inputSchema": {
+      "properties": {
+        "job_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_:~-]+$",
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "get_jobArguments",
+      "type": "object"
+    },
+    "outputSchema": {
+      "$defs": {
+        "HourlyRange": {
+          "properties": {
+            "max": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Max"
+            },
+            "min": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Min"
+            }
+          },
+          "title": "HourlyRange",
+          "type": "object"
+        }
+      },
+      "properties": {
+        "applicants": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Applicants"
+        },
+        "budget_usd": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Budget Usd"
+        },
+        "client_id": {
+          "title": "Client Id",
+          "type": "string"
+        },
+        "connects_cost": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Connects Cost"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration"
+        },
+        "experience_level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Experience Level"
+        },
+        "hourly_usd": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HourlyRange"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "job_id": {
+          "title": "Job Id",
+          "type": "string"
+        },
+        "payment_type": {
+          "enum": [
+            "fixed",
+            "hourly"
+          ],
+          "title": "Payment Type",
+          "type": "string"
+        },
+        "posted_at": {
+          "format": "date-time",
+          "title": "Posted At",
+          "type": "string"
+        },
+        "skills": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Skills",
+          "type": "array"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id",
+        "title",
+        "description",
+        "payment_type",
+        "client_id",
+        "posted_at"
+      ],
+      "title": "Job",
+      "type": "object"
+    }
+  },
+  "get_market_rates": {
+    "annotations": {
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Get market price statistics per job domain (hourly and fixed-price percentiles).",
+    "inputSchema": {
+      "properties": {},
+      "title": "get_market_ratesArguments",
+      "type": "object"
+    },
+    "outputSchema": {
+      "properties": {
+        "domains": {
+          "additionalProperties": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Domains",
+          "type": "object"
+        }
+      },
+      "required": [
+        "domains"
+      ],
+      "title": "MarketRates",
+      "type": "object"
+    }
+  },
+  "list_messages": {
+    "annotations": {
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "List client conversation messages, oldest first; filter by thread or time.",
+    "inputSchema": {
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only messages after this",
+          "title": "Since"
+        },
+        "thread_id": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_:~-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Thread Id"
+        }
+      },
+      "title": "list_messagesArguments",
+      "type": "object"
+    },
+    "outputSchema": {
+      "$defs": {
+        "Message": {
+          "properties": {
+            "client_id": {
+              "title": "Client Id",
+              "type": "string"
+            },
+            "dry_run": {
+              "default": false,
+              "title": "Dry Run",
+              "type": "boolean"
+            },
+            "job_id": {
+              "title": "Job Id",
+              "type": "string"
+            },
+            "message_id": {
+              "title": "Message Id",
+              "type": "string"
+            },
+            "sender": {
+              "enum": [
+                "client",
+                "freelancer"
+              ],
+              "title": "Sender",
+              "type": "string"
+            },
+            "sent_at": {
+              "format": "date-time",
+              "title": "Sent At",
+              "type": "string"
+            },
+            "text": {
+              "title": "Text",
+              "type": "string"
+            },
+            "thread_id": {
+              "title": "Thread Id",
+              "type": "string"
+            }
+          },
+          "required": [
+            "message_id",
+            "thread_id",
+            "job_id",
+            "client_id",
+            "sender",
+            "text",
+            "sent_at"
+          ],
+          "title": "Message",
+          "type": "object"
+        }
+      },
+      "properties": {
+        "messages": {
+          "items": {
+            "$ref": "#/$defs/Message"
+          },
+          "title": "Messages",
+          "type": "array"
+        }
+      },
+      "required": [
+        "messages"
+      ],
+      "title": "MessageList",
+      "type": "object"
+    }
+  },
+  "search_jobs": {
+    "annotations": {
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Search open jobs, newest first.",
+    "inputSchema": {
+      "properties": {
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "payment_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "fixed",
+                "hourly"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Type"
+        },
+        "query": {
+          "default": "",
+          "description": "All words must appear",
+          "maxLength": 200,
+          "title": "Query",
+          "type": "string"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only jobs posted after this",
+          "title": "Since"
+        },
+        "skills": {
+          "default": [],
+          "description": "Any may match",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Skills",
+          "type": "array"
+        }
+      },
+      "title": "search_jobsArguments",
+      "type": "object"
+    },
+    "outputSchema": {
+      "$defs": {
+        "HourlyRange": {
+          "properties": {
+            "max": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Max"
+            },
+            "min": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Min"
+            }
+          },
+          "title": "HourlyRange",
+          "type": "object"
+        },
+        "Job": {
+          "properties": {
+            "applicants": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Applicants"
+            },
+            "budget_usd": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Budget Usd"
+            },
+            "client_id": {
+              "title": "Client Id",
+              "type": "string"
+            },
+            "connects_cost": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Connects Cost"
+            },
+            "description": {
+              "title": "Description",
+              "type": "string"
+            },
+            "duration": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Duration"
+            },
+            "experience_level": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Experience Level"
+            },
+            "hourly_usd": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/HourlyRange"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "job_id": {
+              "title": "Job Id",
+              "type": "string"
+            },
+            "payment_type": {
+              "enum": [
+                "fixed",
+                "hourly"
+              ],
+              "title": "Payment Type",
+              "type": "string"
+            },
+            "posted_at": {
+              "format": "date-time",
+              "title": "Posted At",
+              "type": "string"
+            },
+            "skills": {
+              "default": [],
+              "items": {
+                "type": "string"
+              },
+              "title": "Skills",
+              "type": "array"
+            },
+            "title": {
+              "title": "Title",
+              "type": "string"
+            }
+          },
+          "required": [
+            "job_id",
+            "title",
+            "description",
+            "payment_type",
+            "client_id",
+            "posted_at"
+          ],
+          "title": "Job",
+          "type": "object"
+        }
+      },
+      "properties": {
+        "jobs": {
+          "items": {
+            "$ref": "#/$defs/Job"
+          },
+          "title": "Jobs",
+          "type": "array"
+        },
+        "total": {
+          "title": "Total",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "jobs",
+        "total"
+      ],
+      "title": "JobPage",
+      "type": "object"
+    }
+  },
+  "send_message": {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": false
+    },
+    "description": "Send a message to the client in a proposal or conversation thread.",
+    "inputSchema": {
+      "properties": {
+        "dry_run": {
+          "default": true,
+          "description": "True (default) returns exactly what would be sent and what it costs, and changes nothing. False is allowed only after the user approved.",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "idempotency_key": {
+          "description": "Reuse the same key when retrying; a repeated key never acts twice.",
+          "maxLength": 200,
+          "minLength": 8,
+          "pattern": "^[A-Za-z0-9._:-]+$",
+          "title": "Idempotency Key",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 3000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "thread_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_:~-]+$",
+          "title": "Thread Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thread_id",
+        "text",
+        "idempotency_key"
+      ],
+      "title": "send_messageArguments",
+      "type": "object"
+    },
+    "outputSchema": {
+      "properties": {
+        "client_id": {
+          "title": "Client Id",
+          "type": "string"
+        },
+        "dry_run": {
+          "default": false,
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "job_id": {
+          "title": "Job Id",
+          "type": "string"
+        },
+        "message_id": {
+          "title": "Message Id",
+          "type": "string"
+        },
+        "sender": {
+          "enum": [
+            "client",
+            "freelancer"
+          ],
+          "title": "Sender",
+          "type": "string"
+        },
+        "sent_at": {
+          "format": "date-time",
+          "title": "Sent At",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "thread_id": {
+          "title": "Thread Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id",
+        "thread_id",
+        "job_id",
+        "client_id",
+        "sender",
+        "text",
+        "sent_at"
+      ],
+      "title": "Message",
+      "type": "object"
+    }
+  },
+  "submit_proposal": {
+    "annotations": {
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": false
+    },
+    "description": "Submit a drafted proposal to the client. Spends the job's Connects cost.",
+    "inputSchema": {
+      "properties": {
+        "dry_run": {
+          "default": true,
+          "description": "True (default) returns exactly what would be sent and what it costs, and changes nothing. False is allowed only after the user approved.",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "idempotency_key": {
+          "description": "Reuse the same key when retrying; a repeated key never acts twice.",
+          "maxLength": 200,
+          "minLength": 8,
+          "pattern": "^[A-Za-z0-9._:-]+$",
+          "title": "Idempotency Key",
+          "type": "string"
+        },
+        "proposal_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_:~-]+$",
+          "title": "Proposal Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "proposal_id",
+        "idempotency_key"
+      ],
+      "title": "submit_proposalArguments",
+      "type": "object"
+    },
+    "outputSchema": {
+      "$defs": {
+        "Bid": {
+          "properties": {
+            "amount_usd": {
+              "exclusiveMinimum": 0,
+              "maximum": 1000000,
+              "title": "Amount Usd",
+              "type": "number"
+            },
+            "type": {
+              "enum": [
+                "fixed",
+                "hourly"
+              ],
+              "title": "Type",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "amount_usd"
+          ],
+          "title": "Bid",
+          "type": "object"
+        },
+        "Proposal": {
+          "properties": {
+            "bid": {
+              "$ref": "#/$defs/Bid"
+            },
+            "connects_cost": {
+              "title": "Connects Cost",
+              "type": "integer"
+            },
+            "cover_letter": {
+              "title": "Cover Letter",
+              "type": "string"
+            },
+            "created_at": {
+              "format": "date-time",
+              "title": "Created At",
+              "type": "string"
+            },
+            "dry_run": {
+              "default": false,
+              "description": "True: a preview; nothing was stored or sent",
+              "title": "Dry Run",
+              "type": "boolean"
+            },
+            "job_id": {
+              "title": "Job Id",
+              "type": "string"
+            },
+            "proposal_id": {
+              "title": "Proposal Id",
+              "type": "string"
+            },
+            "screening_answers": {
+              "items": {
+                "type": "string"
+              },
+              "title": "Screening Answers",
+              "type": "array"
+            },
+            "status": {
+              "title": "Status",
+              "type": "string"
+            }
+          },
+          "required": [
+            "proposal_id",
+            "job_id",
+            "status",
+            "cover_letter",
+            "bid",
+            "screening_answers",
+            "connects_cost",
+            "created_at"
+          ],
+          "title": "Proposal",
+          "type": "object"
+        }
+      },
+      "properties": {
+        "balance_after": {
+          "title": "Balance After",
+          "type": "integer"
+        },
+        "connects_cost": {
+          "title": "Connects Cost",
+          "type": "integer"
+        },
+        "dry_run": {
+          "default": false,
+          "description": "True: a preview; no Connects were spent",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "proposal": {
+          "$ref": "#/$defs/Proposal"
+        }
+      },
+      "required": [
+        "proposal",
+        "connects_cost",
+        "balance_after"
+      ],
+      "title": "SubmitResult",
+      "type": "object"
+    }
+  }
+}

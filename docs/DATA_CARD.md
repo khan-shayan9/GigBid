@@ -85,6 +85,8 @@ accepted committing the derived, PII-masked data on that basis. GigBid itself sc
 | `evals/datasets/job_annotations.jsonl` | 778 | **never** (truth: kind, family, group, domain) |
 | `evals/datasets/message_annotations.jsonl` | 115 | **never** (truth: intent, injection) |
 | `evals/datasets/dev.jsonl`, `heldout.jsonl` | 565 and 195 labels (about 250 jobs per persona) | **never** |
+| `evals/datasets/rnd_a_tool_tasks.jsonl` | 40 hand-written tool-call tasks with expected tool and arguments (R&D A; synthetic, ids illustrative) | **never** |
+| `evals/datasets/rnd_a_best_descriptions.json` | rewritten tool descriptions for the R&D A "best" set | no |
 
 ## 5. Gold labels
 

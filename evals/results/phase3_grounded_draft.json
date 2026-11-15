@@ -1,0 +1,57 @@
+{
+  "at": "2026-11-15T15:01:06.498239+00:00",
+  "user": "ai_ml_engineer",
+  "query": "chatbot",
+  "job_id": "job-00306",
+  "job_title": "Open AI API Integration and fine-tuning",
+  "model": "openai/gpt-oss-120b",
+  "profile": "open",
+  "cover_letter": "You need to integrate the OpenAI API for da\u2011vinci\u2011003 and codex and then fine\u2011tune the models for your chatbot mobile app. I have built production\u2011grade HTTP services for machine\u2011learning models using FastAPI, Pydantic request models, health checks and Docker containers, as shown in my model\u2011serving template repository [ai_ml_engineer-repo-model-serving-template-readme-md] and its app code [ai_ml_engineer-repo-model-serving-template-app-py]. The same pattern was used to expose a `/match` endpoint for a CV\u2011ranking service, demonstrating ability to wrap complex model logic behind a clean API [ai_ml_engineer-repo-cv-matcher-readme-md]. My skill set includes Python, FastAPI, Docker, MLflow and Hugging Face transformers, which are directly relevant for loading, calling and fine\u2011tuning large language models [ai_ml_engineer-cv-skills]. I have also designed pipelines that combine rule\u2011based logic with machine\u2011learning models, as in a payments fraud detection case study [ai-cs-11]. I would confirm the exact OpenAI integration details on a brief call.",
+  "evidence_ids": [
+    "ai_ml_engineer-repo-model-serving-template-readme-md",
+    "ai_ml_engineer-repo-model-serving-template-app-py",
+    "ai_ml_engineer-repo-cv-matcher-readme-md",
+    "ai_ml_engineer-cv-skills",
+    "ai-cs-11"
+  ],
+  "evidence": [
+    {
+      "id": "ai_ml_engineer-repo-model-serving-template-readme-md",
+      "type": "repo",
+      "title": "model-serving-template/README.md",
+      "source": "repos/model-serving-template/README.md",
+      "score": 0.6362000107765198
+    },
+    {
+      "id": "ai_ml_engineer-repo-model-serving-template-app-py",
+      "type": "repo",
+      "title": "model-serving-template/app.py",
+      "source": "repos/model-serving-template/app.py",
+      "score": 0.5932000279426575
+    },
+    {
+      "id": "ai_ml_engineer-repo-cv-matcher-readme-md",
+      "type": "repo",
+      "title": "cv-matcher/README.md",
+      "source": "repos/cv-matcher/README.md",
+      "score": 0.6014999747276306
+    },
+    {
+      "id": "ai_ml_engineer-cv-skills",
+      "type": "cv",
+      "title": "CV: Skills",
+      "source": "cv.md#skills",
+      "score": 0.5751000046730042
+    },
+    {
+      "id": "ai-cs-11",
+      "type": "case_study",
+      "title": "Flagging odd payments",
+      "source": "case_studies.md#ai-cs-11",
+      "score": 0.5683000087738037
+    }
+  ],
+  "grounded": true,
+  "draft_seconds": 5.2,
+  "unavailable_servers": []
+}

@@ -1,0 +1,42 @@
+{
+  "model": "openai/gpt-oss-20b",
+  "tasks_file": "evals/datasets/rnd_a_tool_tasks.jsonl",
+  "tool_sets": {
+    "fine": {
+      "tasks": 40,
+      "tool_selection_accuracy": 0.95,
+      "argument_accuracy_given_right_tool": 0.947,
+      "end_to_end_accuracy": 0.9,
+      "invalid_tool_calls": 0,
+      "mean_tokens_per_task": 2104,
+      "mean_input_tokens_per_task": 1931
+    },
+    "coarse": {
+      "tasks": 40,
+      "tool_selection_accuracy": 0.85,
+      "argument_accuracy_given_right_tool": 0.882,
+      "end_to_end_accuracy": 0.75,
+      "invalid_tool_calls": 4,
+      "mean_tokens_per_task": 953,
+      "mean_input_tokens_per_task": 785
+    },
+    "allowlisted": {
+      "tasks": 40,
+      "tool_selection_accuracy": 1.0,
+      "argument_accuracy_given_right_tool": 0.8,
+      "end_to_end_accuracy": 0.8,
+      "invalid_tool_calls": 0,
+      "mean_tokens_per_task": 680,
+      "mean_input_tokens_per_task": 557
+    },
+    "best": {
+      "tasks": 40,
+      "tool_selection_accuracy": 0.975,
+      "argument_accuracy_given_right_tool": 0.974,
+      "end_to_end_accuracy": 0.95,
+      "invalid_tool_calls": 0,
+      "mean_tokens_per_task": 763,
+      "mean_input_tokens_per_task": 601
+    }
+  }
+}
