@@ -10,7 +10,14 @@ These three docs are the source of truth. Read them before any work and follow t
 
 ## Current phase
 
-**Phase 3: MCP (Part A)** (see `1.PROJECT_SPECIFICATION.md` §8). Phase 0 (Scaffold), Phase 1 (Data) and Phase 2 (GigSim) were accepted on 2026-11-15. GigSim is frozen at tag `gigsim-v1`; CI fails if anything under `gigsim/` changes. Work on nothing beyond this phase until the user accepts it.
+**Phase 4: RAG (Part B)** (see `1.PROJECT_SPECIFICATION.md` §8). Phases 0 to 3 were accepted on 2026-11-15. GigSim is frozen at tag `gigsim-v1`; CI fails if anything under `gigsim/` changes. Work on nothing beyond this phase until the user accepts it.
+
+Carried over from Phase 3:
+- Embeddings run through fastembed (`nomic-ai/nomic-embed-text-v1.5`, ADR 0004), not Ollama. The V0 index in `rag/index/memory.py` is in memory; Phase 4 moves it to pgvector.
+- Portfolio ingestion (`rag/ingest/portfolio.py`) is a one-item-per-document shortcut; B1 replaces it. GitHub ingestion goes through the GitHub MCP server (`github_ingest` allowlist in `agent/config.yaml`).
+- The writer's grounding check (`agent/nodes/writer.py`) works on cited ids only; claim-level verification is `rag/verify.py` (B3).
+- Not done yet: the rewritten R&D A tool descriptions are not in the servers; the MCP servers are not in `docker compose`; Upwork live mode needs the user's sign-in before its tool map can be filled.
+- Groq free tier allows 8,000 tokens a minute; long eval runs must cache and resume (see `evals/runners/rnd_a_tool_granularity.py`).
 
 ## Quick reminders
 
