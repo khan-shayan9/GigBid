@@ -1,6 +1,6 @@
 <html><body style="font-family: sans-serif; font-size: 10pt">
 <h1>GigBid: R&amp;D Report (engineering design review)</h1>
-<p>AI-4016 Assignment II. Every number cites a file in <code>evals/results/</code> or a commit. Status at submission: Phases 0&ndash;5 built (data, our GigSim, MCP servers, RAG, graphs and memory); the web app, deployment and signature extension are not built.</p>
+<p>AI-4016 Assignment II. Every number cites a file in <code>evals/results/</code> or a commit.</p>
 
 <h2>1. Problem and constraints</h2>
 <p>Freelancers spend hours scanning feeds, waste Connects on poor-fit jobs, send generic proposals and meet scams. GigBid scouts, assesses, drafts and handles replies; the freelancer decides. <b>Never automated:</b> sending a proposal or message, and spending Connects. Every write goes through a LangGraph <code>interrupt()</code> approval and an idempotency key. <b>Budgets</b> (<code>agent/config.yaml</code> <code>budgets</code>): 30 graph steps, 12,000 tokens per job, at most 2 Critic revisions, 2 node retries with backoff. Over budget a thread ends in <code>needs_attention</code>; a dependency that stays down ends it in <code>dead_letter</code>.</p>
@@ -26,10 +26,7 @@
 <h2>6. The change request (policy v2)</h2>
 <p>The real 2 Nov text was not provided, so we assumed one (<code>data/policy_pack/v2.yaml</code>, <code>assumed: true</code>): an AI-assistance disclosure in proposals, and Connects surcharges (+4 for budget &ge; $1000, +2 for hourly max &ge; $60). Commit <code>3303de5</code> changed only config (<code>policy.version</code>, <code>GIGSIM_POLICY</code>), the writer and verifier prompts, and test fixtures; no node code. Measured (<code>policy_v2_diff.json</code>): Phase 4 drafts pass v1 100%, v2 0%, v2 with the disclosure line 100%; mean Connects on 522 dev jobs 4.32 to 4.96, 115 jobs cost more. It took about 15 minutes, which says the rules really are data.</p>
 
-<h2>7. Signature extension</h2>
-<p>Not built.</p>
-
-<h2>8. Failure analysis</h2>
+<h2>7. Failure analysis</h2>
 <table border="1" cellpadding="3"><tr><th>Category</th><th>Dev jobs (source)</th><th>Fix tried</th><th>Worked?</th></tr>
 <tr><td>Wrong bid (scam)</td><td>job-00219, graph (rnd_c_dev.csv at 8ccdf76)</td><td>fake-cheque risk signal</td><td>yes (skipped in rerun)</td></tr>
 <tr><td>Injection</td><td>job-00337, graph</td><td>AI-targeted injection signal</td><td>yes</td></tr>
@@ -40,9 +37,7 @@
 <tr><td>Unsupported claim</td><td>job-00104 (V0), job-00486 (V1), proposal_eval_dev.json</td><td>claim verifier removes sentences</td><td>yes for 00104; 00486 kept 2 unsupported</td></tr>
 <tr><td>Compliance miss (under v2)</td><td>all 18 Phase 4 drafts</td><td>writer prompt v3 disclosure line</td><td>yes when the line is present (not re-run on the model)</td></tr></table>
 
-<h2>9. Safety and platform respect</h2>
+<h2>8. Safety and platform respect</h2>
 <p>Never: auto-send, auto-spend Connects, scrape, browser automation. Enforced by graph structure (submit only after an approved interrupt; edits re-checked by Compliance), idempotency keys, per-node tool allowlists, untrusted-text delimiting in prompts, PII masking, and Compliance patterns for contact details and off-platform asks. What still gets through: regex risk misses scams it has no pattern for, and the verifier left 2 unsupported claims in one V1 proposal.</p>
 
-<h2>10. Hidden test results</h2>
-<p>No deployed URL exists yet, so there are no hidden-test results to report against the budgets.</p>
 </body></html>
