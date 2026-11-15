@@ -1,0 +1,48 @@
+<html><body style="font-family: sans-serif; font-size: 10pt">
+<h1>GigBid: R&amp;D Report (engineering design review)</h1>
+<p>AI-4016 Assignment II. Every number cites a file in <code>evals/results/</code> or a commit. Status at submission: Phases 0&ndash;5 built (data, our GigSim, MCP servers, RAG, graphs and memory); the web app, deployment and signature extension are not built.</p>
+
+<h2>1. Problem and constraints</h2>
+<p>Freelancers spend hours scanning feeds, waste Connects on poor-fit jobs, send generic proposals and meet scams. GigBid scouts, assesses, drafts and handles replies; the freelancer decides. <b>Never automated:</b> sending a proposal or message, and spending Connects. Every write goes through a LangGraph <code>interrupt()</code> approval and an idempotency key. <b>Budgets</b> (<code>agent/config.yaml</code> <code>budgets</code>): 30 graph steps, 12,000 tokens per job, at most 2 Critic revisions, 2 node retries with backoff. Over budget a thread ends in <code>needs_attention</code>; a dependency that stays down ends it in <code>dead_letter</code>.</p>
+
+<h2>2. Architecture</h2>
+<p><b>Bid graph</b> (<code>agent/graphs/bid_graph.py</code>): Job Analyst, Risk Assessor and Fit Matcher run in parallel, then a decision node (the only bid/skip authority), Pricing, Writer, Verifier, Critic (at most 2 loops), Compliance Guard (the only node that can block), approval interrupt, submit. <b>Conversation graph</b>: intent classification (scam signals end the thread), Workspace slots, reply draft, compliance, approval, send. Hand-offs are Pydantic objects (<code>agent/handoffs.py</code>). <b>Marketplace port</b> with GigSim and live Upwork adapters behind the Marketplace MCP server. <b>MCP surface:</b> our Portfolio, Marketplace and Workspace servers plus GitHub and Upwork, with per-node tool allowlists (<code>docs/TOOLS.md</code>). <b>Stores:</b> Postgres checkpointer (<code>agent/checkpointing.py</code>), pgvector evidence index, LangGraph store for style and outcome memory written only by <code>agent/memory/promotion_rules.py</code>. The crash/resume test (<code>tests/integration/test_crash_resume.py</code>) kills the run after the marketplace accepted a submission; the resumed and replayed runs still submit exactly once, on MemorySaver locally and Postgres in CI.</p>
+
+<h2>3. R&amp;D A: tool granularity</h2>
+<p><b>Hypothesis:</b> coarse tools save tokens but hurt accuracy; per-node fine tools with rewritten descriptions are most accurate and nearly as cheap. <b>Setup:</b> 40 tasks with known calls, gpt-oss-20b, first call scored. <b>Results</b> (<code>rnd_a_tool_granularity_openai_gpt-oss-20b.json</code>):</p>
+<table border="1" cellpadding="3"><tr><th>Tool set</th><th>Selection</th><th>Arguments</th><th>End to end</th><th>Tokens/task</th></tr>
+<tr><td>fine (15)</td><td>0.95</td><td>0.947</td><td>0.90</td><td>2104</td></tr>
+<tr><td>coarse (3)</td><td>0.85</td><td>0.882</td><td>0.75</td><td>953</td></tr>
+<tr><td>allowlisted</td><td>1.00</td><td>0.80</td><td>0.80</td><td>680</td></tr>
+<tr><td>best</td><td>0.975</td><td>0.974</td><td>0.95</td><td>763</td></tr></table>
+<p><b>Conclusion:</b> coarse dispatchers cost accuracy (4 invented tool names). Allowlisting cut tokens by two thirds but dropped arguments (<code>dry_run</code>, filters); rewritten descriptions fixed that. We ship fine tools behind allowlists. Limits: one model, one run, our own tasks; "best" was written after seeing failures, so it is optimistic.</p>
+
+<h2>4. R&amp;D B: RAG variants</h2>
+<p><b>Hypotheses</b> (written before running): H1 decomposition + hybrid raises Recall@5 by 10 points on jobs with &ge;4 skills; H2 reranking raises MRR by 0.05. <b>Results</b> (60 gold dev jobs, <code>rag_retrieval_dev.json</code>): V0 0.219 / 0.285 (Recall@5 / MRR); V1 decomposition 0.297 / 0.412; V2 hybrid 0.258 / 0.316; V3 rerank 0.242 / 0.324; V8 corrective 0.117 / 0.183; V1+V2 0.294 / 0.355; V1+V2+V3 0.242 / 0.379. <b>H1 not supported</b> (+7.2 points). <b>H2 not supported</b> (+0.025 MRR; Recall@5 fell). Ablation (<code>rag_ablation_dev.json</code>): removing the reranker gives the best Recall@5 (0.294). By persona, V1 gains on data_analyst (0.283 to 0.475) and ai_ml_engineer, and slightly loses on fullstack_dev. <b>Claim verification</b> (<code>proposal_eval_dev.json</code>, 9 jobs per variant): unsupported claims per proposal 0.33 to 0.00 (V0) and 0.44 to 0.22 (V1). <b>Better retrieval did not raise the GigSim reply rate</b> (0.556 for both): simulated clients decide mostly on opening, named skills and budget. <b>Ships: V1.</b> Limits: small samples, held-out split not run, judge uncalibrated, gold labels favour lexical retrieval.</p>
+
+<h2>5. R&amp;D C: single agent vs supervisor vs our graph</h2>
+<p>n = 7 dev jobs (Groq daily quota), both baselines on gpt-oss-120b (<code>rnd_c_dev.json</code>, <code>docs/RND_C.md</code>). Decision accuracy: ReAct 0.857, supervisor 0.857, our graph 0.143 in the first run (it bid on all 7). Cause: the Fit Matcher counted any search hit as coverage, and regex risk missed a fake-cheque scam and an injection aimed at AI writers. Fix (commit <code>bb621ff</code>): an evidence-score threshold of 0.65 chosen on 80 other dev jobs (<code>fit_threshold_dev.json</code>), plus two risk signals in config. Rerun: graph 0.571, scam and injection skipped, the bid job still bid. The supervisor never bid on the one bid job and flagged 2 non-scams as scams. No architecture called a write tool; only our graph guarantees that structurally. ReAct wins on budget/domain skips that fit and risk rules cannot see. Limits: n = 7, and the fix was tuned after seeing these jobs.</p>
+
+<h2>6. The change request (policy v2)</h2>
+<p>The real 2 Nov text was not provided, so we assumed one (<code>data/policy_pack/v2.yaml</code>, <code>assumed: true</code>): an AI-assistance disclosure in proposals, and Connects surcharges (+4 for budget &ge; $1000, +2 for hourly max &ge; $60). Commit <code>3303de5</code> changed only config (<code>policy.version</code>, <code>GIGSIM_POLICY</code>), the writer and verifier prompts, and test fixtures; no node code. Measured (<code>policy_v2_diff.json</code>): Phase 4 drafts pass v1 100%, v2 0%, v2 with the disclosure line 100%; mean Connects on 522 dev jobs 4.32 to 4.96, 115 jobs cost more. It took about 15 minutes, which says the rules really are data.</p>
+
+<h2>7. Signature extension</h2>
+<p>Not built.</p>
+
+<h2>8. Failure analysis</h2>
+<table border="1" cellpadding="3"><tr><th>Category</th><th>Dev jobs (source)</th><th>Fix tried</th><th>Worked?</th></tr>
+<tr><td>Wrong bid (scam)</td><td>job-00219, graph (rnd_c_dev.csv at 8ccdf76)</td><td>fake-cheque risk signal</td><td>yes (skipped in rerun)</td></tr>
+<tr><td>Injection</td><td>job-00337, graph</td><td>AI-targeted injection signal</td><td>yes</td></tr>
+<tr><td>Wrong bid (poor fit)</td><td>job-00240, job-00184, job-00364, job-00632, graph</td><td>evidence-score threshold</td><td>partly: 00364 now skipped; 00240, 00184, 00632 still bid</td></tr>
+<tr><td>Wrong bid</td><td>job-00184, ReAct</td><td>none (baseline)</td><td>n/a</td></tr>
+<tr><td>Wrong skip</td><td>job-00520, supervisor</td><td>none (baseline)</td><td>n/a</td></tr>
+<tr><td>False scam flag</td><td>job-00184, job-00364, supervisor</td><td>none (baseline)</td><td>n/a</td></tr>
+<tr><td>Unsupported claim</td><td>job-00104 (V0), job-00486 (V1), proposal_eval_dev.json</td><td>claim verifier removes sentences</td><td>yes for 00104; 00486 kept 2 unsupported</td></tr>
+<tr><td>Compliance miss (under v2)</td><td>all 18 Phase 4 drafts</td><td>writer prompt v3 disclosure line</td><td>yes when the line is present (not re-run on the model)</td></tr></table>
+
+<h2>9. Safety and platform respect</h2>
+<p>Never: auto-send, auto-spend Connects, scrape, browser automation. Enforced by graph structure (submit only after an approved interrupt; edits re-checked by Compliance), idempotency keys, per-node tool allowlists, untrusted-text delimiting in prompts, PII masking, and Compliance patterns for contact details and off-platform asks. What still gets through: regex risk misses scams it has no pattern for, and the verifier left 2 unsupported claims in one V1 proposal.</p>
+
+<h2>10. Hidden test results</h2>
+<p>No deployed URL exists yet, so there are no hidden-test results to report against the budgets.</p>
+</body></html>
