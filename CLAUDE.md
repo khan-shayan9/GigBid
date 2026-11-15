@@ -10,9 +10,9 @@ These three docs are the source of truth. Read them before any work and follow t
 
 ## Current phase
 
-**Phase 5: Graphs and memory (Part C)** (see `1.PROJECT_SPECIFICATION.md` §8). Phases 0 to 4 were accepted on 2026-11-15. GigSim is frozen at tag `gigsim-v1`; CI fails if anything under `gigsim/` changes. Work on nothing beyond this phase until the user accepts it.
+**Phase 6: Web (Part D)** (see `1.PROJECT_SPECIFICATION.md` §8). Phases 0 to 5 were accepted on 2026-11-16. GigSim is frozen at tag `gigsim-v1`; CI fails if anything under `gigsim/` changes. Work on nothing beyond this phase until the user accepts it. The public URL https://gigbid-7txm.onrender.com serves only `/health` so far (Render free tier, `docs/RUNBOOK.md`).
 
-Phase 5 status (2026-11-15), awaiting acceptance:
+Carried over from Phase 5:
 - Done on main: bid and conversation graphs (C1), typed state and reducers (C2), hand-offs (C3), Critic loop and Compliance block, step and token budgets with `needs_attention` (C4, `agent/graphs/guard.py`), interrupt approve/edit/reject (C5), Postgres checkpointer with a crash/resume/replay exactly-once test (C6, `agent/checkpointing.py`), retries, fallback model and dead-letter (C7), style and outcome memory behind promotion rules (R7, `agent/memory/`), policy v2 as its own commit (`evals/results/policy_v2_diff.json`).
 - Shortcuts: analyst, fit, pricing and critic nodes are rule-based (`shortcut:` comments). Outcome memory is promoted by `promote_outcome` but nothing calls it yet; the Phase 7 worker should, from GigSim proposal events. No live node uses the fallback model yet. The Postgres checkpointer test runs only in CI (no local Postgres).
 - R&D C (`docs/RND_C.md`, `evals/results/rnd_c_dev.json`): n = 7 dev jobs only (Groq quota); ReAct and supervisor 0.857 accuracy. Our graph was 0.143 (bid on every job); after the evidence-score threshold (`evals/results/fit_threshold_dev.json`) and two risk signals it is 0.571 and skips the scam and the injection (tuned after seeing these jobs, so biased). Decision-metric numbers (`evals/runners/decision_eval.py`) are not produced yet. `agent/memory/promotion_rules.py` imports `mask_pii` from `data/pipeline/`.
