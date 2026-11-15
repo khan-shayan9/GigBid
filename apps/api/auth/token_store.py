@@ -44,3 +44,8 @@ class EncryptedTokenStore:
 
     async def set_client_info(self, client_info: OAuthClientInformationFull) -> None:
         self._write("client_info", client_info.model_dump(mode="json", exclude_none=True))
+
+
+def has_tokens(user: str, store_dir: Path) -> bool:
+    """Whether `user` has signed in to Upwork (an encrypted token file exists); reads no secret."""
+    return bool(USER.match(user)) and (store_dir / f"{user}.oauth.enc").exists()

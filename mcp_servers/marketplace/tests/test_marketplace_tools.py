@@ -111,6 +111,9 @@ async def _test_write_flow_previews_then_spends_once(session: ClientSession) -> 
     for _ in range(2):  # a retried submit with the same key spends once
         await call(session, "submit_proposal", **submit_args, dry_run=False)
     assert (await call(session, "get_connects_balance"))["balance"] == 120 - job["connects_cost"]
+    listed = (await call(session, "list_proposals"))["proposals"]
+    assert [(p["proposal_id"], p["status"]) for p in listed] == [(draft["proposal_id"],
+                                                                  "submitted")]
 
     message_args = {"thread_id": draft["proposal_id"], "text": "Happy to start Monday.",
                     "idempotency_key": "message-0002"}

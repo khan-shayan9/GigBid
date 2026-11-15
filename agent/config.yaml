@@ -11,6 +11,7 @@ marketplace:
       get_client_history: null
       get_connects_balance: null
       list_messages: null
+      list_proposals: null
       create_proposal_draft: null
 
 models:
@@ -186,6 +187,19 @@ mcp:
     client_liaison: [list_messages, find_free_slots, hold_slot, draft_email, send_message]
     submitter: [create_proposal_draft, submit_proposal]
     github_ingest: [search_repositories, get_file_contents, list_commits]  # B1, Phase 4
+    web: [get_job, list_proposals, list_messages, get_connects_balance]  # API reads (Phase 6)
+
+api:
+  # Web API (apps/api). API_PERSISTENCE=postgres uses DATABASE_URL for the checkpointer and store.
+  persistence: memory  # memory (local dev, tests) | postgres (docker compose, deploy)
+  session_hours: 12
+  # Personas a user can choose in onboarding; each is a GigSim user and a data/personas/ folder.
+  personas: [ai_ml_engineer, fullstack_dev, data_analyst]
+  inbox_limit: 30  # jobs per saved search in the inbox
+  upload_max_bytes: 2000000
+  upload_suffixes: [.pdf, .md, .py, .ts, .js, .sql]  # what rag/ingest/portfolio.py can read
+  # Which model profile node drives each run kind (agent/llm.py chat_model).
+  run_models: {bid: writer, conversation: client_liaison, paragraph: writer}
 
 memory:
   # Promotion rules (agent/memory/promotion_rules.py, R7).

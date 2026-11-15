@@ -40,6 +40,7 @@ from mcp_servers.marketplace.schemas import (
     Message,
     MessageList,
     Proposal,
+    ProposalList,
     SubmitResult,
 )
 from mcp_servers.marketplace.schemas import Job as JobOut
@@ -158,6 +159,12 @@ def create_server(settings: ServerSettings, port_for: Callable[[str], Marketplac
                 "limit": limit}
         return MessageList.model_validate(await run(ctx, "list_messages", args,
                                                     lambda port: port.list_messages(**args)))
+
+    @mcp.tool(annotations=READ)
+    async def list_proposals(ctx: Context) -> ProposalList:
+        """List the user's proposals, newest first, each with its lifecycle status."""
+        return ProposalList.model_validate(
+            await run(ctx, "list_proposals", {}, lambda port: port.list_proposals()))
 
     @mcp.tool(annotations=DRAFT)
     async def create_proposal_draft(

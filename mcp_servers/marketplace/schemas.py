@@ -96,6 +96,10 @@ class Proposal(BaseModel):
     dry_run: bool = Field(False, description="True: a preview; nothing was stored or sent")
 
 
+class ProposalList(BaseModel):
+    proposals: list[Proposal]
+
+
 class SubmitResult(BaseModel):
     proposal: Proposal
     connects_cost: int

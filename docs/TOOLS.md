@@ -23,6 +23,7 @@ Annotations: `ro` = readOnlyHint, `destr` = destructiveHint, `idem` = idempotent
 | `get_connects_balance` | marketplace | read | ro, open | same |
 | `get_market_rates` | marketplace | read | ro, open | same |
 | `list_messages` | marketplace | read | ro, open | same |
+| `list_proposals` | marketplace | read (proposals and their lifecycle status, for the pipeline board) | ro, open | same |
 | `create_proposal_draft` | marketplace | write (draft, no cost) | not ro, not destr, idem, open | same, plus approved interrupt |
 | `submit_proposal` | marketplace | write (spends Connects) | not ro, destr, idem, open | same, plus approved interrupt |
 | `send_message` | marketplace | write (to client) | not ro, not destr, idem, open | same, plus approved interrupt |
@@ -75,7 +76,8 @@ holds.
 | fit_matcher | `search_evidence`, `get_case_study`, `list_skills` |
 | writer, verifier, critic | `search_evidence`, `get_case_study` |
 | client_liaison | `list_messages`, `find_free_slots`, `hold_slot`, `draft_email`, `send_message` |
-| submitter | `create_proposal_draft`, `submit_proposal` (only after an approved interrupt) |
+| submitter | `create_proposal_draft` (`dry_run=true` for the approval preview), then `create_proposal_draft` and `submit_proposal` for real only after an approved interrupt |
+| web (the API's own reads, Phase 6) | `get_job`, `list_proposals`, `list_messages`, `get_connects_balance` |
 | github_ingest (Phase 4 ingestion) | `search_repositories`, `get_file_contents`, `list_commits` |
 
 How the client handles failures:

@@ -60,16 +60,32 @@ async def draft_proposal(job: dict[str, Any], mcp: McpClient, model: BaseChatMod
     return await write_letter(job, await gather_evidence(job, mcp), model, feedback)
 
 
+def _listing(evidence: dict[str, dict[str, Any]]) -> str:
+    return "\n\n".join(f"[{item['id']}] ({item['type']}) {item['title']}\n"
+                       f"{item['text'][:EVIDENCE_CHARS]}" for item in evidence.values())
+
+
+def _post(job: dict[str, Any]) -> str:
+    # Strip the closing tag so the post cannot break out of its delimiters.
+    return f"{job['title']}\n\n{job['description']}".replace("</job_post>", "")
+
+
+async def rewrite_paragraph(job: dict[str, Any], evidence: dict[str, dict[str, Any]],
+                            paragraph: str, model: BaseChatModel) -> str:
+    """Proposal studio's "regenerate": one paragraph, grounded in the draft's evidence."""
+    prompt = load_prompt("writer_paragraph").format(job_post=_post(job),
+                                                    evidence=_listing(evidence),
+                                                    paragraph=paragraph)
+    reply = await model.ainvoke([HumanMessage(prompt)])
+    return keep_grounded(str(reply.content), set(evidence))[0]
+
+
 async def write_letter(job: dict[str, Any], evidence: dict[str, dict[str, Any]],
                        model: BaseChatModel,
                        feedback: str = "") -> tuple[ProposalDraft, list[dict[str, Any]]]:
     """Draft from evidence already gathered (by id); evaluation runs pass each variant's."""
-    listing = "\n\n".join(f"[{item['id']}] ({item['type']}) {item['title']}\n"
-                          f"{item['text'][:EVIDENCE_CHARS]}" for item in evidence.values())
-    # Strip the closing tag so the post cannot break out of its delimiters.
-    post = f"{job['title']}\n\n{job['description']}".replace("</job_post>", "")
-    prompt = load_prompt(NODE).format(max_words=MAX_WORDS, job_post=post, evidence=listing,
-                                     feedback=feedback or "(none)")
+    prompt = load_prompt(NODE).format(max_words=MAX_WORDS, job_post=_post(job),
+                                     evidence=_listing(evidence), feedback=feedback or "(none)")
     reply = await model.ainvoke([HumanMessage(prompt)])
     letter, cited = keep_grounded(str(reply.content), set(evidence))
     draft = ProposalDraft(job_id=job["job_id"], cover_letter=letter, evidence_ids=cited)

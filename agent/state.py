@@ -17,6 +17,7 @@ class GigBidState(TypedDict, total=False):
     critique: dict[str, Any]
     revisions: int
     compliance_verdict: dict[str, Any]
+    preview: dict[str, Any]  # the marketplace's dry run of the proposal (text and Connects cost)
     approval_status: str
     submission: dict[str, Any]
     # Parallel branches may each add errors; the reducer appends instead of overwriting.

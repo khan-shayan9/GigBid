@@ -13,6 +13,7 @@ from langchain_core.runnables import RunnableConfig
 from langgraph.types import interrupt
 
 from agent.config import load_config, load_policy, load_prompt
+from agent.idempotency import idempotency_key
 from agent.mcp_client import ToolUnavailable
 from agent.nodes.compliance import check
 from agent.state import ConversationState
@@ -73,5 +74,5 @@ async def send_reply(state: ConversationState, config: RunnableConfig) -> Conver
     options = config["configurable"]
     sent = await options["mcp"].call(NODE, "send_message", {
         "thread_id": state["thread_id"], "text": state["reply"],
-        "idempotency_key": f"reply-{options['thread_id']}", "dry_run": False})
+        "idempotency_key": idempotency_key("reply", options["thread_id"]), "dry_run": False})
     return {"sent": sent}

@@ -37,6 +37,8 @@ class MarketplacePort(Protocol):
         self, thread_id: str | None = None, since: str | None = None, limit: int = 100,
     ) -> dict[str, Any]: ...
 
+    async def list_proposals(self) -> dict[str, Any]: ...
+
     # Writes take the caller's idempotency key: a retry with the same key never acts twice.
     async def create_proposal_draft(
         self, payload: dict[str, Any], idempotency_key: str, dry_run: bool,

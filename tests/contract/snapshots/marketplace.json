@@ -651,6 +651,117 @@
       "type": "object"
     }
   },
+  "list_proposals": {
+    "annotations": {
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "List the user's proposals, newest first, each with its lifecycle status.",
+    "inputSchema": {
+      "properties": {},
+      "title": "list_proposalsArguments",
+      "type": "object"
+    },
+    "outputSchema": {
+      "$defs": {
+        "Bid": {
+          "properties": {
+            "amount_usd": {
+              "exclusiveMinimum": 0,
+              "maximum": 1000000,
+              "title": "Amount Usd",
+              "type": "number"
+            },
+            "type": {
+              "enum": [
+                "fixed",
+                "hourly"
+              ],
+              "title": "Type",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "amount_usd"
+          ],
+          "title": "Bid",
+          "type": "object"
+        },
+        "Proposal": {
+          "properties": {
+            "bid": {
+              "$ref": "#/$defs/Bid"
+            },
+            "connects_cost": {
+              "title": "Connects Cost",
+              "type": "integer"
+            },
+            "cover_letter": {
+              "title": "Cover Letter",
+              "type": "string"
+            },
+            "created_at": {
+              "format": "date-time",
+              "title": "Created At",
+              "type": "string"
+            },
+            "dry_run": {
+              "default": false,
+              "description": "True: a preview; nothing was stored or sent",
+              "title": "Dry Run",
+              "type": "boolean"
+            },
+            "job_id": {
+              "title": "Job Id",
+              "type": "string"
+            },
+            "proposal_id": {
+              "title": "Proposal Id",
+              "type": "string"
+            },
+            "screening_answers": {
+              "items": {
+                "type": "string"
+              },
+              "title": "Screening Answers",
+              "type": "array"
+            },
+            "status": {
+              "title": "Status",
+              "type": "string"
+            }
+          },
+          "required": [
+            "proposal_id",
+            "job_id",
+            "status",
+            "cover_letter",
+            "bid",
+            "screening_answers",
+            "connects_cost",
+            "created_at"
+          ],
+          "title": "Proposal",
+          "type": "object"
+        }
+      },
+      "properties": {
+        "proposals": {
+          "items": {
+            "$ref": "#/$defs/Proposal"
+          },
+          "title": "Proposals",
+          "type": "array"
+        }
+      },
+      "required": [
+        "proposals"
+      ],
+      "title": "ProposalList",
+      "type": "object"
+    }
+  },
   "search_jobs": {
     "annotations": {
       "openWorldHint": true,

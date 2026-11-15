@@ -110,6 +110,9 @@ class UpworkLiveAdapter:
         return await self._call("list_messages",
                                 {"thread_id": thread_id, "since": since, "limit": limit})
 
+    async def list_proposals(self) -> dict[str, Any]:
+        return await self._call("list_proposals", {})
+
     async def create_proposal_draft(self, payload: dict[str, Any], idempotency_key: str,
                                     dry_run: bool) -> dict[str, Any]:
         if dry_run:

@@ -5,7 +5,7 @@ START -> (Job Analyst | Risk Assessor | Fit Matcher, in parallel) -> decision
   bid  -> pricing -> writer -> verifier -> critic
             critic fails and revisions < budgets.max_revisions -> writer (with the reasons)
           -> compliance  (blocked -> END, reason in state)
-          -> approval (interrupt) -> approved -> submit -> END; rejected -> END
+          -> preview (dry run: text and Connects cost) -> approval (interrupt) -> approved -> submit -> END; rejected -> END
 
 Every node runs through agent/graphs/guard.py: retries, dead-letter and the step and token
 budgets (C4, C7); a thread that stops early has `status` and the reason in `errors`.
@@ -28,7 +28,7 @@ from agent.nodes.decision import decision
 from agent.nodes.fit_matcher import fit_matcher
 from agent.nodes.pricing import pricing
 from agent.nodes.risk_assessor import risk_assessor
-from agent.nodes.submitter import approval, submit
+from agent.nodes.submitter import approval, preview, submit
 from agent.nodes.verifier import verifier
 from agent.nodes.writer import writer
 from agent.state import GigBidState
@@ -48,7 +48,7 @@ def _after_critic(state: GigBidState) -> str:
 
 
 def _after_compliance(state: GigBidState) -> str:
-    return "approval" if state["compliance_verdict"]["allowed"] else END
+    return "preview" if state["compliance_verdict"]["allowed"] else END
 
 
 def _after_approval(state: GigBidState) -> str:
@@ -61,7 +61,7 @@ def build_bid_graph(checkpointer: Any = None, store: Any = None) -> Any:
                        ("fit_matcher", fit_matcher), ("decision", decision),
                        ("pricing", pricing), ("writer", writer), ("verifier", verifier),
                        ("critic", critic), ("compliance", compliance),
-                       ("approval", approval), ("submit", submit)]:
+                       ("preview", preview), ("approval", approval), ("submit", submit)]:
         graph.add_node(name, guarded(name, node))
     for name in PARALLEL:
         graph.add_edge(START, name)
@@ -70,7 +70,8 @@ def build_bid_graph(checkpointer: Any = None, store: Any = None) -> Any:
     for source, target in [("pricing", "writer"), ("writer", "verifier"), ("verifier", "critic")]:
         graph.add_conditional_edges(source, halts(lambda _, target=target: target), [target, END])
     graph.add_conditional_edges("critic", halts(_after_critic), ["writer", "compliance", END])
-    graph.add_conditional_edges("compliance", halts(_after_compliance), ["approval", END])
+    graph.add_conditional_edges("compliance", halts(_after_compliance), ["preview", END])
+    graph.add_conditional_edges("preview", halts(lambda _: "approval"), ["approval", END])
     graph.add_conditional_edges("approval", halts(_after_approval), ["submit", END])
     graph.add_edge("submit", END)
     return graph.compile(checkpointer=checkpointer, store=store)

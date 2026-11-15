@@ -44,6 +44,9 @@ class GigSimAdapter:
         params = {"thread_id": thread_id, "since": since, "limit": limit}
         return await self._call("GET", "/messages", params=params)
 
+    async def list_proposals(self) -> dict[str, Any]:
+        return await self._call("GET", "/proposals")
+
     async def create_proposal_draft(
         self, payload: dict[str, Any], idempotency_key: str, dry_run: bool,
     ) -> dict[str, Any]:

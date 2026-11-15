@@ -7,6 +7,30 @@
 4. `make lint test` (or, without `make`: `uv run ruff check .` and `uv run pytest -q`).
 5. `make api` runs the API on port 8000 with reload.
 
+## Web app (Phase 6)
+- **Run it:** `make gigsim` (GigSim), `make api` (FastAPI on 8000), `make web` (Next.js on 3000;
+  `cd apps/web && npm install` once). The browser talks only to Next.js, which proxies `/api/*`
+  to `API_URL`, so the session cookie is first-party and SSE needs no CORS.
+- **Accounts:** `APP_USERS` holds `name=salt:hash` pairs (scrypt); make one with
+  `uv run python -m apps.api.auth.users <name> <password>`. `APP_SECRET_KEY` signs the session
+  cookie. After sign-in, onboarding picks a persona (`api.personas` in `agent/config.yaml`).
+- **Runs:** graph threads are `<account>:bid:<job_id>` and `<account>:conv:<message_id>`. A run
+  segment (start, or the resume after an approval) runs as a task in the API process
+  (shortcut until the Phase 7 worker). `API_PERSISTENCE=memory` keeps checkpoints in memory, so
+  restarting the API loses them; `postgres` keeps them in `DATABASE_URL`.
+- **Streaming:** `GET /runs/{thread_id}/stream` sends a `snapshot` from the checkpoint, then one
+  `node` event per finished node (LangGraph `updates` mode), `interrupt`, `end`. It sends
+  `Cache-Control: no-transform` because Next.js gzip would otherwise buffer the stream.
+- **Typed client:** `make api-client` writes `apps/web/openapi.json` and regenerates
+  `apps/web/src/lib/api/schema.d.ts`; `tests/integration/test_api.py` fails when it is stale.
+- **Tests:** `make e2e` runs Playwright (laptop and Pixel 7 widths) against the real API served
+  by `tests/e2e/serve.py` with a fake marketplace and scripted models (no GigSim or Groq needed).
+  The HTML report lands in `apps/web/playwright-report/`.
+- **Uploads:** saved per account in `data/uploads/<account>/` (git-ignored). They are not
+  searched by drafts yet: the Portfolio server indexes only `data/personas/<persona>/`.
+- **Tailwind v3, not v4:** v4's stylesheet resolver fails when the project path contains `#`
+  (this repo's local folder `A#2-Agentic`).
+
 ## Docker
 `docker compose up` at the repo root (or `make dev`) starts the stack in `infra/docker-compose.yml`:
 the API on port 8000, Postgres with pgvector, and Redis. `GET /health` answers once the API is up.

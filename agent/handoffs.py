@@ -16,11 +16,19 @@ class RiskReport(BaseModel):
     flags: list[str] = Field(default_factory=list)
     explanation: str
 
+class RequirementMatch(BaseModel):
+    requirement: str
+    evidence_ids: list[str] = Field(default_factory=list)
+    best_score: float = 0.0
+    covered: bool = False
+
+
 class FitReport(BaseModel):
     score: float = Field(ge=0, le=1)
     matched_skills: list[str] = Field(default_factory=list)
     missing_skills: list[str] = Field(default_factory=list)
     evidence_ids: list[str] = Field(default_factory=list)
+    matrix: list[RequirementMatch] = Field(default_factory=list)  # requirement -> its evidence
 
 class ProposalDraft(BaseModel):
     job_id: str

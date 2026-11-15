@@ -1,4 +1,4 @@
-.PHONY: eval-rag eval-table install dev api gigsim mcp-marketplace mcp-portfolio mcp-workspace draft-one test lint eval seed demo
+.PHONY: api-client web e2e eval-rag eval-table install dev api gigsim mcp-marketplace mcp-portfolio mcp-workspace draft-one test lint eval seed demo
 
 install:
 	uv sync --frozen
@@ -7,7 +7,19 @@ dev:
 	docker compose up --build
 
 api:
-	uv run uvicorn apps.api.main:app --reload --port 8000
+	uv run uvicorn apps.api.main:app --reload --port 8000 --env-file .env
+
+# OpenAPI schema -> apps/web/src/lib/api/schema.d.ts (generated; never edit by hand)
+api-client:
+	uv run python -m apps.api.export_openapi
+	cd apps/web && npm run gen:api
+
+web:
+	cd apps/web && npm run dev
+
+# Playwright against the real API with a fake marketplace and scripted models (tests/e2e/)
+e2e:
+	cd apps/web && npx playwright test
 
 gigsim:
 	uv run uvicorn --factory gigsim.app:create_app --port 8081

@@ -1,6 +1,7 @@
 """Human approval and submission (C5): the only path to a real marketplace write.
 
-`approval` pauses the thread with `interrupt()` and the full approval payload. The resume value
+`preview` asks the marketplace for a dry run of the proposal (what will be sent, its Connects
+cost) for the approval payload; nothing is stored or spent. `approval` pauses the thread with `interrupt()` and the full approval payload. The resume value
 is {"action": "approve" | "edit" | "reject", "cover_letter"?: str, "reason"?: str}.
 `submit` then creates and submits the proposal with idempotency keys derived from the thread,
 so a resumed or replayed run cannot submit twice.
@@ -12,6 +13,8 @@ from langgraph.types import interrupt
 
 from agent.config import load_policy
 from agent.handoffs import ProposalDraft
+from agent.idempotency import idempotency_key
+from agent.mcp_client import ToolFailed
 from agent.memory.promotion_rules import promote_style_edit
 from agent.nodes.compliance import check
 from agent.state import GigBidState
@@ -19,12 +22,29 @@ from agent.state import GigBidState
 NODE = "submitter"
 
 
+def _key(prefix: str, state: GigBidState, config: RunnableConfig) -> str:
+    return idempotency_key(prefix, config["configurable"]["thread_id"],
+                           state["proposal_draft"]["job_id"])
+
+
+async def preview(state: GigBidState, config: RunnableConfig) -> GigBidState:
+    draft, price = state["proposal_draft"], state["price_quote"]
+    try:
+        quote = await config["configurable"]["mcp"].call(NODE, "create_proposal_draft", {
+            "job_id": draft["job_id"], "cover_letter": draft["cover_letter"],
+            "bid_type": price["bid_type"], "bid_amount_usd": price["amount_usd"],
+            "idempotency_key": _key("preview", state, config), "dry_run": True})
+    except ToolFailed as error:  # e.g. live Upwork has no preview; the UI says so
+        return {"preview": {"unavailable": str(error)}}
+    return {"preview": quote}
+
+
 async def approval(state: GigBidState, config: RunnableConfig) -> GigBidState:
     answer = interrupt({
         "draft": state["proposal_draft"], "evidence": state.get("evidence", []),
         "claims": state.get("claim_verification", []), "risk": state["risk_report"],
         "price": state["price_quote"], "critique": state.get("critique", {}),
-        "compliance": state["compliance_verdict"]})
+        "compliance": state["compliance_verdict"], "preview": state.get("preview", {})})
     if answer.get("action") == "reject":
         return {"approval_status": f"rejected: {answer.get('reason', '')}".strip()}
     draft = ProposalDraft(**state["proposal_draft"])
@@ -45,12 +65,11 @@ async def approval(state: GigBidState, config: RunnableConfig) -> GigBidState:
 async def submit(state: GigBidState, config: RunnableConfig) -> GigBidState:
     options = config["configurable"]
     draft, price = state["proposal_draft"], state["price_quote"]
-    key = f"{options['thread_id']}-{draft['job_id']}"
     created = await options["mcp"].call(NODE, "create_proposal_draft", {
         "job_id": draft["job_id"], "cover_letter": draft["cover_letter"],
         "bid_type": price["bid_type"], "bid_amount_usd": price["amount_usd"],
-        "idempotency_key": f"draft-{key}", "dry_run": False})
+        "idempotency_key": _key("draft", state, config), "dry_run": False})
     submitted = await options["mcp"].call(NODE, "submit_proposal", {
-        "proposal_id": created["proposal_id"], "idempotency_key": f"submit-{key}",
+        "proposal_id": created["proposal_id"], "idempotency_key": _key("submit", state, config),
         "dry_run": False})
     return {"submission": submitted}

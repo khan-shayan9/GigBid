@@ -10,6 +10,7 @@ services:
         required: false
     environment:
       DATABASE_URL: postgresql+psycopg://gigbid:${POSTGRES_PASSWORD:-gigbid}@postgres:5432/gigbid
+      API_PERSISTENCE: postgres  # checkpointer and store in Postgres: approvals survive restarts
       REDIS_URL: redis://redis:6379/0
     ports:
       - "8000:8000"

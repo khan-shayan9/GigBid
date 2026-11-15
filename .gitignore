@@ -11,3 +11,6 @@ dist/
 build/
 data/processed/
 data/raw/
+
+# Portfolio uploads from the web app (rag/ingest/uploads.py)
+data/uploads/

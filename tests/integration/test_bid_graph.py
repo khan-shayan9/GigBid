@@ -53,6 +53,8 @@ async def test_a_good_job_pauses_for_approval_and_submits_exactly_once() -> None
     graph, config, mcp, result = await arun(JOB, [GOOD, "[]"])
     payload = result["__interrupt__"][0].value
     assert payload["draft"]["evidence_ids"] == ["ai-cs-01"] and payload["price"]["amount_usd"] == 50
+    assert payload["preview"]["proposal_id"].startswith("prop-preview-")
+    assert [args["dry_run"] for args in mcp.tools("create_proposal_draft")] == [True]
     assert not mcp.tools("submit_proposal")  # nothing is sent before approval
     done = await graph.ainvoke(Command(resume={"action": "approve"}), config)
     assert done["approval_status"] == "approved" and len(mcp.tools("submit_proposal")) == 1
