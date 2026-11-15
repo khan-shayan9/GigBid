@@ -9,7 +9,13 @@ These three docs are the source of truth. Read them before any work and follow t
 
 ## Current phase
 
-**Phase 6: Web (Part D)** (see `1.PROJECT_SPECIFICATION.md` §8). Phases 0 to 5 were accepted on 2026-11-16. GigSim is frozen at tag `gigsim-v1`; CI fails if anything under `gigsim/` changes. Work on nothing beyond this phase until the user accepts it. The public URL https://gigbid-7txm.onrender.com serves only `/health` so far (Render free tier, `docs/RUNBOOK.md`).
+**Phase 7: Production (Part E)** (see `1.PROJECT_SPECIFICATION.md` §8). Phases 0 to 6 were accepted on 2026-11-16. GigSim is frozen at tag `gigsim-v1`; CI fails if anything under `gigsim/` changes. Work on nothing beyond this phase until the user accepts it. The public URL https://gigbid-7txm.onrender.com serves only `/health` so far (Render free tier, `docs/RUNBOOK.md`).
+
+Carried over from Phase 6:
+- Done on main (35a7396): FastAPI routers, services and SSE (`apps/api/`), TS client generated from OpenAPI (`make api-client`), all nine Next.js screens (`apps/web/`), 8 Playwright flows at laptop and phone width (`make e2e`, real API with the fake marketplace in `tests/e2e/`), dry-run `preview` node, `list_proposals` tool, `FitReport.matrix`, hashed idempotency keys (`agent/idempotency.py`).
+- Phase 7 must: move graph runs from API tasks to the Arq worker (`shortcut:` in `apps/api/services/runs.py`); call `promote_outcome` from proposal events and make the pipeline board update from events (it updates on refresh now); add Langfuse trace links and cost/latency (the run viewer and analytics say "not measured yet"); add the web service to compose; put Playwright and `tsc` in CI; verify a pending approval survives an API restart with `API_PERSISTENCE=postgres` (set in compose, untested).
+- Not built: own-profile onboarding, Upwork OAuth in the UI (CLI login only). Stored but unused: hourly floor and weekly Connects budget. Uploads are saved per account in `data/uploads/<account>/` but the Portfolio server does not search them yet. Accounts that pick the same persona share its GigSim data.
+- Tailwind is v3: v4 fails to build when the path contains `#`. Architecture deviations to record in `2.ARCHITECTURE.md` when approved: `preview` node, `FitReport.matrix`, `apps/api/services/`, `web` allowlist.
 
 Carried over from Phase 5:
 - Done on main: bid and conversation graphs (C1), typed state and reducers (C2), hand-offs (C3), Critic loop and Compliance block, step and token budgets with `needs_attention` (C4, `agent/graphs/guard.py`), interrupt approve/edit/reject (C5), Postgres checkpointer with a crash/resume/replay exactly-once test (C6, `agent/checkpointing.py`), retries, fallback model and dead-letter (C7), style and outcome memory behind promotion rules (R7, `agent/memory/`), policy v2 as its own commit (`evals/results/policy_v2_diff.json`).
