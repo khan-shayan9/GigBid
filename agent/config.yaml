@@ -101,7 +101,7 @@ budgets:
   max_tokens_per_job: 12000
 
 policy:
-  version: v1  # data/policy_pack/<version>.yaml; the change request switches this to v2
+  version: v2  # data/policy_pack/<version>.yaml; v2 is the 2 Nov 2026 policy update (assumed)
 
 risk:
   # Risk Assessor signals: written for the agent, independent of data/pipeline's label rules.
