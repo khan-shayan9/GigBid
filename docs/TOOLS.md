@@ -46,7 +46,9 @@ Portfolio also serves the resources `portfolio://case/{case_id}` and
     `send_on_upwork`), because live mode only creates drafts.
 - **Portfolio:** read-only, over `data/personas/<user>/` only.
   - Each user sees only their own files (tested).
-  - V0 dense cosine search (`nomic-embed-text` through fastembed, ADR 0004).
+  - Search runs the retrieval variant set in `rag.variant` (`rag/retriever.py`, ADR 0005)
+    over fixed chunks; results are whole evidence items, so cited ids stay item ids.
+  - Items carry metadata: persona, type, project, skills, date, client industry, outcome.
   - Past proposals are opt-in in `search_evidence`.
 - **Workspace:** a local mock.
   - Working hours are weekdays in the user's timezone.

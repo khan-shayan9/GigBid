@@ -23,6 +23,18 @@
     },
     "outputSchema": {
       "properties": {
+        "client_industry": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Industry"
+        },
         "date": {
           "anyOf": [
             {
@@ -55,6 +67,39 @@
           ],
           "default": null,
           "title": "Outcome"
+        },
+        "persona": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Persona"
+        },
+        "project": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project"
+        },
+        "skills": {
+          "default": [],
+          "description": "CV skills named in the text",
+          "items": {
+            "type": "string"
+          },
+          "title": "Skills",
+          "type": "array"
         },
         "source": {
           "title": "Source",
@@ -242,6 +287,18 @@
       "$defs": {
         "EvidenceHit": {
           "properties": {
+            "client_industry": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Client Industry"
+            },
             "date": {
               "anyOf": [
                 {
@@ -275,10 +332,43 @@
               "default": null,
               "title": "Outcome"
             },
+            "persona": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Persona"
+            },
+            "project": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Project"
+            },
             "score": {
-              "description": "Cosine similarity to the requirement",
+              "description": "Relevance to the requirement under the active retrieval variant; higher is better (cosine, fused rank or reranker score)",
               "title": "Score",
               "type": "number"
+            },
+            "skills": {
+              "default": [],
+              "description": "CV skills named in the text",
+              "items": {
+                "type": "string"
+              },
+              "title": "Skills",
+              "type": "array"
             },
             "source": {
               "title": "Source",

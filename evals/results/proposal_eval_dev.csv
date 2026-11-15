@@ -1,0 +1,9 @@
+variant,persona,proposals,unsupported_before,unsupported_after,judge_score,reply_rate,hire_rate,p95_latency_s,usd_per_proposal
+v0,all,9,0.333,0.0,2.75,0.5556,0.2222,65.552,
+v0,ai_ml_engineer,3,0.0,0.0,3.5,0.3333,0.3333,26.577,
+v0,data_analyst,3,0.333,0.0,2.333,0.3333,0.0,64.716,
+v0,fullstack_dev,3,0.667,0.0,2.667,1.0,0.3333,65.552,
+v1,all,9,0.444,0.222,3.0,0.5556,0.2222,74.896,
+v1,ai_ml_engineer,3,0.333,0.0,4.0,0.3333,0.3333,42.984,
+v1,data_analyst,3,0.0,0.0,2.333,0.3333,0.3333,61.134,
+v1,fullstack_dev,3,1.0,0.667,2.667,1.0,0.0,74.896,

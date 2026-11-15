@@ -30,11 +30,16 @@ models:
         risk_assessor: *open_small
         fit_matcher: *open_small
         pricing: *open_small
-        verifier: *open_small
         compliance: *open_small
         writer: &open_strong openai/gpt-oss-120b
         critic: *open_strong
         client_liaison: *open_strong
+        # gpt-oss-20b's free daily quota (200k tokens) ran out during the Phase 4 evals, so the
+        # verifier and the retrieval query model run on models with their own quotas.
+        verifier: *open_strong
+        rag_query: &open_alt qwen/qwen3.8-27b  # V1 requirement split and V8 query rewrite
+        # Evaluation only: a different model family from the writer, to limit self-preference.
+        judge: *open_alt
     # paid: optional; used only where it beats `open` enough to justify the cost.
     paid:
       provider: configure-me
@@ -47,16 +52,48 @@ models:
         pricing: *open_small
         verifier: *open_small
         compliance: *open_small
+        rag_query: *open_alt
         writer: &paid_strong configure-me
         critic: *paid_strong
         client_liaison: *paid_strong
+        judge: *open_alt
   # Open models in both profiles.
   # fastembed runs nomic-embed-text on CPU in-process (no Ollama). `fake` is for tests only.
   # The quantized nomic-ai/nomic-embed-text-v1.5-Q is smaller if memory is short.
   embeddings:
     provider: fastembed
     model: nomic-ai/nomic-embed-text-v1.5
-  reranker: bge-reranker-v2-m3
+  # USD per million tokens, per model id, for the cost columns of the eval results. Fill from the
+  # provider's pricing page with the date checked; a model missing here is reported in tokens only.
+  prices_usd_per_million: {}
+  # ADR 0005: bge-reranker-v2-m3 (int8) took ~2 s a pair on the dev CPU, too slow to evaluate;
+  # this open MS MARCO cross-encoder took 0.18 s a pair in an ad-hoc timing (m3 int8: 1.25 s). BAAI/bge-reranker-v2-m3-int8 is a drop-in.
+  reranker:
+    provider: fastembed
+    model: Xenova/ms-marco-MiniLM-L-12-v2
+
+# Retrieval (Part B). A variant is a set of switches over the components in rag/variants/;
+# RAG_VARIANT overrides `variant`, RAG_INDEX overrides `index`. `variant` is the shipped choice.
+rag:
+  variant: v1  # shipped: best dev Recall@5, MRR and nDCG@10 (evals/results/rag_retrieval_dev.json)
+  index: memory  # memory (local evals, tests) | pgvector (docker compose, CI)
+  chunk_words: 120
+  chunk_overlap: 20
+  candidates: 30  # first-stage depth per query (dense, BM25 and the fused list)
+  rerank_depth: 10  # candidates the cross-encoder rescores
+  rrf_k: 60  # reciprocal rank fusion constant (Cormack et al., 2009)
+  corrective:  # V8
+    min_score: 0.0  # reranker score a hit needs to count as evidence; untuned (MiniLM logit 0)
+    max_requeries: 1
+  variants:
+    v0: {}
+    v1: {decompose: true}
+    v2: {hybrid: true}
+    v3: {rerank: true}
+    v8: {rerank: true, corrective: true}
+    # Combinations for the R&D B hypothesis and the shipped choice.
+    v1_v2: {decompose: true, hybrid: true}
+    v1_v2_v3: {decompose: true, hybrid: true, rerank: true}
 
 budgets:
   max_graph_steps: 30
@@ -71,6 +108,8 @@ thresholds:
 llm_providers:
   timeout_s: 60
   max_retries: 2
+  # Reasoning models spend output tokens on thinking; 2048 cut the verifier's JSON short.
+  max_tokens: 6000
   groq:
     base_url: https://api.groq.com/openai/v1
     api_key_env: GROQ_API_KEY

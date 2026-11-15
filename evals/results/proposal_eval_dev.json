@@ -1,0 +1,881 @@
+{
+ "split": "dev",
+ "per_persona": 3,
+ "jobs": 9,
+ "models": {
+  "writer": "openai/gpt-oss-120b",
+  "verifier": "openai/gpt-oss-120b",
+  "judge": "qwen/qwen3.8-27b"
+ },
+ "note": "the rag_query model's tokens (V1, V8) are counted in rag_retrieval, not here",
+ "variants": {
+  "v0": {
+   "overall": {
+    "proposals": 9,
+    "unsupported_per_proposal": {
+     "before": 0.333,
+     "after": 0.0
+    },
+    "unsupported_claim_rate": {
+     "before": 0.04,
+     "after": 0.0
+    },
+    "verification_failed": 0,
+    "judge_score": 2.75,
+    "judge_unparsed": 1,
+    "gigsim": {
+     "submitted": 9,
+     "rejected": 0,
+     "reply_rate": 0.5556,
+     "hire_rate": 0.2222
+    },
+    "latency_s": {
+     "p50": 55.12,
+     "p95": 65.552
+    },
+    "tokens_per_proposal": 10037,
+    "usd_per_proposal": null
+   },
+   "by_persona": {
+    "ai_ml_engineer": {
+     "proposals": 3,
+     "unsupported_per_proposal": {
+      "before": 0.0,
+      "after": 0.0
+     },
+     "unsupported_claim_rate": {
+      "before": 0.0,
+      "after": 0.0
+     },
+     "verification_failed": 0,
+     "judge_score": 3.5,
+     "judge_unparsed": 1,
+     "gigsim": {
+      "submitted": 3,
+      "rejected": 0,
+      "reply_rate": 0.3333,
+      "hire_rate": 0.3333
+     },
+     "latency_s": {
+      "p50": 25.012,
+      "p95": 26.577
+     },
+     "tokens_per_proposal": 10554,
+     "usd_per_proposal": null
+    },
+    "data_analyst": {
+     "proposals": 3,
+     "unsupported_per_proposal": {
+      "before": 0.333,
+      "after": 0.0
+     },
+     "unsupported_claim_rate": {
+      "before": 0.04,
+      "after": 0.0
+     },
+     "verification_failed": 0,
+     "judge_score": 2.333,
+     "judge_unparsed": 0,
+     "gigsim": {
+      "submitted": 3,
+      "rejected": 0,
+      "reply_rate": 0.3333,
+      "hire_rate": 0.0
+     },
+     "latency_s": {
+      "p50": 61.154,
+      "p95": 64.716
+     },
+     "tokens_per_proposal": 10197,
+     "usd_per_proposal": null
+    },
+    "fullstack_dev": {
+     "proposals": 3,
+     "unsupported_per_proposal": {
+      "before": 0.667,
+      "after": 0.0
+     },
+     "unsupported_claim_rate": {
+      "before": 0.1053,
+      "after": 0.0
+     },
+     "verification_failed": 0,
+     "judge_score": 2.667,
+     "judge_unparsed": 0,
+     "gigsim": {
+      "submitted": 3,
+      "rejected": 0,
+      "reply_rate": 1.0,
+      "hire_rate": 0.3333
+     },
+     "latency_s": {
+      "p50": 59.432,
+      "p95": 65.552
+     },
+     "tokens_per_proposal": 9360,
+     "usd_per_proposal": null
+    }
+   },
+   "rows": [
+    {
+     "variant": "v0",
+     "persona": "ai_ml_engineer",
+     "job_id": "job-00124",
+     "evidence_ids": [
+      "ai_ml_engineer-cv-experience",
+      "ai_ml_engineer-cv-skills",
+      "ai_ml_engineer-repo-model-serving-template-readme-md",
+      "ai_ml_engineer-repo-model-serving-template-app-py",
+      "ai_ml_engineer-repo-cv-matcher-readme-md",
+      "ai_ml_engineer-cv-summary"
+     ],
+     "draft": "I understand you need AI models that can organize and analyze social media data to uncover patterns and insights. I have five years of experience turning machine\u2011learning prototypes into production services, including building FastAPI endpoints with Docker and MLflow\u202f[ai_ml_engineer-cv-summary]. My recent freelance work wrapped a churn prediction and a demand\u2011forecast model into FastAPI services, containerized with Docker and managed via MLflow, which matches the pipeline you described\u202f[ai_ml_engineer-cv-experience]. I am proficient in Python, pandas, scikit\u2011learn, PyTorch, and have used TensorFlow in earlier projects, giving me the flexibility to choose the right framework for your tasks\u202f[ai_ml_engineer-cv-skills]. I also created a reusable model\u2011serving template that provides a\u202f`/predict`\u202fendpoint, health checks, and automatic model loading from the MLflow registry, ready to integrate with your existing systems\u202f[ai_ml_engineer-repo-model-serving-template-readme-md]. Additionally, I built a CV\u2011matcher service that embeds text and ranks candidates, demonstrating expertise with embeddings and similarity algorithms that can be adapted for social\u2011media content analysis\u202f[ai_ml_engineer-repo-cv-matcher-readme-md]. I would be happy to discuss how these experiences align with your project on a call.",
+     "final": "I understand you need AI models that can organize and analyze social media data to uncover patterns and insights. I have five years of experience turning machine\u2011learning prototypes into production services, including building FastAPI endpoints with Docker and MLflow\u202f[ai_ml_engineer-cv-summary]. My recent freelance work wrapped a churn prediction and a demand\u2011forecast model into FastAPI services, containerized with Docker and managed via MLflow, which matches the pipeline you described\u202f[ai_ml_engineer-cv-experience]. I am proficient in Python, pandas, scikit\u2011learn, PyTorch, and have used TensorFlow in earlier projects, giving me the flexibility to choose the right framework for your tasks\u202f[ai_ml_engineer-cv-skills]. I also created a reusable model\u2011serving template that provides a\u202f`/predict`\u202fendpoint, health checks, and automatic model loading from the MLflow registry, ready to integrate with your existing systems\u202f[ai_ml_engineer-repo-model-serving-template-readme-md]. Additionally, I built a CV\u2011matcher service that embeds text and ranks candidates, demonstrating expertise with embeddings and similarity algorithms that can be adapted for social\u2011media content analysis\u202f[ai_ml_engineer-repo-cv-matcher-readme-md]. I would be happy to discuss how these experiences align with your project on a call.",
+     "verification_failed": false,
+     "before": {
+      "supported": 15,
+      "partly_supported": 1,
+      "unsupported": 0
+     },
+     "after": {
+      "supported": 15,
+      "partly_supported": 1,
+      "unsupported": 0
+     },
+     "judge_score": null,
+     "seconds": 25.012,
+     "input_tokens": 5624,
+     "output_tokens": 6323,
+     "usd": null,
+     "bid": {
+      "type": "hourly",
+      "amount_usd": 45.0
+     },
+     "outcome": "ignored"
+    },
+    {
+     "variant": "v0",
+     "persona": "ai_ml_engineer",
+     "job_id": "job-00380",
+     "evidence_ids": [
+      "ai_ml_engineer-cv-experience",
+      "ai_ml_engineer-repo-model-serving-template-readme-md",
+      "ai-cs-05",
+      "ai-cs-12",
+      "ai-cs-16",
+      "ai_ml_engineer-cv-skills"
+     ],
+     "draft": "I see you need an application that orchestrates OpenAI, Eleven Labs, and Stable Diffusion APIs to generate sales copy and build a webpage. I have built FastAPI services that wrap ML models and expose them via Docker, using MLflow for versioning [ai_ml_engineer-cv-experience]. I maintain a reusable template with health checks and Pydantic validation for fast deployment [ai-cs-12]. The template is in a repo with Dockerfile and smoke test [ai_ml_engineer-repo-model-serving-template-readme-md]. I created a regression test suite for LLM prompts to ensure consistent outputs [ai_ml_engineer-cv-experience]. My skills include Python, FastAPI, Docker, PostgreSQL, Hugging Face transformers and sentence embeddings [ai_ml_engineer-cv-skills]. I also lead workshops that explain AI concepts to non\u2011technical teams, ensuring clear communication [ai-cs-16]. I can confirm any additional details on a call.",
+     "final": "I see you need an application that orchestrates OpenAI, Eleven Labs, and Stable Diffusion APIs to generate sales copy and build a webpage. I have built FastAPI services that wrap ML models and expose them via Docker, using MLflow for versioning [ai_ml_engineer-cv-experience]. I maintain a reusable template with health checks and Pydantic validation for fast deployment [ai-cs-12]. The template is in a repo with Dockerfile and smoke test [ai_ml_engineer-repo-model-serving-template-readme-md]. I created a regression test suite for LLM prompts to ensure consistent outputs [ai_ml_engineer-cv-experience]. My skills include Python, FastAPI, Docker, PostgreSQL, Hugging Face transformers and sentence embeddings [ai_ml_engineer-cv-skills]. I also lead workshops that explain AI concepts to non\u2011technical teams, ensuring clear communication [ai-cs-16]. I can confirm any additional details on a call.",
+     "verification_failed": false,
+     "before": {
+      "supported": 6,
+      "partly_supported": 0,
+      "unsupported": 0
+     },
+     "after": {
+      "supported": 6,
+      "partly_supported": 0,
+      "unsupported": 0
+     },
+     "judge_score": 3,
+     "seconds": 13.445,
+     "input_tokens": 4376,
+     "output_tokens": 5455,
+     "usd": null,
+     "bid": {
+      "type": "hourly",
+      "amount_usd": 45.0
+     },
+     "outcome": "ignored"
+    },
+    {
+     "variant": "v0",
+     "persona": "ai_ml_engineer",
+     "job_id": "job-00680",
+     "evidence_ids": [
+      "ai_ml_engineer-repo-model-serving-template-readme-md",
+      "ai_ml_engineer-cv-experience",
+      "ai_ml_engineer-cv-skills",
+      "ai_ml_engineer-repo-model-serving-template-app-py",
+      "ai-cs-12",
+      "ai_ml_engineer-repo-cv-matcher-readme-md"
+     ],
+     "draft": "You need a reliable backend that connects OpenAI\u2019s API and Zapier while exposing a fast, scalable service for your mobile and web app.\n\nI have built several production\u2011ready FastAPI back\u2011ends, packaging models in Docker containers and loading them from an MLflow registry\u202f[ai_ml_engineer-cv-experience].\n\nI also maintain a reusable template that provides a health endpoint, Pydantic request validation and a smoke test, which I have used for churn scoring and a bakery demand forecast\u202f[ai-cs-12].\n\nI work with Python, FastAPI, Docker and MLflow on a daily basis\u202f[ai_ml_engineer-cv-skills].\n\nMy recent projects include a health\u2011provider chatbot and an invoice extraction pipeline that required precise API handling and data validation\u202f[ai_ml_engineer-cv-experience].\n\nI can confirm the details of OpenAI configuration and Zapier webhook integration on a call.",
+     "final": "You need a reliable backend that connects OpenAI\u2019s API and Zapier while exposing a fast, scalable service for your mobile and web app.\n\nI have built several production\u2011ready FastAPI back\u2011ends, packaging models in Docker containers and loading them from an MLflow registry\u202f[ai_ml_engineer-cv-experience].\n\nI also maintain a reusable template that provides a health endpoint, Pydantic request validation and a smoke test, which I have used for churn scoring and a bakery demand forecast\u202f[ai-cs-12].\n\nI work with Python, FastAPI, Docker and MLflow on a daily basis\u202f[ai_ml_engineer-cv-skills].\n\nMy recent projects include a health\u2011provider chatbot and an invoice extraction pipeline that required precise API handling and data validation\u202f[ai_ml_engineer-cv-experience].\n\nI can confirm the details of OpenAI configuration and Zapier webhook integration on a call.",
+     "verification_failed": false,
+     "before": {
+      "supported": 7,
+      "partly_supported": 2,
+      "unsupported": 0
+     },
+     "after": {
+      "supported": 7,
+      "partly_supported": 2,
+      "unsupported": 0
+     },
+     "judge_score": 4,
+     "seconds": 26.577,
+     "input_tokens": 5230,
+     "output_tokens": 4655,
+     "usd": null,
+     "bid": {
+      "type": "hourly",
+      "amount_usd": 45.0
+     },
+     "outcome": "hired"
+    },
+    {
+     "variant": "v0",
+     "persona": "data_analyst",
+     "job_id": "job-00104",
+     "evidence_ids": [
+      "data_analyst-cv-experience",
+      "data_analyst-cv-summary",
+      "data_analyst-repo-kpi-pack-readme-md",
+      "data-cs-07",
+      "data-cs-01",
+      "data-cs-09"
+     ],
+     "draft": "I understand you need a reliable manager to keep your content pipelines on schedule,\u202ftrack every deadline, and streamline the workflows that support your high\u2011tech editorial output.\n\nMy background turning messy data into clear, automated reports can give you the same visibility for content projects. I\u2019ve built Power\u202fBI dashboards with row\u2011level security so each sales rep sees only their region, while managers have the full picture\u202f[data-cs-01]. I also created a monthly KPI pack that replaced two days of manual copy\u2011pasting, pulling from SQL Server and Google\u202fSheets, generating charts and PDFs on a set schedule\u202f[data_analyst-repo-kpi-pack-readme-md].\n\nI am strong in SQL, spreadsheets, and Python, turning raw exports into dashboards that stakeholders open without reminders\u202f[data_analyst-cv-summary]. My freelance work includes weekly trading reports and the first proper sales model built in Excel for a retail client\u202f[data_analyst-cv-experience].\n\nThese skills let me design and maintain the spreadsheets and dashboards you need to monitor content calendars, deadlines, and resource allocation. I would be happy to confirm my experience with Trello, Slack, and other tools on a call.",
+     "final": "I understand you need a reliable manager to keep your content pipelines on schedule,\u202ftrack every deadline, and streamline the workflows that support your high\u2011tech editorial output.\n\nMy background turning messy data into clear, automated reports can give you the same visibility for content projects. I\u2019ve built Power\u202fBI dashboards with row\u2011level security so each sales rep sees only their region, while managers have the full picture\u202f[data-cs-01]. I also created a monthly KPI pack that replaced two days of manual copy\u2011pasting, pulling from SQL Server and Google\u202fSheets, generating charts and PDFs on a set schedule\u202f[data_analyst-repo-kpi-pack-readme-md].\n\nI am strong in SQL, spreadsheets, and Python, turning raw exports into dashboards that stakeholders open without reminders\u202f[data_analyst-cv-summary]. My freelance work includes weekly trading reports and the first proper sales model built in Excel for a retail client\u202f[data_analyst-cv-experience].\n\nThese skills let me design and maintain the spreadsheets and dashboards you need to monitor content calendars, deadlines, and resource allocation.",
+     "verification_failed": false,
+     "before": {
+      "supported": 4,
+      "partly_supported": 2,
+      "unsupported": 1
+     },
+     "after": {
+      "supported": 5,
+      "partly_supported": 1,
+      "unsupported": 0
+     },
+     "judge_score": 2,
+     "seconds": 61.154,
+     "input_tokens": 5791,
+     "output_tokens": 4748,
+     "usd": null,
+     "bid": {
+      "type": "hourly",
+      "amount_usd": 28.0
+     },
+     "outcome": "ignored"
+    },
+    {
+     "variant": "v0",
+     "persona": "data_analyst",
+     "job_id": "job-00189",
+     "evidence_ids": [
+      "data_analyst-cv-experience",
+      "data_analyst-cv-summary",
+      "data-cs-09",
+      "data_analyst-repo-survey-weighting-readme-md",
+      "data-cs-07",
+      "data-cs-06"
+     ],
+     "draft": "I see you need a Decipher survey script that securely captures URL parameters, calls a third\u2011party API, and updates survey variables. My recent work includes building a survey\u2011weighting pipeline in Python that aligns responses to population margins, demonstrating strong handling of survey data and variable manipulation [data-cs-06]. I also authored a survey\u2011weighting tool documented in a repository, showing my ability to script data transformations for surveys [data_analyst-repo-survey-weighting-readme-md]. Beyond survey work, I have a four\u2011year background as a data analyst, regularly using SQL and Python to turn raw exports into actionable dashboards, which equips me to integrate and process API data efficiently [data_analyst-cv-summary]. I look forward to discussing how my experience aligns with your security and integration requirements on a call. Thank you for considering my proposal; I am ready to start promptly.",
+     "final": "I see you need a Decipher survey script that securely captures URL parameters, calls a third\u2011party API, and updates survey variables. My recent work includes building a survey\u2011weighting pipeline in Python that aligns responses to population margins, demonstrating strong handling of survey data and variable manipulation [data-cs-06]. I also authored a survey\u2011weighting tool documented in a repository, showing my ability to script data transformations for surveys [data_analyst-repo-survey-weighting-readme-md]. Beyond survey work, I have a four\u2011year background as a data analyst, regularly using SQL and Python to turn raw exports into actionable dashboards, which equips me to integrate and process API data efficiently [data_analyst-cv-summary]. I look forward to discussing how my experience aligns with your security and integration requirements on a call. Thank you for considering my proposal; I am ready to start promptly.",
+     "verification_failed": false,
+     "before": {
+      "supported": 4,
+      "partly_supported": 2,
+      "unsupported": 0
+     },
+     "after": {
+      "supported": 4,
+      "partly_supported": 2,
+      "unsupported": 0
+     },
+     "judge_score": 2,
+     "seconds": 55.007,
+     "input_tokens": 4119,
+     "output_tokens": 5201,
+     "usd": null,
+     "bid": {
+      "type": "hourly",
+      "amount_usd": 28.0
+     },
+     "outcome": "ignored"
+    },
+    {
+     "variant": "v0",
+     "persona": "data_analyst",
+     "job_id": "job-00617",
+     "evidence_ids": [
+      "data_analyst-cv-experience",
+      "data_analyst-cv-summary",
+      "data-cs-15",
+      "data_analyst-repo-survey-weighting-readme-md",
+      "data_analyst-repo-ecom-sql-reports-readme-md",
+      "data-cs-16"
+     ],
+     "draft": "You need factor and cluster analyses to turn your quantitative research into clear market segments. I have turned messy survey exports into weighted results that match population margins, ensuring reliable insights. [data_analyst-repo-survey-weighting-readme-md]  \nMy four years as a freelance data analyst include building sales dashboards in Power\u202fBI and reporting views over a PostgreSQL shop database, demonstrating strong SQL and visualization skills. [data_analyst-cv-experience]  \nI also created the first robust sales model in Excel for a retail team, showing I can design and validate quantitative models. [data_analyst-cv-experience]  \nIn a recent case study I applied linear regression to housing data and explained each coefficient to the client, proving my ability to communicate statistical findings clearly. [data-cs-15]  \nI am comfortable using Python for analyses that go beyond spreadsheets, which will let me implement factor and cluster methods efficiently. [data_analyst-cv-summary]  \nI would confirm my specific experience with factor and cluster techniques on a call and discuss how to tailor the analysis to your buyer\u2011needs framework.",
+     "final": "You need factor and cluster analyses to turn your quantitative research into clear market segments. I have turned messy survey exports into weighted results that match population margins, ensuring reliable insights. [data_analyst-repo-survey-weighting-readme-md]  \nMy four years as a freelance data analyst include building sales dashboards in Power\u202fBI and reporting views over a PostgreSQL shop database, demonstrating strong SQL and visualization skills. [data_analyst-cv-experience]  \nI also created the first robust sales model in Excel for a retail team, showing I can design and validate quantitative models. [data_analyst-cv-experience]  \nIn a recent case study I applied linear regression to housing data and explained each coefficient to the client, proving my ability to communicate statistical findings clearly. [data-cs-15]  \nI am comfortable using Python for analyses that go beyond spreadsheets, which will let me implement factor and cluster methods efficiently. [data_analyst-cv-summary]  \nI would confirm my specific experience with factor and cluster techniques on a call and discuss how to tailor the analysis to your buyer\u2011needs framework.",
+     "verification_failed": false,
+     "before": {
+      "supported": 12,
+      "partly_supported": 0,
+      "unsupported": 0
+     },
+     "after": {
+      "supported": 12,
+      "partly_supported": 0,
+      "unsupported": 0
+     },
+     "judge_score": 3,
+     "seconds": 64.716,
+     "input_tokens": 4311,
+     "output_tokens": 6422,
+     "usd": null,
+     "bid": {
+      "type": "hourly",
+      "amount_usd": 28.0
+     },
+     "outcome": "interview"
+    },
+    {
+     "variant": "v0",
+     "persona": "fullstack_dev",
+     "job_id": "job-00025",
+     "evidence_ids": [
+      "fullstack_dev-cv-experience",
+      "fullstack_dev-cv-stack",
+      "fullstack_dev-cv-summary",
+      "web-cs-09",
+      "web-cs-03",
+      "web-cs-13"
+     ],
+     "draft": "You need immediate enhancements to a custom WordPress theme, including WooCommerce template updates and secure handling of $wpdb, AJAX nonces, and input sanitization.\n\nI have rebuilt a law firm\u2019s WordPress site and handled similar PHP/WordPress projects [fullstack_dev-cv-experience].\n\nMy stack includes PHP, WordPress, Laravel, and modern CI/CD pipelines, which I have set up for many client sites [fullstack_dev-cv-stack].\n\nI bring six years of full\u2011stack development experience and a focus on performance and maintainable code [fullstack_dev-cv-summary].\n\nI noted the WPDB mention and can discuss any additional details to provide an accurate quote or hourly rate.",
+     "final": "You need immediate enhancements to a custom WordPress theme, including WooCommerce template updates and secure handling of $wpdb, AJAX nonces, and input sanitization.\n\nI have rebuilt a law firm\u2019s WordPress site and handled similar PHP/WordPress projects [fullstack_dev-cv-experience].\n\nMy stack includes PHP, WordPress, Laravel, and modern CI/CD pipelines, which I have set up for many client sites [fullstack_dev-cv-stack].\n\nI bring six years of full\u2011stack development experience and a focus on performance and maintainable code [fullstack_dev-cv-summary].\n\nI noted the WPDB mention and can discuss any additional details to provide an accurate quote or hourly rate.",
+     "verification_failed": false,
+     "before": {
+      "supported": 5,
+      "partly_supported": 1,
+      "unsupported": 0
+     },
+     "after": {
+      "supported": 5,
+      "partly_supported": 1,
+      "unsupported": 0
+     },
+     "judge_score": 3,
+     "seconds": 59.432,
+     "input_tokens": 4027,
+     "output_tokens": 6565,
+     "usd": null,
+     "bid": {
+      "type": "hourly",
+      "amount_usd": 32.0
+     },
+     "outcome": "replied"
+    },
+    {
+     "variant": "v0",
+     "persona": "fullstack_dev",
+     "job_id": "job-00420",
+     "evidence_ids": [
+      "fullstack_dev-cv-experience",
+      "fullstack_dev-repo-studio-booking-readme-md",
+      "fullstack_dev-cv-stack",
+      "fullstack_dev-cv-summary",
+      "web-cs-02",
+      "fullstack_dev-repo-next-saas-starter-readme-md"
+     ],
+     "draft": "I see you need a live\u2011sports and casino platform with a sophisticated multi\u2011level user management system. I have built multi\u2011tenant dashboards where every query is scoped by the account, mirroring the role hierarchy you described\u3010web-cs-02\u3011. My SaaS starter template provides session\u2011based authentication and team accounts, automatically limiting data access by `teamId`\u3010fullstack_dev-repo-next-saas-starter-readme-md\u3011. I delivered a property\u2011management dashboard used by dozens of landlords, handling permissions and data segregation across users\u3010fullstack_dev-cv-experience\u3011. My stack includes PHP/Laravel, JavaScript, TypeScript, Next.js, Node/Express, PostgreSQL and MongoDB\u2011style data handling, allowing me to work with the technologies you prefer\u3010fullstack_dev-cv-stack\u3011. I routinely set up CI pipelines, Docker containers, and automated deployments to keep platforms stable and easy to maintain\u3010fullstack_dev-cv-stack\u3011. I have collaborated with clients on multiple full\u2011stack projects, ensuring clear communication and reliable support\u3010fullstack_dev-cv-experience\u3011.\n\nI would be glad to discuss how my background aligns with your needs on a call.",
+     "final": "I see you need a live\u2011sports and casino platform with a sophisticated multi\u2011level user management system. I have built multi\u2011tenant dashboards where every query is scoped by the account, mirroring the role hierarchy you described\u3010web-cs-02\u3011. My SaaS starter template provides session\u2011based authentication and team accounts, automatically limiting data access by `teamId`\u3010fullstack_dev-repo-next-saas-starter-readme-md\u3011. I delivered a property\u2011management dashboard used by dozens of landlords, handling permissions and data segregation across users\u3010fullstack_dev-cv-experience\u3011. My stack includes PHP/Laravel, JavaScript, TypeScript, Next.js, Node/Express, PostgreSQL and MongoDB\u2011style data handling, allowing me to work with the technologies you prefer\u3010fullstack_dev-cv-stack\u3011. I routinely set up CI pipelines, Docker containers, and automated deployments to keep platforms stable and easy to maintain\u3010fullstack_dev-cv-stack\u3011. I have collaborated with clients on multiple full\u2011stack projects, ensuring clear communication and reliable support\u3010fullstack_dev-cv-experience\u3011.\n\nI would be glad to discuss how my background aligns with your needs on a call.",
+     "verification_failed": false,
+     "before": {
+      "supported": 3,
+      "partly_supported": 3,
+      "unsupported": 0
+     },
+     "after": {
+      "supported": 3,
+      "partly_supported": 3,
+      "unsupported": 0
+     },
+     "judge_score": 3,
+     "seconds": 65.552,
+     "input_tokens": 5160,
+     "output_tokens": 4479,
+     "usd": null,
+     "bid": {
+      "type": "fixed",
+      "amount_usd": 1000.0
+     },
+     "outcome": "hired"
+    },
+    {
+     "variant": "v0",
+     "persona": "fullstack_dev",
+     "job_id": "job-00486",
+     "evidence_ids": [
+      "fullstack_dev-cv-experience",
+      "web-cs-06",
+      "fullstack_dev-repo-studio-booking-readme-md",
+      "web-cs-12",
+      "web-cs-03",
+      "fullstack_dev-repo-next-saas-starter-readme-md"
+     ],
+     "draft": "You need a clean, professional logo for your medical scrubs brand that captures the identity you envision.\n\nI have delivered client sites and e\u2011commerce projects, setting up CI and hosting for every build, which gives me a solid sense of how visual branding fits into a digital presence [fullstack_dev-cv-experience].\n\nMost recently I created a headless storefront for an independent fashion label, working closely with the client to reflect their brand style across product pages [web-cs-03].\n\nI use an iterative workflow similar to the CI/CD pipelines I set up for a B2B SaaS startup, allowing fast feedback and revisions [web-cs-12].\n\nIf you\u2019d like to confirm my design experience, I\u2019m happy to discuss specifics on a call.\n\nLooking forward to helping you create a logo that represents your brand.",
+     "final": "You need a clean, professional logo for your medical scrubs brand that captures the identity you envision.\n\nI use an iterative workflow similar to the CI/CD pipelines I set up for a B2B SaaS startup, allowing fast feedback and revisions [web-cs-12].\n\nIf you\u2019d like to confirm my design experience, I\u2019m happy to discuss specifics on a call.\n\nLooking forward to helping you create a logo that represents your brand.",
+     "verification_failed": false,
+     "before": {
+      "supported": 4,
+      "partly_supported": 1,
+      "unsupported": 2
+     },
+     "after": {
+      "supported": 1,
+      "partly_supported": 1,
+      "unsupported": 0
+     },
+     "judge_score": 2,
+     "seconds": 55.12,
+     "input_tokens": 4349,
+     "output_tokens": 3501,
+     "usd": null,
+     "bid": {
+      "type": "hourly",
+      "amount_usd": 32.0
+     },
+     "outcome": "replied"
+    }
+   ]
+  },
+  "v1": {
+   "overall": {
+    "proposals": 9,
+    "unsupported_per_proposal": {
+     "before": 0.444,
+     "after": 0.222
+    },
+    "unsupported_claim_rate": {
+     "before": 0.0656,
+     "after": 0.0364
+    },
+    "verification_failed": 0,
+    "judge_score": 3.0,
+    "judge_unparsed": 0,
+    "gigsim": {
+     "submitted": 9,
+     "rejected": 0,
+     "reply_rate": 0.5556,
+     "hire_rate": 0.2222
+    },
+    "latency_s": {
+     "p50": 43.98,
+     "p95": 74.896
+    },
+    "tokens_per_proposal": 8898,
+    "usd_per_proposal": null
+   },
+   "by_persona": {
+    "ai_ml_engineer": {
+     "proposals": 3,
+     "unsupported_per_proposal": {
+      "before": 0.333,
+      "after": 0.0
+     },
+     "unsupported_claim_rate": {
+      "before": 0.0667,
+      "after": 0.0
+     },
+     "verification_failed": 0,
+     "judge_score": 4.0,
+     "judge_unparsed": 0,
+     "gigsim": {
+      "submitted": 3,
+      "rejected": 0,
+      "reply_rate": 0.3333,
+      "hire_rate": 0.3333
+     },
+     "latency_s": {
+      "p50": 39.719,
+      "p95": 42.984
+     },
+     "tokens_per_proposal": 8811,
+     "usd_per_proposal": null
+    },
+    "data_analyst": {
+     "proposals": 3,
+     "unsupported_per_proposal": {
+      "before": 0.0,
+      "after": 0.0
+     },
+     "unsupported_claim_rate": {
+      "before": 0.0,
+      "after": 0.0
+     },
+     "verification_failed": 0,
+     "judge_score": 2.333,
+     "judge_unparsed": 0,
+     "gigsim": {
+      "submitted": 3,
+      "rejected": 0,
+      "reply_rate": 0.3333,
+      "hire_rate": 0.3333
+     },
+     "latency_s": {
+      "p50": 43.98,
+      "p95": 61.134
+     },
+     "tokens_per_proposal": 8761,
+     "usd_per_proposal": null
+    },
+    "fullstack_dev": {
+     "proposals": 3,
+     "unsupported_per_proposal": {
+      "before": 1.0,
+      "after": 0.667
+     },
+     "unsupported_claim_rate": {
+      "before": 0.12,
+      "after": 0.1
+     },
+     "verification_failed": 0,
+     "judge_score": 2.667,
+     "judge_unparsed": 0,
+     "gigsim": {
+      "submitted": 3,
+      "rejected": 0,
+      "reply_rate": 1.0,
+      "hire_rate": 0.0
+     },
+     "latency_s": {
+      "p50": 61.821,
+      "p95": 74.896
+     },
+     "tokens_per_proposal": 9122,
+     "usd_per_proposal": null
+    }
+   },
+   "rows": [
+    {
+     "variant": "v1",
+     "persona": "ai_ml_engineer",
+     "job_id": "job-00124",
+     "evidence_ids": [
+      "ai_ml_engineer-repo-model-serving-template-readme-md",
+      "ai-cs-10",
+      "ai_ml_engineer-cv-skills",
+      "ai_ml_engineer-cv-education",
+      "ai_ml_engineer-repo-cv-matcher-readme-md",
+      "ai_ml_engineer-repo-model-serving-template-app-py"
+     ],
+     "draft": "You need AI models that turn raw social media streams into actionable insights.\n\nI built FastAPI services that load models from an MLflow registry and expose\u202f/predict\u202fendpoints, supporting model\u2011as\u2011a\u2011service delivery. [ai_ml_engineer-repo-model-serving-template-readme-md]\n\nMy deployments include Dockerfiles and pytest smoke tests for reliable, continuously refined services. [ai_ml_engineer-repo-model-serving-template-readme-md]\n\nI routinely use Python, pandas, scikit\u2011learn, PyTorch and LightGBM to develop and fine\u2011tune algorithms on large training sets. [ai_ml_engineer-cv-skills]\n\nI applied implicit\u2011feedback matrix factorisation to recommend content and validated gains with an A/B test, showing pattern detection experience. [ai-cs-10]\n\nI write production\u2011ready Python, manage Docker containers, and connect to PostgreSQL and AWS\u202fS3. [ai_ml_engineer-cv-skills]\n\nMy BSc in Computer Science gave me a solid foundation in statistics, NLP and computer vision. [ai_ml_engineer-cv-education]\n\nI would confirm any further specifics on a call.",
+     "final": "You need AI models that turn raw social media streams into actionable insights.\n\nI built FastAPI services that load models from an MLflow registry and expose\u202f/predict\u202fendpoints, supporting model\u2011as\u2011a\u2011service delivery. [ai_ml_engineer-repo-model-serving-template-readme-md]\n\nMy deployments include Dockerfiles and pytest smoke tests for reliable, continuously refined services. [ai_ml_engineer-repo-model-serving-template-readme-md]\n\nI routinely use Python, pandas, scikit\u2011learn, PyTorch and LightGBM to develop and fine\u2011tune algorithms on large training sets. [ai_ml_engineer-cv-skills]\n\nI applied implicit\u2011feedback matrix factorisation to recommend content and validated gains with an A/B test, showing pattern detection experience. [ai-cs-10]\n\nI write production\u2011ready Python, manage Docker containers, and connect to PostgreSQL and AWS\u202fS3. [ai_ml_engineer-cv-skills]\n\nMy BSc in Computer Science gave me a solid foundation in statistics, NLP and computer vision. [ai_ml_engineer-cv-education]\n\nI would confirm any further specifics on a call.",
+     "verification_failed": false,
+     "before": {
+      "supported": 5,
+      "partly_supported": 1,
+      "unsupported": 0
+     },
+     "after": {
+      "supported": 5,
+      "partly_supported": 1,
+      "unsupported": 0
+     },
+     "judge_score": 4,
+     "seconds": 13.979,
+     "input_tokens": 5120,
+     "output_tokens": 4899,
+     "usd": null,
+     "bid": {
+      "type": "hourly",
+      "amount_usd": 45.0
+     },
+     "outcome": "ignored"
+    },
+    {
+     "variant": "v1",
+     "persona": "ai_ml_engineer",
+     "job_id": "job-00380",
+     "evidence_ids": [
+      "ai_ml_engineer-repo-model-serving-template-readme-md",
+      "ai-cs-05",
+      "ai-cs-15",
+      "ai-cs-12",
+      "ai_ml_engineer-cv-summary",
+      "ai_ml_engineer-cv-skills"
+     ],
+     "draft": "I see you need an application that generates sales copy and a webpage for customers by orchestrating the OpenAI, Eleven Labs, and Stable Diffusion APIs. I have built FastAPI services that expose machine\u2011learning models and package them in Docker for reliable HTTP endpoints [ai-cs-12]. In a recent project I delivered a CV\u2011matching service that embeds documents, ranks candidates with cosine similarity, and returns the top matching sentences through a FastAPI API, all containerized for easy scaling [ai-cs-05]. I also created an email\u2011triage prototype that classifies tenant emails and drafts replies using language\u2011model calls, demonstrating integration of LLM APIs into a web service workflow [ai-cs-15]. My five\u2011year background as a machine\u2011learning engineer focuses on moving models from notebooks to production [ai_ml_engineer-cv-summary]. I work with Python, FastAPI, Docker, MLflow, and Hugging Face transformers to build robust services [ai_ml_engineer-cv-skills]. I would welcome a call to confirm how my experience aligns with your long\u2011term goals and to discuss the architecture in detail.",
+     "final": "I see you need an application that generates sales copy and a webpage for customers by orchestrating the OpenAI, Eleven Labs, and Stable Diffusion APIs. I have built FastAPI services that expose machine\u2011learning models and package them in Docker for reliable HTTP endpoints [ai-cs-12]. In a recent project I delivered a CV\u2011matching service that embeds documents, ranks candidates with cosine similarity, and returns the top matching sentences through a FastAPI API, all containerized for easy scaling [ai-cs-05]. I also created an email\u2011triage prototype that classifies tenant emails and drafts replies using language\u2011model calls, demonstrating integration of LLM APIs into a web service workflow [ai-cs-15]. My five\u2011year background as a machine\u2011learning engineer focuses on moving models from notebooks to production [ai_ml_engineer-cv-summary]. I work with Python, FastAPI, Docker, MLflow, and Hugging Face transformers to build robust services [ai_ml_engineer-cv-skills]. I would welcome a call to confirm how my experience aligns with your long\u2011term goals and to discuss the architecture in detail.",
+     "verification_failed": false,
+     "before": {
+      "supported": 4,
+      "partly_supported": 1,
+      "unsupported": 0
+     },
+     "after": {
+      "supported": 4,
+      "partly_supported": 1,
+      "unsupported": 0
+     },
+     "judge_score": 4,
+     "seconds": 42.984,
+     "input_tokens": 4213,
+     "output_tokens": 4259,
+     "usd": null,
+     "bid": {
+      "type": "hourly",
+      "amount_usd": 45.0
+     },
+     "outcome": "ignored"
+    },
+    {
+     "variant": "v1",
+     "persona": "ai_ml_engineer",
+     "job_id": "job-00680",
+     "evidence_ids": [
+      "ai_ml_engineer-repo-model-serving-template-readme-md",
+      "ai_ml_engineer-cv-skills",
+      "ai-cs-15",
+      "ai-cs-12",
+      "ai-cs-03",
+      "ai_ml_engineer-cv-experience"
+     ],
+     "draft": "You need a reliable backend that exposes your OpenAI\u2011based model through clean HTTP endpoints and can be hooked up to Zapier so the app can launch immediately. I have built FastAPI services packaged in Docker containers and wired them to the MLflow model registry, exactly the pattern you need for turning a model into a production API\u202f[ai-cs-12]. My freelance work includes wrapping a churn\u2011scoring model and a demand\u2011forecast model into FastAPI services with Docker and MLflow, so I know how to move from prototype to deployable backend quickly\u202f[ai_ml_engineer-cv-experience]. I am comfortable with Python, FastAPI, Docker, PostgreSQL and AWS, and I have used these tools to deliver end\u2011to\u2011end ML prototypes, including an email\u2011triage agent that called OpenAI APIs and external services\u202f[ai_ml_engineer-cv-skills][ai-cs-15]. I can set up the required REST endpoints that Zapier can invoke and integrate the OpenAI configuration you already tested\u202f[ai_ml_engineer-cv-skills]. Let\u2019s discuss any specific integration details on a call.",
+     "final": "You need a reliable backend that exposes your OpenAI\u2011based model through clean HTTP endpoints and can be hooked up to Zapier so the app can launch immediately. I have built FastAPI services packaged in Docker containers and wired them to the MLflow model registry, exactly the pattern you need for turning a model into a production API\u202f[ai-cs-12]. My freelance work includes wrapping a churn\u2011scoring model and a demand\u2011forecast model into FastAPI services with Docker and MLflow, so I know how to move from prototype to deployable backend quickly\u202f[ai_ml_engineer-cv-experience]. I am comfortable with Python, FastAPI, Docker, PostgreSQL and AWS, and I have used these tools to deliver end\u2011to\u2011end ML prototypes, including an email\u2011triage agent that called OpenAI APIs and external services\u202f[ai_ml_engineer-cv-skills][ai-cs-15]. Let\u2019s discuss any specific integration details on a call.",
+     "verification_failed": false,
+     "before": {
+      "supported": 2,
+      "partly_supported": 1,
+      "unsupported": 1
+     },
+     "after": {
+      "supported": 2,
+      "partly_supported": 1,
+      "unsupported": 0
+     },
+     "judge_score": 4,
+     "seconds": 39.719,
+     "input_tokens": 4714,
+     "output_tokens": 3227,
+     "usd": null,
+     "bid": {
+      "type": "hourly",
+      "amount_usd": 45.0
+     },
+     "outcome": "hired"
+    },
+    {
+     "variant": "v1",
+     "persona": "data_analyst",
+     "job_id": "job-00104",
+     "evidence_ids": [
+      "data-cs-09",
+      "data-cs-07",
+      "data-cs-12",
+      "data-cs-05",
+      "data-cs-01",
+      "data_analyst-cv-experience"
+     ],
+     "draft": "I understand you need a reliable project and operations manager to keep your content pipelines moving on schedule and ensure flawless delivery.\n\nIn my recent work I built an automated monthly KPI pack that reduced a two\u2011day manual process to a single scheduled run, demonstrating my ability to streamline reporting and keep stakeholders informed on time [data-cs-12].\n\nI also created a Google\u202fSheets\u2011based stock ordering system that consolidates inputs from multiple sites and emails suppliers automatically, showing my skill in designing spreadsheet\u2011driven workflows that cut manual effort and prevent errors [data-cs-05].\n\nFor a SaaS client I integrated Stripe data into BigQuery and delivered a Looker\u202fStudio dashboard that tracks MRR, churn and cohort retention, first agreeing metric definitions in writing to ensure alignment\u2014an example of my focus on clear requirements and accurate tracking [data-cs-09].\n\nMy freelance data\u2011analysis experience includes building a Power\u202fBI sales dashboard with row\u2011level security so each user sees only their relevant data, reflecting my capability to set up secure, role\u2011based reporting structures [data-cs-01].\n\nI routinely use Google\u202fSuite, Excel and Apps Script to create and maintain dynamic spreadsheets, a core part of the workflow you described [data-cs-05].\n\nI\u2019d be happy to discuss how these experiences can support your team on a call.",
+     "final": "I understand you need a reliable project and operations manager to keep your content pipelines moving on schedule and ensure flawless delivery.\n\nIn my recent work I built an automated monthly KPI pack that reduced a two\u2011day manual process to a single scheduled run, demonstrating my ability to streamline reporting and keep stakeholders informed on time [data-cs-12].\n\nI also created a Google\u202fSheets\u2011based stock ordering system that consolidates inputs from multiple sites and emails suppliers automatically, showing my skill in designing spreadsheet\u2011driven workflows that cut manual effort and prevent errors [data-cs-05].\n\nFor a SaaS client I integrated Stripe data into BigQuery and delivered a Looker\u202fStudio dashboard that tracks MRR, churn and cohort retention, first agreeing metric definitions in writing to ensure alignment\u2014an example of my focus on clear requirements and accurate tracking [data-cs-09].\n\nMy freelance data\u2011analysis experience includes building a Power\u202fBI sales dashboard with row\u2011level security so each user sees only their relevant data, reflecting my capability to set up secure, role\u2011based reporting structures [data-cs-01].\n\nI routinely use Google\u202fSuite, Excel and Apps Script to create and maintain dynamic spreadsheets, a core part of the workflow you described [data-cs-05].\n\nI\u2019d be happy to discuss how these experiences can support your team on a call.",
+     "verification_failed": false,
+     "before": {
+      "supported": 5,
+      "partly_supported": 0,
+      "unsupported": 0
+     },
+     "after": {
+      "supported": 5,
+      "partly_supported": 0,
+      "unsupported": 0
+     },
+     "judge_score": 3,
+     "seconds": 61.134,
+     "input_tokens": 5746,
+     "output_tokens": 3863,
+     "usd": null,
+     "bid": {
+      "type": "hourly",
+      "amount_usd": 28.0
+     },
+     "outcome": "ignored"
+    },
+    {
+     "variant": "v1",
+     "persona": "data_analyst",
+     "job_id": "job-00189",
+     "evidence_ids": [
+      "data_analyst-repo-survey-weighting-readme-md",
+      "data-cs-09",
+      "data-cs-07",
+      "data-cs-03",
+      "data-cs-06",
+      "data-cs-08"
+     ],
+     "draft": "I see you need a reliable script that captures URL parameters, calls a third\u2011party API, updates Decipher survey variables, and safeguards proprietary data.\n\nI have built a Python\u2011based weighting routine that ingests raw survey responses, aligns them to demographic margins, and outputs calibrated results for accurate reporting\u202f[data-cs-06].\n\nI also designed an end\u2011to\u2011end pipeline that pulls data from a third\u2011party service (Stripe) via its API, loads it into BigQuery, and feeds a live dashboard for real\u2011time insight\u202f[data-cs-09].\n\nIn a separate engagement I wrote a suite of SQL views that transform e\u2011commerce tables into clean, analysis\u2011ready datasets for a BI tool, documenting every column to ensure transparency\u202f[data-cs-03].\n\nMy work is fully documented and version\u2011controlled, helping keep sensitive logic out of client\u2011side code\u202f[data-cs-03].\n\nI\u2019d be happy to discuss how these skills map to your Decipher integration on a call.",
+     "final": "I see you need a reliable script that captures URL parameters, calls a third\u2011party API, updates Decipher survey variables, and safeguards proprietary data.\n\nI have built a Python\u2011based weighting routine that ingests raw survey responses, aligns them to demographic margins, and outputs calibrated results for accurate reporting\u202f[data-cs-06].\n\nI also designed an end\u2011to\u2011end pipeline that pulls data from a third\u2011party service (Stripe) via its API, loads it into BigQuery, and feeds a live dashboard for real\u2011time insight\u202f[data-cs-09].\n\nIn a separate engagement I wrote a suite of SQL views that transform e\u2011commerce tables into clean, analysis\u2011ready datasets for a BI tool, documenting every column to ensure transparency\u202f[data-cs-03].\n\nMy work is fully documented and version\u2011controlled, helping keep sensitive logic out of client\u2011side code\u202f[data-cs-03].\n\nI\u2019d be happy to discuss how these skills map to your Decipher integration on a call.",
+     "verification_failed": false,
+     "before": {
+      "supported": 3,
+      "partly_supported": 1,
+      "unsupported": 0
+     },
+     "after": {
+      "supported": 3,
+      "partly_supported": 1,
+      "unsupported": 0
+     },
+     "judge_score": 1,
+     "seconds": 41.928,
+     "input_tokens": 4141,
+     "output_tokens": 3548,
+     "usd": null,
+     "bid": {
+      "type": "hourly",
+      "amount_usd": 28.0
+     },
+     "outcome": "ignored"
+    },
+    {
+     "variant": "v1",
+     "persona": "data_analyst",
+     "job_id": "job-00617",
+     "evidence_ids": [
+      "data-cs-15",
+      "data_analyst-cv-experience",
+      "data-rev-08",
+      "data-cs-13",
+      "data-cs-06",
+      "data-cs-09"
+     ],
+     "draft": "I see you need expert help turning your collected survey data into actionable market segments through factor and cluster analysis. I have performed large\u2011scale survey weighting and produced statistically sound charts for an NGO, ensuring results matched population margins [data-cs-06]. My freelance work also includes building sales dashboards and reporting views for a drinks distributor and an online shop, demonstrating strong data\u2011pipeline and visualization skills [data_analyst-cv-experience]. In a capstone project I analyzed bike\u2011share usage with R and Tableau, applying exploratory data analysis and statistical modeling [data-cs-13]. I have applied linear regression to real\u2011estate pricing data, interpreting coefficients and validating model assumptions [data-cs-15]. Clients have praised my ability to define metrics clearly and deliver actionable dashboards, as reflected in a 4.9/5 review [data-rev-08]. I would be happy to confirm the specific factor\u2011analysis and clustering methods that best fit your dataset during a quick call. Looking forward to discussing how I can help you extract clear buyer segments from your data.",
+     "final": "I see you need expert help turning your collected survey data into actionable market segments through factor and cluster analysis. I have performed large\u2011scale survey weighting and produced statistically sound charts for an NGO, ensuring results matched population margins [data-cs-06]. My freelance work also includes building sales dashboards and reporting views for a drinks distributor and an online shop, demonstrating strong data\u2011pipeline and visualization skills [data_analyst-cv-experience]. In a capstone project I analyzed bike\u2011share usage with R and Tableau, applying exploratory data analysis and statistical modeling [data-cs-13]. I have applied linear regression to real\u2011estate pricing data, interpreting coefficients and validating model assumptions [data-cs-15]. Clients have praised my ability to define metrics clearly and deliver actionable dashboards, as reflected in a 4.9/5 review [data-rev-08]. I would be happy to confirm the specific factor\u2011analysis and clustering methods that best fit your dataset during a quick call. Looking forward to discussing how I can help you extract clear buyer segments from your data.",
+     "verification_failed": false,
+     "before": {
+      "supported": 9,
+      "partly_supported": 3,
+      "unsupported": 0
+     },
+     "after": {
+      "supported": 9,
+      "partly_supported": 3,
+      "unsupported": 0
+     },
+     "judge_score": 3,
+     "seconds": 43.98,
+     "input_tokens": 3677,
+     "output_tokens": 5309,
+     "usd": null,
+     "bid": {
+      "type": "hourly",
+      "amount_usd": 28.0
+     },
+     "outcome": "hired"
+    },
+    {
+     "variant": "v1",
+     "persona": "fullstack_dev",
+     "job_id": "job-00025",
+     "evidence_ids": [
+      "fullstack_dev-cv-stack",
+      "fullstack_dev-cv-experience",
+      "fullstack_dev-repo-studio-booking-readme-md",
+      "web-cs-03",
+      "fullstack_dev-repo-studio-booking-cancelbooking-ts",
+      "fullstack_dev-repo-next-saas-starter-readme-md"
+     ],
+     "draft": "You need immediate enhancements to your WordPress theme, including WooCommerce template updates, unique prefixes, sanitization and secure AJAX. I have rebuilt a law\u2011firm WordPress site, migrating custom theme code and ensuring compatibility with modern WordPress standards\u202f[fullstack_dev-cv-experience]. My background includes PHP, Laravel and older WordPress work, giving me solid familiarity with $wpdb and the WordPress coding practices\u202f[fullstack_dev-cv-stack]. I will update the WooCommerce templates, apply a unique prefix to all functions, classes and hooks, replace underscores with hyphens in handlers, strip unused code, prepare $wpdb queries safely, sanitize $_POST/$_GET data and add nonces to every AJAX request\u202f[fullstack_dev-cv-experience]. Let me know if you prefer a fixed quotation after I review the theme files or an hourly arrangement; I can start right away.",
+     "final": "You need immediate enhancements to your WordPress theme, including WooCommerce template updates, unique prefixes, sanitization and secure AJAX. I have rebuilt a law\u2011firm WordPress site, migrating custom theme code and ensuring compatibility with modern WordPress standards\u202f[fullstack_dev-cv-experience]. My background includes PHP, Laravel and older WordPress work, giving me solid familiarity with $wpdb and the WordPress coding practices\u202f[fullstack_dev-cv-stack]. I will update the WooCommerce templates, apply a unique prefix to all functions, classes and hooks, replace underscores with hyphens in handlers, strip unused code, prepare $wpdb queries safely, sanitize $_POST/$_GET data and add nonces to every AJAX request\u202f[fullstack_dev-cv-experience]. Let me know if you prefer a fixed quotation after I review the theme files or an hourly arrangement; I can start right away.",
+     "verification_failed": false,
+     "before": {
+      "supported": 0,
+      "partly_supported": 2,
+      "unsupported": 0
+     },
+     "after": {
+      "supported": 0,
+      "partly_supported": 2,
+      "unsupported": 0
+     },
+     "judge_score": 3,
+     "seconds": 74.896,
+     "input_tokens": 5393,
+     "output_tokens": 3701,
+     "usd": null,
+     "bid": {
+      "type": "hourly",
+      "amount_usd": 32.0
+     },
+     "outcome": "replied"
+    },
+    {
+     "variant": "v1",
+     "persona": "fullstack_dev",
+     "job_id": "job-00420",
+     "evidence_ids": [
+      "fullstack_dev-cv-experience",
+      "fullstack_dev-repo-next-saas-starter-readme-md",
+      "web-cs-13",
+      "web-cs-03",
+      "web-cs-10",
+      "web-cs-06"
+     ],
+     "draft": "You need a live\u2011sports and casino platform that reliably enforces super\u2011admin, admin, master, agent and user permissions while staying stable under load. I have built a property\u2011management dashboard used by ~40 landlords, which required granular role controls and secure session handling [fullstack_dev-cv-experience]. My reusable \u201cnext\u2011saas\u2011starter\u201d kit includes authentication with sessions, team accounts and query scoping by team\u202fID, a solid foundation for multi\u2011level role\u2011based access control [fullstack_dev-repo-next-saas-starter-readme-md]. I delivered online booking and payment systems for a yoga studio and live order tracking for a food\u2011delivery startup, both of which demanded robust user management and real\u2011time data handling [fullstack_dev-cv-experience]. I also set up CI/CD pipelines and hosting for every client site at Agencia Norte, ensuring repeatable deployments and easy maintenance [fullstack_dev-cv-experience]. My experience with a MERN to\u2011do app shows comfort with MongoDB, Express and JavaScript stacks you listed [web-cs-13]. I have integrated Node services with external APIs and built retry mechanisms for reliability, as seen in the Xero invoicing sync project [web-cs-10]. I would be happy to confirm how these skills map to your specific requirements on a call.",
+     "final": "You need a live\u2011sports and casino platform that reliably enforces super\u2011admin, admin, master, agent and user permissions while staying stable under load. My reusable \u201cnext\u2011saas\u2011starter\u201d kit includes authentication with sessions, team accounts and query scoping by team\u202fID, a solid foundation for multi\u2011level role\u2011based access control [fullstack_dev-repo-next-saas-starter-readme-md]. I also set up CI/CD pipelines and hosting for every client site at Agencia Norte, ensuring repeatable deployments and easy maintenance [fullstack_dev-cv-experience]. My experience with a MERN to\u2011do app shows comfort with MongoDB, Express and JavaScript stacks you listed [web-cs-13]. I have integrated Node services with external APIs and built retry mechanisms for reliability, as seen in the Xero invoicing sync project [web-cs-10]. I would be happy to confirm how these skills map to your specific requirements on a call.",
+     "verification_failed": false,
+     "before": {
+      "supported": 12,
+      "partly_supported": 2,
+      "unsupported": 2
+     },
+     "after": {
+      "supported": 12,
+      "partly_supported": 2,
+      "unsupported": 0
+     },
+     "judge_score": 3,
+     "seconds": 61.315,
+     "input_tokens": 4624,
+     "output_tokens": 6158,
+     "usd": null,
+     "bid": {
+      "type": "fixed",
+      "amount_usd": 1000.0
+     },
+     "outcome": "interview"
+    },
+    {
+     "variant": "v1",
+     "persona": "fullstack_dev",
+     "job_id": "job-00486",
+     "evidence_ids": [
+      "web-cs-06",
+      "web-cs-03",
+      "fullstack_dev-repo-studio-booking-readme-md",
+      "fullstack_dev-cv-experience",
+      "web-cs-12",
+      "web-cs-07"
+     ],
+     "draft": "You need a clean, professional logo that captures the identity of your medical scrubs brand.\n\nI have helped brands translate their visual concepts into digital assets, such as the headless storefront I built for an independent fashion label, where the brand\u2019s look and feel were central to the project [web-cs-03].\n\nMy freelance work spans multiple client projects, including e\u2011commerce and branding\u2011related sites, demonstrating a track record of delivering on brand\u2011focused requirements [fullstack_dev-cv-experience].\n\nI would be happy to discuss your vision and confirm how my experience aligns with your needs on a call.",
+     "final": "You need a clean, professional logo that captures the identity of your medical scrubs brand.\n\nMy freelance work spans multiple client projects, including e\u2011commerce and branding\u2011related sites, demonstrating a track record of delivering on brand\u2011focused requirements [fullstack_dev-cv-experience].\n\nI would be happy to discuss your vision and confirm how my experience aligns with your needs on a call.",
+     "verification_failed": false,
+     "before": {
+      "supported": 3,
+      "partly_supported": 3,
+      "unsupported": 1
+     },
+     "after": {
+      "supported": 2,
+      "partly_supported": 0,
+      "unsupported": 2
+     },
+     "judge_score": 2,
+     "seconds": 61.821,
+     "input_tokens": 3985,
+     "output_tokens": 3506,
+     "usd": null,
+     "bid": {
+      "type": "hourly",
+      "amount_usd": 32.0
+     },
+     "outcome": "replied"
+    }
+   ]
+  }
+ }
+}

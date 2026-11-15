@@ -19,5 +19,6 @@ def chat_model(node: str, config: dict | None = None, **overrides: object) -> Ch
     provider = providers[profile["provider"]]
     settings = {"model": profile["nodes"][node], "base_url": provider["base_url"],
                 "api_key": os.environ[provider["api_key_env"]],
-                "timeout": providers["timeout_s"], "max_retries": providers["max_retries"]}
+                "timeout": providers["timeout_s"], "max_retries": providers["max_retries"],
+                "max_tokens": providers["max_tokens"]}
     return ChatOpenAI(**settings | overrides)

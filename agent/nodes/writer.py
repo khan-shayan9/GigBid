@@ -57,7 +57,12 @@ def keep_grounded(letter: str, known_ids: set[str]) -> tuple[str, list[str]]:
 
 async def draft_proposal(job: dict[str, Any], mcp: McpClient,
                          model: BaseChatModel) -> tuple[ProposalDraft, list[dict[str, Any]]]:
-    evidence = await gather_evidence(job, mcp)
+    return await write_letter(job, await gather_evidence(job, mcp), model)
+
+
+async def write_letter(job: dict[str, Any], evidence: dict[str, dict[str, Any]],
+                       model: BaseChatModel) -> tuple[ProposalDraft, list[dict[str, Any]]]:
+    """Draft from evidence already gathered (by id); evaluation runs pass each variant's."""
     listing = "\n\n".join(f"[{item['id']}] ({item['type']}) {item['title']}\n"
                           f"{item['text'][:EVIDENCE_CHARS]}" for item in evidence.values())
     # Strip the closing tag so the post cannot break out of its delimiters.

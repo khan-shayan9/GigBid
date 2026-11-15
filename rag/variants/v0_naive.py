@@ -1,18 +1,12 @@
-"""V0: the mandatory baseline, dense top-k cosine retrieval with no rewriting or reranking."""
+"""V0: the mandatory baseline, dense top-k cosine over fixed chunks, no rewriting or reranking."""
 
-import numpy as np
+from collections.abc import Collection
 
-from rag.index.memory import MemoryIndex
-from rag.ingest.portfolio import EvidenceItem, EvidenceType, Outcome
+from rag.index.corpus import Corpus
 
 
-def retrieve(query: str, index: MemoryIndex, k: int = 5,
-             types: list[EvidenceType] | None = None,
-             outcomes: list[Outcome] | None = None) -> list[tuple[EvidenceItem, float]]:
-    """The k items most similar to the query, best first, after the metadata filters."""
-    scores = index.vectors @ index.embedder.embed_query(query)  # unit vectors: dot = cosine
-    allowed = [position for position, item in enumerate(index.items)
-               if (not types or item.type in types)
-               and (not outcomes or item.outcome in outcomes)]
-    best = sorted(allowed, key=lambda position: -scores[position])[:k]
-    return [(index.items[position], float(np.round(scores[position], 4))) for position in best]
+def dense(corpus: Corpus, query: str, chunk_ids: Collection[str],
+          depth: int) -> list[tuple[str, float]]:
+    """The `depth` chunks most similar to the query, best first, as (chunk id, cosine)."""
+    vector = corpus.index.embedder.embed_query(query)
+    return corpus.index.search(corpus.persona, vector, depth, chunk_ids)

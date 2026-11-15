@@ -14,6 +14,7 @@ from pydantic import AnyUrl
 from mcp_servers.portfolio.server import create_server, embeddings_config
 from mcp_servers.portfolio.store import PortfolioSettings
 from rag.index.embedder import FakeEmbedder, make_embedder
+from rag.variants.v3_rerank import FakeReranker
 
 CLINIC_BOT = "chatbot that answers patient questions from the clinic's leaflets"
 
@@ -21,7 +22,7 @@ CLINIC_BOT = "chatbot that answers patient questions from the clinic's leaflets"
 @asynccontextmanager
 async def open_session(user: str | None, embedder: Any = None) -> AsyncIterator[ClientSession]:
     settings = PortfolioSettings(stdio_user=user, cache_dir=None)
-    server = create_server(settings, embedder or FakeEmbedder())
+    server = create_server(settings, embedder or FakeEmbedder(), FakeReranker())
     async with create_connected_server_and_client_session(server) as session:
         yield session
 

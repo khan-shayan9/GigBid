@@ -102,6 +102,14 @@ Per persona: every stream job in the persona's domain plus 30 off-domain jobs. E
 - Fair price band: hourly jobs use the domain's p25 to p75 contract rate; fixed jobs use 0.8 to
   1.1 x the budget, or the domain's p25 to p75 historical budget when there is none.
 
+### Evidence metadata (Phase 4, B1)
+`rag/ingest/portfolio.py` tags every evidence item with persona, type, project, skills, date,
+client industry and, for past proposals, outcome. `project` is the case study id for case studies
+and their reviews, the repo folder for repo files, and the job id for past proposals. Repos carry
+no link to a case study, so retrieval scoring counts a repo as its own project, never as gold.
+`skills` lists only CV skills named word for word in the text; the case studies mostly imply
+their skills (by design), so many items have none.
+
 ## 6. Splits and anti-circularity
 
 - Splits are by group: a duplicate stays with its original, and each scam or injection family

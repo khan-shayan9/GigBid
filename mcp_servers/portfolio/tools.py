@@ -10,7 +10,6 @@ from pydantic import BaseModel, Field
 
 from mcp_servers.portfolio.store import PortfolioStore
 from rag.ingest.portfolio import EvidenceItem, EvidenceType, Outcome, cv_skills
-from rag.variants import v0_naive
 
 MAX_TEXT_CHARS = 2000  # keeps one search result within a node's token budget
 READ = ToolAnnotations(readOnlyHint=True, openWorldHint=False)
@@ -27,7 +26,9 @@ class EvidenceFilters(BaseModel):
 
 
 class EvidenceHit(EvidenceItem):
-    score: float = Field(description="Cosine similarity to the requirement")
+    score: float = Field(description="Relevance to the requirement under the active retrieval "
+                                     "variant; higher is better (cosine, fused rank or "
+                                     "reranker score)")
 
 
 class EvidenceResults(BaseModel):
@@ -48,9 +49,11 @@ def register_tools(mcp: FastMCP, store: PortfolioStore) -> None:
     ) -> EvidenceResults:
         """Find portfolio evidence for one job requirement, best match first. Cite `id`."""
         filters = filters or EvidenceFilters()
-        index = await store.index()
-        hits = await asyncio.to_thread(v0_naive.retrieve, requirement, index, k,
-                                       filters.types, filters.outcomes)
+        corpus = await store.corpus()
+        hits = await asyncio.to_thread(
+            store.retriever.search, corpus, requirement, k,
+            lambda item: item.type in filters.types
+            and (not filters.outcomes or item.outcome in filters.outcomes))
         return EvidenceResults(items=[
             EvidenceHit(**item.model_dump() | {"text": item.text[:MAX_TEXT_CHARS]}, score=score)
             for item, score in hits])

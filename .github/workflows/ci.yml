@@ -4,6 +4,19 @@ on: [push, pull_request]
 jobs:
   checks:
     runs-on: ubuntu-latest
+    services:
+      postgres:  # pgvector index tests (tests/integration/test_pgvector.py)
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: gigbid
+          POSTGRES_PASSWORD: gigbid
+          POSTGRES_DB: gigbid
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U gigbid -d gigbid" --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://gigbid:gigbid@localhost:5432/gigbid
     steps:
       - uses: actions/checkout@v4
         with:

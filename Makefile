@@ -1,4 +1,4 @@
-.PHONY: install dev api gigsim mcp-marketplace mcp-portfolio mcp-workspace draft-one test lint eval seed demo
+.PHONY: eval-rag eval-table install dev api gigsim mcp-marketplace mcp-portfolio mcp-workspace draft-one test lint eval seed demo
 
 install:
 	uv sync --frozen
@@ -32,6 +32,17 @@ lint:
 
 eval:
 	uv run python -m evals.runners.run_demo_eval
+
+# Part B: every retrieval variant, the ablation, proposal quality and outcomes, then the table.
+# Model replies and reranker scores are cached in data/processed/eval_cache/, so a rerun is cheap.
+eval-rag:
+	uv run python -m evals.runners.rag_eval --per-persona 20
+	uv run python -m evals.runners.ablation --per-persona 20 --pipeline v1_v2_v3
+	uv run python -m evals.runners.proposal_eval --per-persona 3
+	uv run python -m evals.runners.results_table
+
+eval-table:
+	uv run python -m evals.runners.results_table
 
 seed:
 	uv run python -m data.pipeline.build_seed
