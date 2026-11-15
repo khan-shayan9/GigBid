@@ -24,7 +24,8 @@ class GigBidState(TypedDict, total=False):
     # C4/C7 (agent/graphs/guard.py): counted per node; `status` is dead_letter or needs_attention.
     steps: Annotated[int, operator.add]
     tokens_used: Annotated[int, operator.add]
-    status: str
+    # Two parallel nodes may both fail in one step; keep the latest status instead of erroring.
+    status: Annotated[str, lambda old, new: new or old]
 
 
 class ConversationState(TypedDict, total=False):

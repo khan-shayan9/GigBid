@@ -42,6 +42,7 @@ models:
         judge: *open_alt
       # C7: cheap nodes switch to another model on the same provider (its own quota) when theirs
       # still fails after the client's retries (agent/llm.py).
+      # shortcut: same provider, so a Groq outage is not covered; add an OpenRouter node map then.
       fallbacks: &cheap_fallbacks
         scout: *open_alt
         analyst: *open_alt

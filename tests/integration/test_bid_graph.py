@@ -135,13 +135,13 @@ async def test_a_tool_that_stays_down_dead_letters_the_thread(budgets: Any) -> N
 
 async def test_a_transient_failure_recovers_on_the_normal_path(budgets: Any) -> None:
     _, _, _, result = await arun(JOB, [GOOD, "[]"], mcp=FakeMcp(failures=1))
-    assert "status" not in result and "__interrupt__" in result
+    assert not result.get("status") and "__interrupt__" in result
 
 
 async def test_a_model_that_is_down_falls_back() -> None:
     model = with_fallback(DownModel(responses=[]), FakeListChatModel(responses=[GOOD, "[]"]))
     _, _, _, result = await arun(JOB, [], model=model)
-    assert "status" not in result and "__interrupt__" in result
+    assert not result.get("status") and "__interrupt__" in result
 
 
 async def arun(job: dict, replies: list[str], thread: str = "t1", mcp: FakeMcp | None = None,
@@ -150,3 +150,12 @@ async def arun(job: dict, replies: list[str], thread: str = "t1", mcp: FakeMcp |
     config = {"configurable": {"mcp": mcp, "model": model or FakeListChatModel(responses=replies),
                                "thread_id": thread}}
     return graph, config, mcp, await graph.ainvoke({"job": job}, config)
+
+
+async def test_two_parallel_failures_dead_letter_without_crashing(budgets: Any) -> None:
+    class AllDown(FakeMcp):
+        async def call(self, node: str, tool: str, args: dict[str, Any]) -> dict[str, Any]:
+            raise ToolUnavailable(f"{tool} down")
+    budgets(node_retries=0)
+    _, _, _, result = await arun(JOB, [], mcp=AllDown())
+    assert result["status"] == "dead_letter" and len(result["errors"]) == 1  # risk degrades
