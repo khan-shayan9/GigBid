@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 
@@ -26,3 +28,24 @@ class ProposalDraft(BaseModel):
     screening_answers: list[str] = Field(default_factory=list)
     evidence_ids: list[str] = Field(default_factory=list)
     status: str = "pending_review"
+
+
+class BidDecision(BaseModel):
+    decision: Literal["bid", "watch", "skip"]
+    reasons: list[str] = Field(default_factory=list)
+
+
+class PriceQuote(BaseModel):
+    bid_type: Literal["fixed", "hourly"]
+    amount_usd: float = Field(gt=0)
+    rationale: str
+
+
+class Critique(BaseModel):
+    passed: bool
+    reasons: list[str] = Field(default_factory=list)
+
+
+class ComplianceVerdict(BaseModel):
+    allowed: bool
+    violations: list[str] = Field(default_factory=list)

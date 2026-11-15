@@ -100,6 +100,27 @@ budgets:
   max_revisions: 2
   max_tokens_per_job: 12000
 
+policy:
+  version: v1  # data/policy_pack/<version>.yaml; the change request switches this to v2
+
+risk:
+  # Risk Assessor signals: written for the agent, independent of data/pipeline's label rules.
+  unverified_client_weight: 0.3
+  signals:
+    - {id: injected_instructions, weight: 0.8, pattern: 'ignore (all |any )?(previous|prior|your|the above) (instructions|rules)|system prompt|you are now'}
+    - {id: account_access, weight: 0.8, pattern: '(send|share|give) (us |me )?your (password|login|credentials)|log ?in to (our|my) (client''s )?accounts?'}
+    - {id: off_platform, weight: 0.6, pattern: 'whatsapp|telegram|skype|outside (the|this) platform|off[- ]platform'}
+    - {id: upfront_payment, weight: 0.6, pattern: '(pay|send|deposit)\b.{0,40}\b(fee|deposit|upfront|crypto|wallet)'}
+    - {id: free_work, weight: 0.4, pattern: '(unpaid|free) (test|trial|sample)'}
+
+liaison:
+  # Client Liaison intent rules, checked in order; the first match wins, else "question".
+  intents:
+    - {id: scam_signal, pattern: 'whatsapp|telegram|outside (the|this) platform|gift card|wire (the )?money|your password'}
+    - {id: interview_request, pattern: 'interview|call|meet|schedule|availability|available'}
+    - {id: negotiation, pattern: 'budget|price|rate|cheaper|discount|lower'}
+  slot_window_days: 7
+
 thresholds:
   minimum_fit_score: 0.60
   maximum_risk_score: 0.70

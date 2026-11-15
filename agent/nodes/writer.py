@@ -55,19 +55,21 @@ def keep_grounded(letter: str, known_ids: set[str]) -> tuple[str, list[str]]:
     return "\n\n".join(part for part in kept if part), list(dict.fromkeys(cited))
 
 
-async def draft_proposal(job: dict[str, Any], mcp: McpClient,
-                         model: BaseChatModel) -> tuple[ProposalDraft, list[dict[str, Any]]]:
-    return await write_letter(job, await gather_evidence(job, mcp), model)
+async def draft_proposal(job: dict[str, Any], mcp: McpClient, model: BaseChatModel,
+                         feedback: str = "") -> tuple[ProposalDraft, list[dict[str, Any]]]:
+    return await write_letter(job, await gather_evidence(job, mcp), model, feedback)
 
 
 async def write_letter(job: dict[str, Any], evidence: dict[str, dict[str, Any]],
-                       model: BaseChatModel) -> tuple[ProposalDraft, list[dict[str, Any]]]:
+                       model: BaseChatModel,
+                       feedback: str = "") -> tuple[ProposalDraft, list[dict[str, Any]]]:
     """Draft from evidence already gathered (by id); evaluation runs pass each variant's."""
     listing = "\n\n".join(f"[{item['id']}] ({item['type']}) {item['title']}\n"
                           f"{item['text'][:EVIDENCE_CHARS]}" for item in evidence.values())
     # Strip the closing tag so the post cannot break out of its delimiters.
     post = f"{job['title']}\n\n{job['description']}".replace("</job_post>", "")
-    prompt = load_prompt(NODE).format(max_words=MAX_WORDS, job_post=post, evidence=listing)
+    prompt = load_prompt(NODE).format(max_words=MAX_WORDS, job_post=post, evidence=listing,
+                                     feedback=feedback or "(none)")
     reply = await model.ainvoke([HumanMessage(prompt)])
     letter, cited = keep_grounded(str(reply.content), set(evidence))
     draft = ProposalDraft(job_id=job["job_id"], cover_letter=letter, evidence_ids=cited)
@@ -77,5 +79,7 @@ async def write_letter(job: dict[str, Any], evidence: dict[str, dict[str, Any]],
 async def writer(state: GigBidState, config: RunnableConfig) -> GigBidState:
     """Graph node. `config["configurable"]` carries the run's `mcp` client and `model`."""
     options = config["configurable"]
-    draft, evidence = await draft_proposal(state["job"], options["mcp"], options["model"])
+    feedback = "\n".join(state.get("critique", {}).get("reasons", []))
+    draft, evidence = await draft_proposal(state["job"], options["mcp"], options["model"],
+                                           feedback)
     return {"proposal_draft": draft.model_dump(), "evidence": evidence}

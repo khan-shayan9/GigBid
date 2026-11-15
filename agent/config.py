@@ -19,3 +19,10 @@ def load_prompt(node: str) -> str:
     if text.startswith("---\n"):
         text = text.split("\n---\n", 1)[1]
     return text.lstrip()
+
+
+def load_policy(version: str | None = None) -> dict:
+    """The active marketplace policy (data/policy_pack/<version>.yaml): data, not code."""
+    version = version or load_config()["policy"]["version"]
+    path = AGENT_DIR.parent / "data" / "policy_pack" / f"{version}.yaml"
+    return yaml.safe_load(path.read_text(encoding="utf-8"))

@@ -63,11 +63,13 @@ def export() -> None:
         for number, row in enumerate(rows, start=1):
             item_id = f"cal-{number:02d}"
             items.write(json.dumps({
-                "item_id": item_id, "job_id": row["job_id"], "persona": row["persona"],
+                "item_id": item_id, "source": "synthetic", "job_id": row["job_id"],
+                "persona": row["persona"],
                 "job_post": job_post(all_jobs[row["job_id"]]), "letter": row["final"],
                 "evidence": [evidence[row["persona"]][id_] for id_ in row["evidence_ids"]]})
                 + "\n")
-            key.write(json.dumps({"item_id": item_id, "variant": row["variant"],
+            key.write(json.dumps({"item_id": item_id, "source": "synthetic",
+                                  "variant": row["variant"],
                                   "judge_score": row["judge_score"]}) + "\n")
     with LABELS.open("w", newline="", encoding="utf-8") as labels:
         writer = csv.writer(labels)

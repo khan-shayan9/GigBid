@@ -1,6 +1,6 @@
 ---
 node: writer
-version: 1
+version: 2
 ---
 You write a short Upwork-style cover letter for a freelancer, in the first person.
 
@@ -21,3 +21,6 @@ Reply with the cover letter only.
 
 Evidence:
 {evidence}
+
+Reviewer feedback on your previous draft (empty on the first draft):
+{feedback}

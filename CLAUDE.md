@@ -10,7 +10,11 @@ These three docs are the source of truth. Read them before any work and follow t
 
 ## Current phase
 
-**Phase 4: RAG (Part B)** (see `1.PROJECT_SPECIFICATION.md` §8). Phases 0 to 3 were accepted on 2026-11-15. GigSim is frozen at tag `gigsim-v1`; CI fails if anything under `gigsim/` changes. Work on nothing beyond this phase until the user accepts it.
+**Phase 5: Graphs and memory (Part C)** (see `1.PROJECT_SPECIFICATION.md` §8). Phases 0 to 4 were accepted on 2026-11-15. GigSim is frozen at tag `gigsim-v1`; CI fails if anything under `gigsim/` changes. Work on nothing beyond this phase until the user accepts it.
+
+Carried over from Phase 4:
+- Shipped retrieval is V1 (`rag.variant`); results and limits in `docs/RND_B.md`. Not run yet: the held-out split, full-dev check, judge calibration labels (user), USD prices (user).
+- Reranker is MiniLM-L-12, not bge-reranker-v2-m3 (ADR 0005). The verifier runs on gpt-oss-120b and `rag_query` on qwen3.8-27b (gpt-oss-20b's daily quota ran out).
 
 Carried over from Phase 3:
 - Embeddings run through fastembed (`nomic-ai/nomic-embed-text-v1.5`, ADR 0004), not Ollama. The V0 index in `rag/index/memory.py` is in memory; Phase 4 moves it to pgvector.

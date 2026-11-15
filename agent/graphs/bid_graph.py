@@ -1,9 +1,72 @@
-# TODO: Build a hand-written LangGraph StateGraph.
-# Required design: parallel Job Analyst, Risk Assessor and Fit Matcher branches;
-# decision routing; pricing; writer; claim verification; Critic (maximum two revisions);
-# Compliance Guard; interrupt-based human approval before any external write.
-#
-# Do not replace the required graph with a linear chain labelled "multi-agent".
+"""The bid graph (C1): one thread per job. Wiring only; the logic lives in agent/nodes/.
 
-def build_bid_graph():
-    raise NotImplementedError("Implement the bid graph as specified in the assignment.")
+START -> (Job Analyst | Risk Assessor | Fit Matcher, in parallel) -> decision
+  skip -> END
+  bid  -> pricing -> writer -> verifier -> critic
+            critic fails and revisions < budgets.max_revisions -> writer (with the reasons)
+          -> compliance  (blocked -> END, reason in state)
+          -> approval (interrupt) -> approved -> submit -> END; rejected -> END
+
+`config["configurable"]` carries `mcp` (agent/mcp_client.py), `model` and `thread_id`.
+Compile with a checkpointer so an interrupted thread survives a restart.
+"""
+
+from typing import Any
+
+from langgraph.graph import END, START, StateGraph
+
+from agent.config import load_config
+from agent.nodes.analyst import analyst
+from agent.nodes.compliance import compliance
+from agent.nodes.critic import critic
+from agent.nodes.decision import decision
+from agent.nodes.fit_matcher import fit_matcher
+from agent.nodes.pricing import pricing
+from agent.nodes.risk_assessor import risk_assessor
+from agent.nodes.submitter import approval, submit
+from agent.nodes.verifier import verifier
+from agent.nodes.writer import writer
+from agent.state import GigBidState
+
+PARALLEL = ["analyst", "risk_assessor", "fit_matcher"]
+
+
+def _after_decision(state: GigBidState) -> str:
+    return "pricing" if state["decision"]["decision"] == "bid" else END
+
+
+def _after_critic(state: GigBidState) -> str:
+    max_revisions = load_config()["budgets"]["max_revisions"]
+    if state["critique"]["passed"] or state.get("revisions", 0) > max_revisions:
+        return "compliance"
+    return "writer"
+
+
+def _after_compliance(state: GigBidState) -> str:
+    return "approval" if state["compliance_verdict"]["allowed"] else END
+
+
+def _after_approval(state: GigBidState) -> str:
+    return "submit" if state.get("approval_status") == "approved" else END
+
+
+def build_bid_graph(checkpointer: Any = None) -> Any:
+    graph = StateGraph(GigBidState)
+    for name, node in [("analyst", analyst), ("risk_assessor", risk_assessor),
+                       ("fit_matcher", fit_matcher), ("decision", decision),
+                       ("pricing", pricing), ("writer", writer), ("verifier", verifier),
+                       ("critic", critic), ("compliance", compliance),
+                       ("approval", approval), ("submit", submit)]:
+        graph.add_node(name, node)
+    for name in PARALLEL:
+        graph.add_edge(START, name)
+    graph.add_edge(PARALLEL, "decision")  # waits for all three branches
+    graph.add_conditional_edges("decision", _after_decision, ["pricing", END])
+    graph.add_edge("pricing", "writer")
+    graph.add_edge("writer", "verifier")
+    graph.add_edge("verifier", "critic")
+    graph.add_conditional_edges("critic", _after_critic, ["writer", "compliance"])
+    graph.add_conditional_edges("compliance", _after_compliance, ["approval", END])
+    graph.add_conditional_edges("approval", _after_approval, ["submit", END])
+    graph.add_edge("submit", END)
+    return graph.compile(checkpointer=checkpointer)
