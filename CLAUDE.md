@@ -6,7 +6,6 @@ These three docs are the source of truth. Read them before any work and follow t
 
 @1.PROJECT_SPECIFICATION.md
 @2.ARCHITECTURE.md
-@3.AI_RULES.md
 
 ## Current phase
 
