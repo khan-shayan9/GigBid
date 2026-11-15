@@ -167,3 +167,11 @@ mcp:
     client_liaison: [list_messages, find_free_slots, hold_slot, draft_email, send_message]
     submitter: [create_proposal_draft, submit_proposal]
     github_ingest: [search_repositories, get_file_contents, list_commits]  # B1, Phase 4
+
+memory:
+  # Promotion rules (agent/memory/promotion_rules.py, R7).
+  min_repeated_edits: 3        # same edit pattern this many times before it becomes a style
+  min_edit_ratio: 0.10         # smaller edits (typo fixes) are not style signals
+  length_change_ratio: 0.15    # length change that counts as "shorten" or "lengthen"
+  max_example_chars: 300
+  outcome_events: [replied, interview, hired, lost]  # GigSim proposal events kept as outcomes
