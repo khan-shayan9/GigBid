@@ -40,6 +40,16 @@ models:
         rag_query: &open_alt qwen/qwen3.8-27b  # V1 requirement split and V8 query rewrite
         # Evaluation only: a different model family from the writer, to limit self-preference.
         judge: *open_alt
+      # C7: cheap nodes switch to another model on the same provider (its own quota) when theirs
+      # still fails after the client's retries (agent/llm.py).
+      # shortcut: same provider, so a Groq outage is not covered; add an OpenRouter node map then.
+      fallbacks: &cheap_fallbacks
+        scout: *open_alt
+        analyst: *open_alt
+        risk_assessor: *open_alt
+        fit_matcher: *open_alt
+        pricing: *open_alt
+        compliance: *open_alt
     # paid: optional; used only where it beats `open` enough to justify the cost.
     paid:
       provider: configure-me
@@ -57,6 +67,7 @@ models:
         critic: *paid_strong
         client_liaison: *paid_strong
         judge: *open_alt
+      fallbacks: *cheap_fallbacks
   # Open models in both profiles.
   # fastembed runs nomic-embed-text on CPU in-process (no Ollama). `fake` is for tests only.
   # The quantized nomic-ai/nomic-embed-text-v1.5-Q is smaller if memory is short.
@@ -96,9 +107,13 @@ rag:
     v1_v2_v3: {decompose: true, hybrid: true, rerank: true}
 
 budgets:
+  # Over a budget the thread stops with status needs_attention (agent/graphs/guard.py).
   max_graph_steps: 30
   max_revisions: 2
   max_tokens_per_job: 12000
+  # A node whose dependency is down (incl. GigSim 429/5xx) is retried, then dead-lettered.
+  node_retries: 2
+  node_backoff_s: 2.0
 
 policy:
   version: v2  # data/policy_pack/<version>.yaml; v2 is the 2 Nov 2026 policy update (assumed)

@@ -2,15 +2,19 @@
 
 import os
 
+from langchain_core.language_models import BaseChatModel
+from langchain_core.runnables import Runnable
 from langchain_openai import ChatOpenAI
 
 from agent.config import load_config
 
 
-def chat_model(node: str, config: dict | None = None, **overrides: object) -> ChatOpenAI:
+def chat_model(node: str, config: dict | None = None, **overrides: object) -> Runnable:
     """The node's model on its profile's provider (Groq and OpenRouter are OpenAI-compatible).
 
-    `overrides` (e.g. `model`, `max_retries`) are for evaluation runs only.
+    The client retries with backoff (`max_retries`); cheap nodes listed under the profile's
+    `fallbacks` then switch model (C7). `overrides` (e.g. `model`) are for evaluation runs only
+    and get no fallback, so measurements stay on the model asked for.
     """
     config = config or load_config()
     models = config["models"]
@@ -21,4 +25,12 @@ def chat_model(node: str, config: dict | None = None, **overrides: object) -> Ch
                 "api_key": os.environ[provider["api_key_env"]],
                 "timeout": providers["timeout_s"], "max_retries": providers["max_retries"],
                 "max_tokens": providers["max_tokens"]}
-    return ChatOpenAI(**settings | overrides)
+    model = ChatOpenAI(**settings | overrides)
+    fallback = profile.get("fallbacks", {}).get(node)
+    if overrides or not fallback:
+        return model
+    return with_fallback(model, ChatOpenAI(**settings | {"model": fallback}))
+
+
+def with_fallback(primary: BaseChatModel, fallback: BaseChatModel) -> Runnable:
+    return primary.with_fallbacks([fallback])
