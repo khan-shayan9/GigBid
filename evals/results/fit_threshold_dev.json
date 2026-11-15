@@ -1,0 +1,68 @@
+{
+  "split": "dev",
+  "jobs_sampled": 80,
+  "seed": 1,
+  "minimum_fit_score": 0.6,
+  "thresholds": {
+    "0.55": {
+      "bid": {
+        "jobs": 23,
+        "mean_fit": 0.957,
+        "share_reaching_minimum_fit": 1.0
+      },
+      "skip": {
+        "jobs": 57,
+        "mean_fit": 0.947,
+        "share_reaching_minimum_fit": 1.0
+      }
+    },
+    "0.6": {
+      "bid": {
+        "jobs": 23,
+        "mean_fit": 0.851,
+        "share_reaching_minimum_fit": 0.87
+      },
+      "skip": {
+        "jobs": 57,
+        "mean_fit": 0.818,
+        "share_reaching_minimum_fit": 0.86
+      }
+    },
+    "0.65": {
+      "bid": {
+        "jobs": 23,
+        "mean_fit": 0.684,
+        "share_reaching_minimum_fit": 0.783
+      },
+      "skip": {
+        "jobs": 57,
+        "mean_fit": 0.563,
+        "share_reaching_minimum_fit": 0.456
+      }
+    },
+    "0.7": {
+      "bid": {
+        "jobs": 23,
+        "mean_fit": 0.405,
+        "share_reaching_minimum_fit": 0.348
+      },
+      "skip": {
+        "jobs": 57,
+        "mean_fit": 0.322,
+        "share_reaching_minimum_fit": 0.193
+      }
+    },
+    "0.75": {
+      "bid": {
+        "jobs": 23,
+        "mean_fit": 0.112,
+        "share_reaching_minimum_fit": 0.0
+      },
+      "skip": {
+        "jobs": 57,
+        "mean_fit": 0.068,
+        "share_reaching_minimum_fit": 0.0
+      }
+    }
+  }
+}

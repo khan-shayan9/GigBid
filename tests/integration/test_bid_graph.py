@@ -38,7 +38,7 @@ class FakeMcp:
             raise ToolUnavailable("rate_limited: retry later")
         if tool == "search_evidence":
             return {"items": [{"id": "ai-cs-01", "type": "case_study", "title": "MedAssist",
-                               "text": "Clinic leaflet bot."}]}
+                               "text": "Clinic leaflet bot.", "score": 0.9}]}
         if tool == "get_client_history":
             return {"client_id": "client-1", "payment_verified": True, "total_spent_usd": 900}
         if tool == "create_proposal_draft":

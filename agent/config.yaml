@@ -122,7 +122,8 @@ risk:
   # Risk Assessor signals: written for the agent, independent of data/pipeline's label rules.
   unverified_client_weight: 0.3
   signals:
-    - {id: injected_instructions, weight: 0.8, pattern: 'ignore (all |any )?(previous|prior|your|the above) (instructions|rules)|system prompt|you are now'}
+    - {id: injected_instructions, weight: 0.8, pattern: 'ignore (all |any )?(previous|prior|your|the above) (instructions|rules)|system prompt|you are now|(instructions?|requirements?) for (ai|llm|bots?|ai[- ]written)|ai[- ](written|generated) (proposals?|applications?|bids?)|if you are an? (ai|bot|language model)'}
+    - {id: fake_cheque, weight: 0.8, pattern: '(send|mail|post) you a (cheque|check)|keep the (rest|remainder|difference|balance)|over-?pa(y|id)'}
     - {id: account_access, weight: 0.8, pattern: '(send|share|give) (us |me )?your (password|login|credentials)|log ?in to (our|my) (client''s )?accounts?'}
     - {id: off_platform, weight: 0.6, pattern: 'whatsapp|telegram|skype|outside (the|this) platform|off[- ]platform'}
     - {id: upfront_payment, weight: 0.6, pattern: '(pay|send|deposit)\b.{0,40}\b(fee|deposit|upfront|crypto|wallet)'}
@@ -138,6 +139,9 @@ liaison:
 
 thresholds:
   minimum_fit_score: 0.60
+  # A requirement counts as covered when its best evidence scores at least this (cosine, nomic
+  # embeddings, rag variant v1). Chosen on 80 dev jobs (evals/results/fit_threshold_dev.json).
+  minimum_evidence_score: 0.65
   maximum_risk_score: 0.70
 
 # OpenAI-compatible endpoints for the providers named in the model profiles.

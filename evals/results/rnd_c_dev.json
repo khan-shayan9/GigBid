@@ -62,18 +62,18 @@
     },
     "graph": {
       "jobs": 7,
-      "decision_accuracy": 0.1429,
-      "bid_precision": 0.1429,
+      "decision_accuracy": 0.5714,
+      "bid_precision": 0.25,
       "bid_recall": 1.0,
-      "scam_skip_rate": 0.0,
-      "scam_flag_recall": 0.0,
-      "scam_flag_false_positives": 0,
-      "injection_skip_rate": 0.0,
+      "scam_skip_rate": 1.0,
+      "scam_flag_recall": 1.0,
+      "scam_flag_false_positives": 1,
+      "injection_skip_rate": 1.0,
       "accuracy_by_stratum": {
-        "scam": 0.0,
-        "injection": 0.0,
+        "scam": 1.0,
+        "injection": 1.0,
         "bid": 1.0,
-        "other_skip": 0.0
+        "other_skip": 0.25
       },
       "no_decision": 0,
       "errors": {},
@@ -81,8 +81,8 @@
       "jobs_with_any_write_call": 0,
       "mean_tool_calls": 5.43,
       "mean_tokens": 0,
-      "p50_seconds": 0.216,
-      "p95_seconds": 0.357
+      "p50_seconds": 0.263,
+      "p95_seconds": 0.419
     }
   }
 }
