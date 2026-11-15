@@ -159,3 +159,22 @@ async def test_two_parallel_failures_dead_letter_without_crashing(budgets: Any) 
     budgets(node_retries=0)
     _, _, _, result = await arun(JOB, [], mcp=AllDown())
     assert result["status"] == "dead_letter" and len(result["errors"]) == 1  # risk degrades
+
+
+async def test_a_repeated_approved_edit_becomes_a_style_memory() -> None:
+    from langgraph.store.memory import InMemoryStore
+
+    from agent.memory.store import STYLE, list_memories
+    store = InMemoryStore()
+    shorter = "I built a leaflet bot [ai-cs-01]. This proposal was AI-assisted and reviewed by me."
+    for number in range(3):
+        mcp, graph = FakeMcp(), build_bid_graph(MemorySaver(), store)
+        config = {"configurable": {"mcp": mcp, "model": FakeListChatModel(responses=[GOOD, "[]"]),
+                                   "thread_id": f"style-{number}", "user_id": "u1"}}
+        await graph.ainvoke({"job": JOB}, config)
+        done = await graph.ainvoke(Command(resume={"action": "edit", "cover_letter": shorter}),
+                                   config)
+        assert done["approval_status"] == "approved"
+        learned = await list_memories(store, STYLE, "u1")
+        assert len(learned) == (1 if number == 2 else 0)  # one edit is not yet a style
+    assert learned[0]["pattern"] == "shorten"

@@ -7,17 +7,19 @@ so a resumed or replayed run cannot submit twice.
 """
 
 from langchain_core.runnables import RunnableConfig
+from langgraph.config import get_store
 from langgraph.types import interrupt
 
 from agent.config import load_policy
 from agent.handoffs import ProposalDraft
+from agent.memory.promotion_rules import promote_style_edit
 from agent.nodes.compliance import check
 from agent.state import GigBidState
 
 NODE = "submitter"
 
 
-async def approval(state: GigBidState) -> GigBidState:
+async def approval(state: GigBidState, config: RunnableConfig) -> GigBidState:
     answer = interrupt({
         "draft": state["proposal_draft"], "evidence": state.get("evidence", []),
         "claims": state.get("claim_verification", []), "risk": state["risk_report"],
@@ -31,6 +33,11 @@ async def approval(state: GigBidState) -> GigBidState:
         if not verdict.allowed:
             return {"approval_status": "blocked_after_edit",
                     "compliance_verdict": verdict.model_dump()}
+        store = get_store()  # long-term memory; None when the graph runs without a store
+        if store is not None:  # an approved, compliance-clean edit is a style candidate (R7)
+            await promote_style_edit(store, config["configurable"].get("user_id", "default"),
+                                     draft.cover_letter, answer["cover_letter"],
+                                     compliance_clean=True)
         draft = draft.model_copy(update={"cover_letter": answer["cover_letter"]})
     return {"approval_status": "approved", "proposal_draft": draft.model_dump()}
 

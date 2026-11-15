@@ -11,7 +11,8 @@ Every node runs through agent/graphs/guard.py: retries, dead-letter and the step
 budgets (C4, C7); a thread that stops early has `status` and the reason in `errors`.
 
 `config["configurable"]` carries `mcp` (agent/mcp_client.py), `model` and `thread_id`.
-Compile with a checkpointer so an interrupted thread survives a restart.
+Compile with a checkpointer so an interrupted thread survives a restart, and with a store
+so approved edits reach long-term memory through agent/memory/promotion_rules.py.
 """
 
 from typing import Any
@@ -54,7 +55,7 @@ def _after_approval(state: GigBidState) -> str:
     return "submit" if state.get("approval_status") == "approved" else END
 
 
-def build_bid_graph(checkpointer: Any = None) -> Any:
+def build_bid_graph(checkpointer: Any = None, store: Any = None) -> Any:
     graph = StateGraph(GigBidState)
     for name, node in [("analyst", analyst), ("risk_assessor", risk_assessor),
                        ("fit_matcher", fit_matcher), ("decision", decision),
@@ -72,4 +73,4 @@ def build_bid_graph(checkpointer: Any = None) -> Any:
     graph.add_conditional_edges("compliance", halts(_after_compliance), ["approval", END])
     graph.add_conditional_edges("approval", halts(_after_approval), ["submit", END])
     graph.add_edge("submit", END)
-    return graph.compile(checkpointer=checkpointer)
+    return graph.compile(checkpointer=checkpointer, store=store)
