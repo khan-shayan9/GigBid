@@ -33,7 +33,10 @@ def _after_check(state: ConversationState) -> str:
 
 
 def _after_approval(state: ConversationState) -> str:
-    return "send_reply" if state.get("approval_status") == "approved" else END
+    status = state.get("approval_status")
+    if status == "blocked_after_edit":  # back to the user with the reason, to fix and approve
+        return "approve_reply"
+    return "send_reply" if status == "approved" else END
 
 
 def build_conversation_graph(checkpointer: Any = None) -> Any:
@@ -48,6 +51,7 @@ def build_conversation_graph(checkpointer: Any = None) -> Any:
     graph.add_edge("offer_slots", "draft_reply")
     graph.add_edge("draft_reply", "check_reply")
     graph.add_conditional_edges("check_reply", _after_check, ["approve_reply", END])
-    graph.add_conditional_edges("approve_reply", _after_approval, ["send_reply", END])
+    graph.add_conditional_edges("approve_reply", _after_approval,
+                                ["approve_reply", "send_reply", END])
     graph.add_edge("send_reply", END)
     return graph.compile(checkpointer=checkpointer)

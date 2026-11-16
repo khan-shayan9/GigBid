@@ -66,8 +66,11 @@ async def approve_reply(state: ConversationState) -> ConversationState:
         if not verdict.allowed:
             return {"approval_status": "blocked_after_edit",
                     "compliance_verdict": verdict.model_dump()}
-        return {"approval_status": "approved", "reply": answer["reply"]}
-    return {"approval_status": "approved"}
+        return {"approval_status": "approved", "reply": answer["reply"],
+                "compliance_verdict": verdict.model_dump()}
+    # the sent text's verdict, not a blocked edit's from an earlier round
+    return {"approval_status": "approved",
+            "compliance_verdict": check(state["reply"], load_policy(), "message").model_dump()}
 
 
 async def send_reply(state: ConversationState, config: RunnableConfig) -> ConversationState:

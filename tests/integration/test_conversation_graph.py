@@ -48,3 +48,13 @@ async def test_a_reply_with_contact_details_is_blocked() -> None:
     _, _, _mcp, result = await start("What is your rate?", "Email me at me@example.com")
     assert result["intent"] == "negotiation" and not result["compliance_verdict"]["allowed"]
     assert "__interrupt__" not in result
+
+
+async def test_a_blocked_edit_goes_back_for_approval() -> None:
+    graph, config, mcp, _ = await start("What is your rate?", "My rate is $40 an hour.")
+    blocked = await graph.ainvoke(Command(resume={"action": "edit",
+                                                  "reply": "Email me at me@example.com"}), config)
+    assert blocked["approval_status"] == "blocked_after_edit" and "__interrupt__" in blocked
+    assert not [call for call in mcp.calls if call[1] == "send_message"]
+    done = await graph.ainvoke(Command(resume={"action": "approve"}), config)
+    assert done["sent"] and done["compliance_verdict"]["allowed"]

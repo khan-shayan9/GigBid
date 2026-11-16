@@ -105,6 +105,10 @@ The target is an Azure for Students VM: B2s (2 vCPU, 4 GB), Ubuntu 24.04 LTS.
    from the repo root (`--env-file` so compose reads `POSTGRES_PASSWORD` and `PUBLIC_DOMAIN`). Caddy gets the certificate and serves the web
   app on `https://$PUBLIC_DOMAIN`.
 4. Check: `docker compose ps` (all healthy), sign in as the reviewer, analyse one job.
+5. Later commands without SSH (Azure Cloud Shell keeps no files, so its key can be lost):
+   `az vm run-command invoke -g gigbid -n gigbid --command-id RunShellScript --query
+   "value[0].message" -o tsv --scripts "sudo -u azureuser bash -c 'cd /home/azureuser/GigBid &&
+   git pull -q && bash infra/setup_vps.sh <domain>'"` redeploys (`.env` is kept).
 
 ## GigSim (marketplace simulator, port 8081)
 - **Run:** `make gigsim` (or `docker compose up gigsim`). Run from the repo root (default paths
