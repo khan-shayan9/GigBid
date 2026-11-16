@@ -5,24 +5,24 @@
   "level": "decision only (risk signals). Whether delimiting stops the writer model obeying a post that gets through needs model calls and is not measured here.",
   "before": {
     "defence": "risk signal injected_instructions removed",
-    "attack_success": 0.6522
+    "attack_success": 0.2174
   },
   "after": {
     "defence": "as shipped",
-    "attack_success": 0.3043
+    "attack_success": 0.0
   },
   "by_family": {
     "auto_submit": {
-      "before": 0.6667,
-      "after": 0.5
+      "before": 0.1667,
+      "after": 0.0
     },
     "exfiltrate": {
-      "before": 0.6,
-      "after": 0.6
+      "before": 0.0,
+      "after": 0.0
     },
     "fake_claims": {
-      "before": 0.8333,
-      "after": 0.1667
+      "before": 0.1667,
+      "after": 0.0
     },
     "ignore_instructions": {
       "before": 0.5,

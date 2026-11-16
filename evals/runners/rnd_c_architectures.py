@@ -43,7 +43,11 @@ from evals.runners.common import (
     labels,
     percentile,
 )
+from mcp_servers.portfolio.tools import EvidenceFilters
 from rag.retriever import Retriever
+
+# the Portfolio server's default search: past proposals are opt-in (mcp_servers/portfolio/tools.py)
+DEFAULT_TYPES = EvidenceFilters().types
 
 ARCHITECTURES = ("react", "supervisor", "graph")
 MODEL_NODE = "critic"  # gpt-oss-20b (the triage nodes' model) had no daily quota left; see docs
@@ -102,7 +106,8 @@ class Backend:
                 else {"error": "client_not_found"}
         if name == "search_evidence":
             hits = self.retriever.search(self.corpora[self.persona], args["requirement"],
-                                         args.get("k", EVIDENCE_K), lambda item: True)
+                                         args.get("k", EVIDENCE_K),
+                                         lambda item: item.type in DEFAULT_TYPES)
             return {"items": [{"id": item.id, "title": item.title, "type": item.type,
                                "text": item.text[:EVIDENCE_CHARS], "score": score}
                               for item, score in hits]}
