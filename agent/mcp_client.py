@@ -56,7 +56,9 @@ def connections_for(user: str, config: dict) -> dict[str, Connection]:
         if config["transport"] == "stdio":
             connections[name] = {"transport": "stdio", "command": sys.executable,
                                  "args": ["-m", server["module"]], "cwd": str(REPO_ROOT),
-                                 "env": {f"{prefix}_STDIO_USER": user}}
+                                 # the SDK starts stdio servers with a bare env; in a container
+                                 # their settings (GigSim tokens and URL) come only from ours
+                                 "env": {**os.environ, f"{prefix}_STDIO_USER": user}}
             continue
         tokens = parse_tokens(os.environ.get(f"{prefix}_MCP_TOKENS", ""), f"{prefix}_MCP_TOKENS")
         token = next((token for token, owner in tokens.items() if owner == user), None)

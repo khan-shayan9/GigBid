@@ -79,3 +79,12 @@ async def test_a_server_that_dies_mid_run_degrades() -> None:
         await mcp._sessions["workspace"]._write_stream.aclose()  # the transport is gone
         with pytest.raises(ToolUnavailable):
             await mcp.call("client_liaison", "find_free_slots", WINDOW)
+
+
+def test_stdio_servers_get_the_parent_environment(monkeypatch: pytest.MonkeyPatch) -> None:
+    """In compose the settings are env vars, not a .env file the server could read."""
+    monkeypatch.setenv("GIGSIM_TOKENS", "ai_ml_engineer=t1")
+    config = load_config()["mcp"] | {"transport": "stdio"}
+    env = mcp_client.connections_for("ai_ml_engineer", config)["marketplace"]["env"]
+    assert env["GIGSIM_TOKENS"] == "ai_ml_engineer=t1"
+    assert env["MARKETPLACE_STDIO_USER"] == "ai_ml_engineer"
