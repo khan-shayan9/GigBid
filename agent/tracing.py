@@ -43,7 +43,9 @@ def _mask(*, data: Any, **_: Any) -> Any:
 def _client() -> Any:
     from langfuse import Langfuse
     return Langfuse(mask=_mask, environment=os.environ.get("APP_ENV", "development"),
-                    timeout=HTTP_TIMEOUT_S)
+                    timeout=HTTP_TIMEOUT_S,
+                    # FastAPI traces every request itself (a health check each 10 s); keep runs only
+                    blocked_instrumentation_scopes=["fastapi"])
 
 
 def callbacks(thread_id: str) -> list[Any]:
