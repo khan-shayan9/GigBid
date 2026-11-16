@@ -11,7 +11,7 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage
 from langchain_core.runnables import RunnableConfig
 
-from agent.config import load_prompt
+from agent.config import load_policy, load_prompt
 from agent.handoffs import ProposalDraft
 from agent.mcp_client import McpClient
 from agent.state import GigBidState
@@ -72,12 +72,22 @@ def _post(job: dict[str, Any]) -> str:
 
 async def rewrite_paragraph(job: dict[str, Any], evidence: dict[str, dict[str, Any]],
                             paragraph: str, model: BaseChatModel) -> str:
-    """Proposal studio's "regenerate": one paragraph, grounded in the draft's evidence."""
+    """Proposal studio's "regenerate": one paragraph, grounded in the draft's evidence.
+
+    Lines carrying a phrase the policy requires (the AI-assistance disclosure) are kept as they
+    are: the model is not asked to rewrite them, so it cannot drop them."""
+    required = [phrase.lower() for rule in load_policy().get("required", [])
+                if "proposal" in rule["applies_to"] for phrase in rule["any_of"]]
+    lines = paragraph.splitlines()
+    kept = [line for line in lines if any(phrase in line.lower() for phrase in required)]
+    body = "\n".join(line for line in lines if line not in kept)
+    if not body.strip():
+        return paragraph
     prompt = load_prompt("writer_paragraph").format(job_post=_post(job),
                                                     evidence=_listing(evidence),
-                                                    paragraph=paragraph)
+                                                    paragraph=body)
     reply = await model.ainvoke([HumanMessage(prompt)])
-    return keep_grounded(str(reply.content), set(evidence))[0]
+    return "\n".join([keep_grounded(str(reply.content), set(evidence))[0], *kept])
 
 
 async def write_letter(job: dict[str, Any], evidence: dict[str, dict[str, Any]],
