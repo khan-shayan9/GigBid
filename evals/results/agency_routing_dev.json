@@ -1,0 +1,1941 @@
+{
+  "split": "dev",
+  "members": [
+    "ai_ml_engineer",
+    "fullstack_dev",
+    "data_analyst"
+  ],
+  "rag_variant": "v1",
+  "router": {
+    "n": 170,
+    "accuracy": 0.847
+  },
+  "jobs_tied_at_top": 28,
+  "router_on_ties": {
+    "n": 28,
+    "accuracy": 0.714
+  },
+  "contrast_jobs": {
+    "n": 11,
+    "accuracy": 0.909
+  },
+  "baselines": {
+    "random_expected": 0.333,
+    "always_ai_ml_engineer": {
+      "n": 170,
+      "accuracy": 0.329
+    },
+    "always_fullstack_dev": {
+      "n": 170,
+      "accuracy": 0.341
+    },
+    "always_data_analyst": {
+      "n": 170,
+      "accuracy": 0.329
+    }
+  },
+  "by_gold_persona": {
+    "ai_ml_engineer": {
+      "n": 56,
+      "accuracy": 0.804
+    },
+    "fullstack_dev": {
+      "n": 58,
+      "accuracy": 0.948
+    },
+    "data_analyst": {
+      "n": 56,
+      "accuracy": 0.786
+    }
+  },
+  "decisions": {
+    "single_persona_pairs": {
+      "n": 565,
+      "gold_bids": 170,
+      "predicted_bids": 150,
+      "precision": 0.427,
+      "recall": 0.376,
+      "f1": 0.4
+    },
+    "agency_jobs": {
+      "n": 522,
+      "gold_bids": 170,
+      "predicted_bids": 164,
+      "precision": 0.415,
+      "recall": 0.4,
+      "f1": 0.407
+    }
+  },
+  "results": [
+    {
+      "job_id": "job-00011",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.25,
+        "fullstack_dev": 0.75,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00012",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.333,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00013",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.833,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00014",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.333,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00018",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00021",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00024",
+      "gold": "ai_ml_engineer",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.333,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.5
+      }
+    },
+    {
+      "job_id": "job-00025",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.8,
+        "data_analyst": 0.2
+      }
+    },
+    {
+      "job_id": "job-00028",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.25,
+        "fullstack_dev": 1.0,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00044",
+      "gold": "fullstack_dev",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.25
+      }
+    },
+    {
+      "job_id": "job-00049",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.8,
+        "data_analyst": 0.4
+      }
+    },
+    {
+      "job_id": "job-00052",
+      "gold": "ai_ml_engineer",
+      "routed": "fullstack_dev",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00064",
+      "gold": "ai_ml_engineer",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.333,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.833
+      }
+    },
+    {
+      "job_id": "job-00068",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.667,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00070",
+      "gold": "data_analyst",
+      "routed": "fullstack_dev",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.5,
+        "fullstack_dev": 0.5,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00074",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.5,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00082",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.667,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00092",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.333,
+        "data_analyst": 0.667
+      }
+    },
+    {
+      "job_id": "job-00098",
+      "gold": "data_analyst",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.333,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00100",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.667,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00102",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.667,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.833
+      }
+    },
+    {
+      "job_id": "job-00104",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00105",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.333,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00106",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.667,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00108",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00113",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.75,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00115",
+      "gold": "ai_ml_engineer",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.5,
+        "fullstack_dev": 0.25,
+        "data_analyst": 1.0
+      }
+    },
+    {
+      "job_id": "job-00119",
+      "gold": "ai_ml_engineer",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.5,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.667
+      }
+    },
+    {
+      "job_id": "job-00121",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.333,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00124",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.667,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00129",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.6,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.2
+      }
+    },
+    {
+      "job_id": "job-00130",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.5,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00136",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00140",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.5
+      }
+    },
+    {
+      "job_id": "job-00157",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.5,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00161",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00167",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.833
+      }
+    },
+    {
+      "job_id": "job-00173",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.333,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00188",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00189",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00193",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.25
+      }
+    },
+    {
+      "job_id": "job-00194",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00195",
+      "gold": "ai_ml_engineer",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.25
+      }
+    },
+    {
+      "job_id": "job-00204",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.4,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.8
+      }
+    },
+    {
+      "job_id": "job-00215",
+      "gold": "data_analyst",
+      "routed": "fullstack_dev",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.25,
+        "data_analyst": 0.25
+      }
+    },
+    {
+      "job_id": "job-00218",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 1.0,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00225",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.4,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00227",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00233",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.75,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00239",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.2
+      }
+    },
+    {
+      "job_id": "job-00267",
+      "gold": "fullstack_dev",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.5
+      }
+    },
+    {
+      "job_id": "job-00273",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.5,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00275",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.5
+      }
+    },
+    {
+      "job_id": "job-00279",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.667
+      }
+    },
+    {
+      "job_id": "job-00283",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.6,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00290",
+      "gold": "ai_ml_engineer",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 1.0,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00294",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.667,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00304",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.667,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00308",
+      "gold": "ai_ml_engineer",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00309",
+      "gold": "ai_ml_engineer",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.2,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.4
+      }
+    },
+    {
+      "job_id": "job-00310",
+      "gold": "data_analyst",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00314",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.5,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00319",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.667,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00326",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.25,
+        "fullstack_dev": 0.75,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00327",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.5,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00328",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.833,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00329",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.5,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00331",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.667
+      }
+    },
+    {
+      "job_id": "job-00332",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.667
+      }
+    },
+    {
+      "job_id": "job-00333",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00344",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.2,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.6
+      }
+    },
+    {
+      "job_id": "job-00348",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.4,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.4
+      }
+    },
+    {
+      "job_id": "job-00358",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00360",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.333,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00361",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.5
+      }
+    },
+    {
+      "job_id": "job-00365",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00366",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.25
+      }
+    },
+    {
+      "job_id": "job-00371",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.6,
+        "fullstack_dev": 0.4,
+        "data_analyst": 0.2
+      }
+    },
+    {
+      "job_id": "job-00374",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.667,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00380",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.5,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00384",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.333,
+        "fullstack_dev": 0.333,
+        "data_analyst": 0.5
+      }
+    },
+    {
+      "job_id": "job-00395",
+      "gold": "data_analyst",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.5,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00396",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.25,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00403",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.333,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.833
+      }
+    },
+    {
+      "job_id": "job-00404",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.333,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.5
+      }
+    },
+    {
+      "job_id": "job-00405",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.5,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00406",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00412",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.333,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00417",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.5,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00420",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.833,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00421",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.8,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00427",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00439",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.667,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00448",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.2,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00449",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00450",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.75,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.25
+      }
+    },
+    {
+      "job_id": "job-00455",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.333,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00457",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00459",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.5,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00461",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.5,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.5
+      }
+    },
+    {
+      "job_id": "job-00465",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.667,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00485",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.333,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.667
+      }
+    },
+    {
+      "job_id": "job-00486",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00489",
+      "gold": "fullstack_dev",
+      "routed": "data_analyst",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.5,
+        "data_analyst": 0.5
+      }
+    },
+    {
+      "job_id": "job-00493",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.333,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00505",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00509",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.6,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.4
+      }
+    },
+    {
+      "job_id": "job-00510",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.6,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.2
+      }
+    },
+    {
+      "job_id": "job-00513",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 1.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.25
+      }
+    },
+    {
+      "job_id": "job-00518",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.6,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00520",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.25,
+        "fullstack_dev": 0.75,
+        "data_analyst": 0.25
+      }
+    },
+    {
+      "job_id": "job-00529",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.2,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.6
+      }
+    },
+    {
+      "job_id": "job-00531",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.4,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00532",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00533",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.333,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00537",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.333,
+        "fullstack_dev": 0.333,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00542",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.333,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00553",
+      "gold": "data_analyst",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.333,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00557",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.333,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00558",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.667
+      }
+    },
+    {
+      "job_id": "job-00565",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00570",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.333,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00573",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.667,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00574",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00587",
+      "gold": "data_analyst",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00591",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.333,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00593",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.75,
+        "data_analyst": 0.25
+      }
+    },
+    {
+      "job_id": "job-00595",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.667,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00598",
+      "gold": "data_analyst",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.5,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00601",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.2,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00605",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00606",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00614",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.333,
+        "fullstack_dev": 0.333,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00616",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00617",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 1.0
+      }
+    },
+    {
+      "job_id": "job-00631",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.667,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00633",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.667,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00634",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.667,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00635",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.667,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00640",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.4,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00642",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.667,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.333
+      }
+    },
+    {
+      "job_id": "job-00644",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.333,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.667
+      }
+    },
+    {
+      "job_id": "job-00648",
+      "gold": "ai_ml_engineer",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.5,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00658",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.5
+      }
+    },
+    {
+      "job_id": "job-00659",
+      "gold": "data_analyst",
+      "routed": "fullstack_dev",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00663",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.667,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00664",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.833
+      }
+    },
+    {
+      "job_id": "job-00668",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.5,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00670",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00675",
+      "gold": "data_analyst",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.5,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00680",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 1.0,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00687",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.333,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00693",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.5,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00694",
+      "gold": "ai_ml_engineer",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.25,
+        "fullstack_dev": 0.5,
+        "data_analyst": 0.25
+      }
+    },
+    {
+      "job_id": "job-00695",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.2,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.2
+      }
+    },
+    {
+      "job_id": "job-00696",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.833
+      }
+    },
+    {
+      "job_id": "job-00701",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.667,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00703",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.5,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00720",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.5
+      }
+    },
+    {
+      "job_id": "job-00726",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.25,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00733",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.8,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.2
+      }
+    },
+    {
+      "job_id": "job-00736",
+      "gold": "data_analyst",
+      "routed": "data_analyst",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00739",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00748",
+      "gold": "data_analyst",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": true,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00751",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.167,
+        "fullstack_dev": 0.667,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00752",
+      "gold": "data_analyst",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.333,
+        "fullstack_dev": 0.167,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00758",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.667,
+        "data_analyst": 0.167
+      }
+    },
+    {
+      "job_id": "job-00769",
+      "gold": "fullstack_dev",
+      "routed": "fullstack_dev",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.0,
+        "fullstack_dev": 0.667,
+        "data_analyst": 0.0
+      }
+    },
+    {
+      "job_id": "job-00771",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.8,
+        "fullstack_dev": 0.4,
+        "data_analyst": 0.4
+      }
+    },
+    {
+      "job_id": "job-00778",
+      "gold": "ai_ml_engineer",
+      "routed": "ai_ml_engineer",
+      "tied_at_top": false,
+      "fit_scores": {
+        "ai_ml_engineer": 0.333,
+        "fullstack_dev": 0.0,
+        "data_analyst": 0.0
+      }
+    }
+  ]
+}

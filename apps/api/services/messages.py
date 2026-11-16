@@ -11,15 +11,19 @@ from apps.api.services import profiles, runs
 MESSAGE_LIMIT = 500
 
 
-async def _messages(rt: Runtime, persona: str) -> list[dict]:
-    async with rt.open_mcp(persona, ["marketplace"]) as mcp:
-        return (await mcp.call("web", "list_messages", {"limit": MESSAGE_LIMIT}))["messages"]
+async def _messages(rt: Runtime, account: str) -> list[tuple[str, dict]]:
+    """(member, message) for every persona this account bids as (one, or the team in X1)."""
+    found = []
+    for member in await profiles.members_of(rt, account):
+        async with rt.open_mcp(member, ["marketplace"]) as mcp:
+            listed = await mcp.call("web", "list_messages", {"limit": MESSAGE_LIMIT})
+        found += [(member, message) for message in listed["messages"]]
+    return found
 
 
 async def threads(rt: Runtime, account: str) -> MessageThreads:
-    persona = await profiles.persona_of(rt, account)
     grouped: dict[str, list[dict]] = defaultdict(list)
-    for message in await _messages(rt, persona):
+    for _, message in await _messages(rt, account):
         grouped[message["thread_id"]].append(message)
     replies = {run.subject: run for run in await runs.summaries(rt, account, "conversation")}
     found = []
@@ -34,10 +38,11 @@ async def threads(rt: Runtime, account: str) -> MessageThreads:
 
 
 async def draft_reply(rt: Runtime, account: str, message_id: str) -> RunRef:
-    persona = await profiles.persona_of(rt, account)
-    message = next((m for m in await _messages(rt, persona)
-                    if m["message_id"] == message_id and m["sender"] == "client"), None)
-    if message is None:
+    member, message = next(((member, m) for member, m in await _messages(rt, account)
+                            if m["message_id"] == message_id and m["sender"] == "client"),
+                           (None, None))
+    if member is None or message is None:
         raise ApiError(404, "not_found", "No such client message.")
-    return await runs.start(rt, account, persona, "conversation", message_id,
-                            {"thread_id": message["thread_id"], "message": message["text"]})
+    return await runs.start(rt, account, member, "conversation", message_id,
+                            {"thread_id": message["thread_id"], "message": message["text"],
+                             "member": member})

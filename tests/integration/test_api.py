@@ -9,10 +9,17 @@ import pytest
 from fastapi.testclient import TestClient
 
 from agent.config import load_config
+from agent.mcp_client import ToolUnavailable
 from apps.api.auth.users import hash_password
 from apps.api.main import create_app
 from apps.api.services import insights, jobs
-from tests.e2e.fake_backend import PARAGRAPH, REPLY, FakeMarket, fake_overrides
+from tests.e2e.fake_backend import (
+    CLIENT_MESSAGE,
+    PARAGRAPH,
+    REPLY,
+    FakeMarket,
+    fake_overrides,
+)
 
 PASSWORD = secrets.token_hex(8)
 CLINIC_THREAD = "reviewer:bid:job-clinic"
@@ -237,3 +244,72 @@ def test_a_dead_lettered_run_replays_from_before_its_failure(
     done = wait_idle(client, CLINIC_THREAD)
     assert done["pending_approval"] and not done["status"] and not done["errors"]
     assert client.post(f"/runs/{CLINIC_THREAD}/retry").status_code == 409
+
+
+def test_agency_mode_routes_a_job_and_submits_as_that_member(client: TestClient,
+                                                             market: FakeMarket) -> None:
+    sign_in(client)
+    assert client.put("/profile", json={"persona": "ai_ml_engineer", "agency": True}).is_success
+    market.scores["fullstack_dev"] = 0.95  # every member covers the job; this one most strongly
+    thread = client.post("/jobs/job-clinic/analyse").json()["thread_id"]
+    assert thread == CLINIC_THREAD  # one thread per job, whichever member bids
+    run = wait_idle(client, thread)
+    assert run["member"] == "fullstack_dev" and run["pending_approval"]
+    assert set(run["route"]["fit_scores"]) == set(load_config()["api"]["personas"])
+    assert "tied with" in run["route"]["reason"]
+    assert client.get("/runs?kind=bid").json()["runs"][0]["member"] == "fullstack_dev"
+    # resume hands run_segment the account persona; the checkpoint's member must win
+    client.post(f"/runs/{thread}/resume", json={"action": "approve"})
+    assert wait_idle(client, thread)["approval_status"] == "approved"
+    assert [persona for persona, tool in market.by_persona if tool == "submit_proposal"] == [
+        "fullstack_dev"]
+    rt = client.app.state.runtime
+    board = client.get("/pipeline").json()["cards"]
+    assert [(card["stage"], card["thread_id"]) for card in board] == [("submitted", thread)]
+    # Turned off, the routed member's proposal and its outcome still belong to this account.
+    assert client.put("/profile", json={"persona": "ai_ml_engineer"}).is_success
+    assert len(client.get("/pipeline").json()["cards"]) == 1
+    next(iter(market.proposals.values()))["status"] = "replied"
+    assert client.portal.call(insights.sync_outcomes, rt, "reviewer") == 1
+
+
+def test_agency_mode_replies_as_the_member_who_holds_the_thread(client: TestClient,
+                                                                market: FakeMarket) -> None:
+    sign_in(client)
+    assert client.put("/profile", json={"persona": "ai_ml_engineer", "agency": True}).is_success
+    message = CLIENT_MESSAGE | {"message_id": "fullstack_dev-conv-01-m1",
+                                "thread_id": "fullstack_dev-conv-01"}
+    market.messages.append(message)
+    market.owner[message["message_id"]] = "fullstack_dev"
+    assert len(client.get("/messages").json()["threads"]) == 2
+    thread = client.post(f"/messages/{message['message_id']}/reply").json()["thread_id"]
+    assert wait_idle(client, thread)["member"] == "fullstack_dev"
+    client.post(f"/runs/{thread}/resume", json={"action": "approve"})
+    wait_idle(client, thread)
+    assert [persona for persona, tool in market.by_persona if tool == "send_message"][-1] ==         "fullstack_dev"
+
+
+def test_agency_mode_is_off_by_default(client: TestClient, market: FakeMarket) -> None:
+    sign_in(client)
+    market.scores["fullstack_dev"] = 0.95
+    run = wait_idle(client, client.post("/jobs/job-clinic/analyse").json()["thread_id"])
+    assert run["member"] is None and run["route"] is None
+    assert {persona for persona, _ in market.by_persona} == {"ai_ml_engineer"}
+
+
+def test_agency_routing_skips_a_member_whose_portfolio_is_down(client: TestClient,
+                                                               market: FakeMarket) -> None:
+    sign_in(client)
+    assert client.put("/profile", json={"persona": "ai_ml_engineer", "agency": True}).is_success
+    market.scores["fullstack_dev"] = 0.95
+    rt = client.app.state.runtime
+    healthy = rt.open_mcp
+
+    def flaky(persona: str, servers: list[str]) -> Any:
+        if persona == "fullstack_dev" and servers == ["portfolio"]:
+            raise ToolUnavailable("portfolio down")
+        return healthy(persona, servers)
+
+    rt.open_mcp = flaky
+    run = wait_idle(client, client.post("/jobs/job-clinic/analyse").json()["thread_id"])
+    assert run["member"] == "ai_ml_engineer" and "fullstack_dev" not in run["route"]["fit_scores"]

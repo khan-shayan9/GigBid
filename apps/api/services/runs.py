@@ -27,6 +27,7 @@ from apps.api.schemas.runs import (
     RunSummary,
     TimelineStep,
 )
+from apps.api.services import agency
 from data.pipeline.pii import mask_pii
 
 log = logging.getLogger("gigbid.api")
@@ -85,8 +86,13 @@ async def run_segment(rt: Runtime, account: str, persona: str, thread_id: str, k
     try:
         state = await _graph(rt, kind).aget_state(_config(thread_id))
         replay = replay_from is not None and state.values.get("status") == DEAD_LETTER
+        # X1: a routed thread runs as its member on every later segment, including a re-delivery.
+        persona = state.values.get("member") or persona
         if not state.values:
             segment_input: Any = graph_input
+            if kind == "bid" and graph_input and graph_input.get("agency"):
+                persona, segment_input = await agency.routed_input(rt, account, persona,
+                                                                   graph_input)
         elif state.interrupts:
             segment_input = Command(resume=answer) if answer else None
         else:
@@ -238,7 +244,7 @@ async def detail(rt: Runtime, account: str, thread_id: str) -> RunDetail:
         status=values.get("status"), errors=values.get("errors", []),
         steps=values.get("steps", 0), tokens_used=values.get("tokens_used", 0),
         timeline=timeline, approval_status=values.get("approval_status"),
-        job=values.get("job"), job_spec=values.get("job_spec"),
+        member=values.get("member"), route=values.get("route"), job=values.get("job"), job_spec=values.get("job_spec"),
         risk_report=values.get("risk_report"), fit_report=values.get("fit_report"),
         decision=values.get("decision"), price_quote=values.get("price_quote"),
         draft=values.get("proposal_draft"), evidence=values.get("evidence", []),
@@ -280,6 +286,7 @@ async def _summary(rt: Runtime, kind: RunKind, thread_id: str) -> RunSummary:
         decision=(values.get("decision") or {}).get("decision"),
         fit_score=fit.get("score"), risk_score=risk.get("score"),
         risk_flags=risk.get("flags", []), price=values.get("price_quote"),
+        member=values.get("member"),
         updated_at=state.created_at)
 
 

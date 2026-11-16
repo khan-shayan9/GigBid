@@ -6,6 +6,8 @@ class GigBidState(TypedDict, total=False):
     """What one job's thread needs now. Traces and long-term memory live elsewhere (C2)."""
 
     job: dict[str, Any]
+    member: str  # X1: the persona this thread bids as, when agency mode routed it (ADR 0006)
+    route: dict[str, Any]  # its RouteDecision
     job_spec: dict[str, Any]
     risk_report: dict[str, Any]
     fit_report: dict[str, Any]
@@ -33,6 +35,7 @@ class ConversationState(TypedDict, total=False):
     """One client conversation thread."""
 
     thread_id: str
+    member: str  # X1: the persona whose marketplace thread this is (ADR 0006)
     message: str  # the client's latest message (untrusted)
     intent: str
     slots: list[dict[str, Any]]

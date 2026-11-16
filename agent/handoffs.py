@@ -30,6 +30,14 @@ class FitReport(BaseModel):
     evidence_ids: list[str] = Field(default_factory=list)
     matrix: list[RequirementMatch] = Field(default_factory=list)  # requirement -> its evidence
 
+class RouteDecision(BaseModel):
+    """X1 agency mode: the team member (persona) a job goes to, and every member's fit."""
+
+    member: str
+    fit_scores: dict[str, float]
+    reason: str
+
+
 class ProposalDraft(BaseModel):
     job_id: str
     cover_letter: str

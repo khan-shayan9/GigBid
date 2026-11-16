@@ -14,6 +14,7 @@ from agent.handoffs import (
     PriceQuote,
     ProposalDraft,
     RiskReport,
+    RouteDecision,
 )
 from mcp_servers.marketplace.schemas import Job, Proposal, SubmitResult
 from rag.verify import ClaimVerdict
@@ -62,7 +63,9 @@ class RunDetail(BaseModel):
     tokens_used: int = 0
     timeline: list[TimelineStep] = []
     approval_status: str | None = None
+    member: str | None = Field(None, description="X1: the persona agency mode routed this to")
     # bid runs
+    route: RouteDecision | None = None
     job: Job | None = None
     job_spec: JobSpec | None = None
     risk_report: RiskReport | None = None
@@ -101,6 +104,7 @@ class RunSummary(BaseModel):
     risk_score: float | None = None
     risk_flags: list[str] = []
     price: PriceQuote | None = None
+    member: str | None = Field(None, description="X1: the persona agency mode routed this to")
     updated_at: datetime | None = None
 
 

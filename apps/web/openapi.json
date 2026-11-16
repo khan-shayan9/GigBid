@@ -949,6 +949,12 @@
             "title": "Account",
             "type": "string"
           },
+          "agency": {
+            "default": false,
+            "description": "X1: route each job to the best-fit persona of the team",
+            "title": "Agency",
+            "type": "boolean"
+          },
           "autonomy": {
             "default": "manual",
             "enum": [
@@ -1002,6 +1008,11 @@
       },
       "ProfileIn": {
         "properties": {
+          "agency": {
+            "default": false,
+            "title": "Agency",
+            "type": "boolean"
+          },
           "autonomy": {
             "default": "manual",
             "enum": [
@@ -1330,6 +1341,33 @@
         "title": "RiskReport",
         "type": "object"
       },
+      "RouteDecision": {
+        "description": "X1 agency mode: the team member (persona) a job goes to, and every member's fit.",
+        "properties": {
+          "fit_scores": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Fit Scores",
+            "type": "object"
+          },
+          "member": {
+            "title": "Member",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "member",
+          "fit_scores",
+          "reason"
+        ],
+        "title": "RouteDecision",
+        "type": "object"
+      },
       "RunDetail": {
         "properties": {
           "approval_status": {
@@ -1467,6 +1505,18 @@
             "title": "Kind",
             "type": "string"
           },
+          "member": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "X1: the persona agency mode routed this to",
+            "title": "Member"
+          },
           "pending_approval": {
             "title": "Pending Approval",
             "type": "boolean"
@@ -1511,6 +1561,16 @@
             "anyOf": [
               {
                 "$ref": "#/components/schemas/RiskReport"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "route": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RouteDecision"
               },
               {
                 "type": "null"
@@ -1690,6 +1750,18 @@
             ],
             "title": "Kind",
             "type": "string"
+          },
+          "member": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "X1: the persona agency mode routed this to",
+            "title": "Member"
           },
           "pending_approval": {
             "title": "Pending Approval",

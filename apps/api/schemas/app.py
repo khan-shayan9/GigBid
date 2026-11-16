@@ -24,6 +24,7 @@ class Profile(BaseModel):
     weekly_connects_budget: int = Field(60, ge=0, le=1000)
     saved_searches: list[str] = Field(default=[], max_length=10)
     autonomy: Autonomy = "manual"
+    agency: bool = Field(False, description="X1: route each job to the best-fit persona of the team")
 
 
 class ProfileIn(BaseModel):
@@ -32,6 +33,7 @@ class ProfileIn(BaseModel):
     weekly_connects_budget: int = Field(60, ge=0, le=1000)
     saved_searches: list[str] = Field(default=[], max_length=10)
     autonomy: Autonomy = "manual"
+    agency: bool = False
 
 
 class Session(BaseModel):

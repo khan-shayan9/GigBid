@@ -5,7 +5,9 @@ Like the real client and server, the fake enforces each node's tool allowlist an
 Marketplace server's idempotency-key pattern.
 `FakeMarket` keeps state across MCP sessions, like GigSim would; `down = True` makes every
 marketplace tool unavailable (degraded mode); `slow` seconds delay each evidence search, so a
-run lasts long enough to watch it stream.
+run lasts long enough to watch it stream. `scores` sets one persona's evidence score, and
+`by_persona` records which persona made each call, and `owner` which persona (GigSim user) a
+proposal or message belongs to; lists show only the caller's (X1 agency mode).
 """
 
 import asyncio
@@ -61,6 +63,9 @@ class FakeMarket:
         self.messages = [dict(CLIENT_MESSAGE)]
         self.balance = 120
         self.calls: list[tuple[str, str, dict[str, Any]]] = []
+        self.scores: dict[str, float] = {}
+        self.by_persona: list[tuple[str, str]] = []
+        self.owner: dict[str, str] = {}  # proposal or message id -> persona; default ai_ml_engineer
 
     def tools(self, name: str) -> list[dict[str, Any]]:
         return [args for _, tool, args in self.calls if tool == name]
@@ -69,8 +74,9 @@ class FakeMarket:
 class FakeMcp:
     """The McpClient interface the API and the graph nodes use."""
 
-    def __init__(self, market: FakeMarket) -> None:
+    def __init__(self, market: FakeMarket, persona: str = "ai_ml_engineer") -> None:
         self.market = market
+        self.persona = persona
 
     async def __aenter__(self) -> Self:
         return self
@@ -86,6 +92,7 @@ class FakeMcp:
         if key is not None and not IDEMPOTENCY_KEY.match(key):
             raise ToolFailed(f"invalid_request: bad idempotency_key {key!r}")
         market.calls.append((node, tool, args))
+        market.by_persona.append((self.persona, tool))
         if market.down and tool in MARKET_TOOLS:
             raise ToolUnavailable("marketplace_unavailable: GigSim is down")
         if tool == "search_evidence" and market.slow:
@@ -112,14 +119,18 @@ class FakeMcp:
     def _get_market_rates(self, _: dict[str, Any]) -> dict[str, Any]:
         return {"domains": {}}
 
+    def _mine(self, item_id: str) -> bool:
+        return self.market.owner.get(item_id, "ai_ml_engineer") == self.persona
+
     def _list_proposals(self, _: dict[str, Any]) -> dict[str, Any]:
-        return {"proposals": list(self.market.proposals.values())}
+        return {"proposals": [p for p in self.market.proposals.values()
+                              if self._mine(p["proposal_id"])]}
 
     def _list_messages(self, _: dict[str, Any]) -> dict[str, Any]:
-        return {"messages": self.market.messages}
+        return {"messages": [m for m in self.market.messages if self._mine(m["message_id"])]}
 
     def _search_evidence(self, _: dict[str, Any]) -> dict[str, Any]:
-        return {"items": [EVIDENCE]}
+        return {"items": [EVIDENCE | {"score": self.market.scores.get(self.persona, 0.9)}]}
 
     def _find_free_slots(self, _: dict[str, Any]) -> dict[str, Any]:
         return {"slots": [SLOT]}
@@ -133,6 +144,7 @@ class FakeMcp:
                     "dry_run": args["dry_run"]}
         if not args["dry_run"]:
             self.market.proposals.setdefault(proposal["proposal_id"], proposal)
+            self.market.owner.setdefault(proposal["proposal_id"], self.persona)
         return proposal
 
     def _submit_proposal(self, args: dict[str, Any]) -> dict[str, Any]:
@@ -150,6 +162,7 @@ class FakeMcp:
                    "sent_at": datetime.now(UTC).isoformat(), "dry_run": args["dry_run"]}
         if not args["dry_run"]:
             self.market.messages.append(message)
+            self.market.owner[message["message_id"]] = self.persona
         return message
 
 
@@ -159,4 +172,4 @@ def model_for(kind: str) -> FakeListChatModel:
 
 
 def fake_overrides(market: FakeMarket) -> dict[str, Any]:
-    return {"open_mcp": lambda persona, servers: FakeMcp(market), "model_for": model_for}
+    return {"open_mcp": lambda persona, servers: FakeMcp(market, persona), "model_for": model_for}

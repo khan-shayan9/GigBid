@@ -31,18 +31,35 @@ SEEN_STATUSES = ("pipeline_statuses",)  # last proposal statuses the worker saw,
 
 
 async def _proposals(rt: Runtime, account: str) -> list[dict]:
+    """Marketplace proposals of every persona this account bids as, each with its `member`."""
+    found = []
+    for member in await profiles.members_of(rt, account):
+        async with rt.open_mcp(member, ["marketplace"]) as mcp:
+            listed = (await mcp.call("web", "list_proposals", {}))["proposals"]
+        found += [proposal | {"member": member} for proposal in listed]
+    return found
+
+
+async def _runs_by_proposal(rt: Runtime, account: str,
+                            bid_runs: list[RunSummary]) -> dict[tuple[str, str], RunSummary]:
+    """(member, job id) -> this account's bid thread, so a proposal another member made for the
+    same job (another account's, in agency mode) is not taken for this account's (X1)."""
     persona = await profiles.persona_of(rt, account)
-    async with rt.open_mcp(persona, ["marketplace"]) as mcp:
-        return (await mcp.call("web", "list_proposals", {}))["proposals"]
+    return {(run.member or persona, run.subject): run for run in bid_runs}
+
+
+def _key(proposal: dict) -> tuple[str, str]:
+    return proposal["member"], proposal["job_id"]
 
 
 async def pipeline(rt: Runtime, account: str) -> Pipeline:
-    bid_runs = {run.subject: run for run in await runs.summaries(rt, account, "bid")}
+    bid_runs = await runs.summaries(rt, account, "bid")
     cards = [PipelineCard(stage="awaiting_approval", job_id=run.subject, title=run.title,
                           thread_id=run.thread_id)
-             for run in bid_runs.values() if run.pending_approval]
+             for run in bid_runs if run.pending_approval]
+    by_proposal = await _runs_by_proposal(rt, account, bid_runs)
     for proposal in await _proposals(rt, account):
-        run = bid_runs.get(proposal["job_id"])
+        run = by_proposal.get(_key(proposal))
         stage = proposal["status"] if proposal["status"] in STAGES else "submitted"
         cards.append(PipelineCard(stage=stage, job_id=proposal["job_id"],
                                   title=run.title if run else proposal["job_id"],
@@ -56,16 +73,16 @@ async def sync_outcomes(rt: Runtime, account: str) -> int:
     Only proposals this account sent from its own bid thread count: accounts on the same persona
     share its marketplace proposals. Returns how many outcomes changed.
     """
-    bid_runs = {run.subject: run for run in await runs.summaries(rt, account, "bid")}
+    by_proposal = await _runs_by_proposal(rt, account, await runs.summaries(rt, account, "bid"))
     proposals = await _proposals(rt, account)
-    statuses = {proposal["job_id"]: proposal["status"] for proposal in proposals}
+    statuses = {":".join(_key(proposal)): proposal["status"] for proposal in proposals}
     seen = await rt.store.aget(SEEN_STATUSES, account)
     if seen is None or seen.value != statuses:  # e.g. "viewed": no memory, but a board change
         await rt.store.aput(SEEN_STATUSES, account, statuses)
         await rt.runs.publish(runs.pipeline_channel(account), {"type": "changed"})
     changed = 0
     for proposal in proposals:
-        run = bid_runs.get(proposal["job_id"])
+        run = by_proposal.get(_key(proposal))
         if run is None or run.approval_status != "approved":
             continue
         known = await rt.store.aget((OUTCOME, account), proposal["job_id"])
@@ -89,12 +106,12 @@ def _approval(run: RunSummary) -> str:
 async def analytics(rt: Runtime, account: str) -> Analytics:
     bid_runs = await runs.summaries(rt, account, "bid")
     proposals = await _proposals(rt, account)
-    by_job = {run.subject: run for run in bid_runs}
+    by_proposal = await _runs_by_proposal(rt, account, bid_runs)
     rows: dict[str, Counter] = {}
     for proposal in proposals:
         if proposal["status"] == "drafted":
             continue
-        run = by_job.get(proposal["job_id"])
+        run = by_proposal.get(_key(proposal))
         row = rows.setdefault((run.category if run else None) or "unknown", Counter())
         row["submitted"] += 1
         row["replied"] += proposal["status"] in REPLIED_OR_LATER

@@ -737,6 +737,12 @@ export interface components {
             /** Account */
             account: string;
             /**
+             * Agency
+             * @description X1: route each job to the best-fit persona of the team
+             * @default false
+             */
+            agency: boolean;
+            /**
              * Autonomy
              * @default manual
              * @enum {string}
@@ -765,6 +771,11 @@ export interface components {
         };
         /** ProfileIn */
         ProfileIn: {
+            /**
+             * Agency
+             * @default false
+             */
+            agency: boolean;
             /**
              * Autonomy
              * @default manual
@@ -900,6 +911,20 @@ export interface components {
             /** Score */
             score: number;
         };
+        /**
+         * RouteDecision
+         * @description X1 agency mode: the team member (persona) a job goes to, and every member's fit.
+         */
+        RouteDecision: {
+            /** Fit Scores */
+            fit_scores: {
+                [key: string]: number;
+            };
+            /** Member */
+            member: string;
+            /** Reason */
+            reason: string;
+        };
         /** RunDetail */
         RunDetail: {
             /** Approval Status */
@@ -935,6 +960,11 @@ export interface components {
              * @enum {string}
              */
             kind: "bid" | "conversation";
+            /**
+             * Member
+             * @description X1: the persona agency mode routed this to
+             */
+            member?: string | null;
             /** Pending Approval */
             pending_approval: boolean;
             preview?: components["schemas"]["Preview"] | null;
@@ -947,6 +977,7 @@ export interface components {
              */
             revisions: number;
             risk_report?: components["schemas"]["RiskReport"] | null;
+            route?: components["schemas"]["RouteDecision"] | null;
             /** Running */
             running: boolean;
             /** Sent */
@@ -1015,6 +1046,11 @@ export interface components {
              * @enum {string}
              */
             kind: "bid" | "conversation";
+            /**
+             * Member
+             * @description X1: the persona agency mode routed this to
+             */
+            member?: string | null;
             /** Pending Approval */
             pending_approval: boolean;
             price?: components["schemas"]["PriceQuote"] | null;

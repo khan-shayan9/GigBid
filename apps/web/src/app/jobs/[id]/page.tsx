@@ -63,6 +63,21 @@ export default function JobDetailPage() {
             {decision?.decision === "bid" && <li>Fit and risk are within your thresholds.</li>}
           </ul>
         </section>
+        {run.route && (
+          <section className="card" aria-labelledby="route-h">
+            <h2 id="route-h">Team member</h2>
+            <p className="text-sm">
+              Routed to <strong>{run.route.member}</strong>: {run.route.reason}.
+            </p>
+            <ul className="mt-2 list-disc pl-5 text-sm">
+              {Object.entries(run.route.fit_scores).map(([member, score]) => (
+                <li key={member}>
+                  {member}: fit {Math.round(score * 100)}%
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
         <section className="card" aria-labelledby="risk-h">
           <h2 id="risk-h">Risk report</h2>
           {risk ? (

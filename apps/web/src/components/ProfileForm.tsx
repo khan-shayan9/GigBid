@@ -23,6 +23,7 @@ export function ProfileForm({ submitLabel, onSaved }: { submitLabel: string; onS
         .map((line) => line.trim())
         .filter(Boolean),
       autonomy: form.get("autonomy") === "auto_skip_low_fit" ? "auto_skip_low_fit" : "manual",
+      agency: form.get("agency") === "on",
     };
     try {
       await unwrap(api.PUT("/profile", { body }));
@@ -95,6 +96,15 @@ export function ProfileForm({ submitLabel, onSaved }: { submitLabel: string; onS
         </select>
         <span className="mt-1 block text-xs font-normal text-slate-500">
           GigBid never sends a proposal or message, or spends Connects, without your approval.
+        </span>
+      </label>
+      <label className="label flex items-start gap-2">
+        <input type="checkbox" name="agency" defaultChecked={profile.agency ?? false} className="mt-1" />
+        <span>
+          Agency mode
+          <span className="mt-1 block text-xs font-normal text-slate-500">
+            Route each job to the team member ({session.personas.join(", ")}) whose portfolio fits it best.
+          </span>
         </span>
       </label>
       {error && (

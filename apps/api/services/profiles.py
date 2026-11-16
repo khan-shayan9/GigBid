@@ -16,6 +16,7 @@ from mcp_servers.marketplace.adapters.upwork_live import TOKEN_DIR
 from rag.ingest.uploads import UploadRejected, save_upload
 
 PROFILE = ("profile",)
+ROUTED_MEMBERS = "routed_members"  # personas agency mode has bid as, per account (X1)
 
 
 async def get_profile(rt: Runtime, account: str) -> Profile:
@@ -37,6 +38,20 @@ async def persona_of(rt: Runtime, account: str) -> str:
     if persona is None:
         raise ApiError(409, "onboarding_required", "Choose a persona in onboarding first.")
     return persona
+
+
+async def members_of(rt: Runtime, account: str) -> list[str]:
+    """The personas this account bids as: its own, every configured one in agency mode (X1), and
+    any agency mode routed a thread to before it was turned off (their proposals and replies)."""
+    members = [await persona_of(rt, account)]
+    if (await get_profile(rt, account)).agency:
+        members += load_config()["api"]["personas"]
+    members += [item.key for item in await rt.store.asearch((ROUTED_MEMBERS, account), limit=100)]
+    return list(dict.fromkeys(members))
+
+
+async def remember_member(rt: Runtime, account: str, member: str) -> None:
+    await rt.store.aput((ROUTED_MEMBERS, account), member, {"routed": True})
 
 
 def marketplace_mode() -> str:

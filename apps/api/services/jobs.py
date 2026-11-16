@@ -38,7 +38,17 @@ async def analyse(rt: Runtime, account: str, job_id: str) -> RunRef:
     persona = await profiles.persona_of(rt, account)
     async with rt.open_mcp(persona, ["marketplace"]) as mcp:
         job = await mcp.call("web", "get_job", {"job_id": job_id})
-    return await runs.start(rt, account, persona, "bid", job_id, {"job": job})
+    return await _start_bid(rt, account, job)
+
+
+async def _start_bid(rt: Runtime, account: str, job: dict) -> RunRef:
+    """Start the job's bid thread; in agency mode (X1) its first segment routes it to a member
+    (apps/api/services/agency.py)."""
+    persona = await profiles.persona_of(rt, account)
+    graph_input = {"job": job}
+    if (await profiles.get_profile(rt, account)).agency:
+        graph_input["agency"] = True
+    return await runs.start(rt, account, persona, "bid", job["job_id"], graph_input)
 
 
 async def queue_new_jobs(rt: Runtime, account: str, limit: int) -> int:
@@ -56,7 +66,7 @@ async def queue_new_jobs(rt: Runtime, account: str, limit: int) -> int:
     seen |= {run.subject for run in await runs.summaries(rt, account, "bid")}
     fresh = [job for job in jobs if job["job_id"] not in seen][:limit]
     for job in fresh:
-        await runs.start(rt, account, profile.persona, "bid", job["job_id"], {"job": job})
+        await _start_bid(rt, account, job)
     return len(fresh)
 
 

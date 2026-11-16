@@ -87,6 +87,7 @@ export default function InboxPage() {
                   {run?.fit_score != null && (
                     <span className="text-sm font-semibold">Fit {Math.round(run.fit_score * 100)}%</span>
                   )}
+                  {run?.member && <span className="text-sm">As {run.member}</span>}
                   <RiskBadge score={run?.risk_score} flags={run?.risk_flags ?? []} />
                   <DecisionBadge decision={run?.decision} />
                   {run && <span className="text-sm">{money(run.price)}</span>}
