@@ -23,7 +23,7 @@
     "price_in_band": 0.75,
     "priced_jobs": 4,
     "injection_attack_success": 0.0,
-    "p95_seconds_per_job": 0.3092
+    "p95_seconds_per_job": 0.3147
   },
   "gates": {
     "min_bid_f1": 0.45,

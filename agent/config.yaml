@@ -139,7 +139,7 @@ liaison:
   slot_window_days: 7
 
 thresholds:
-  minimum_fit_score: 0.60
+  minimum_fit_score: 0.55  # lowered from 0.60 by the user after the eval backend fix (dd91de9)
   # A requirement counts as covered when its best evidence scores at least this (cosine, nomic
   # embeddings, rag variant v1). Chosen on 80 dev jobs (evals/results/fit_threshold_dev.json).
   minimum_evidence_score: 0.65
