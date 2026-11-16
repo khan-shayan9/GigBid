@@ -5,7 +5,8 @@ START -> (Job Analyst | Risk Assessor | Fit Matcher, in parallel) -> decision
   bid  -> pricing -> writer -> verifier -> critic
             critic fails and revisions < budgets.max_revisions -> writer (with the reasons)
           -> compliance  (blocked -> END, reason in state)
-          -> preview (dry run: text and Connects cost) -> approval (interrupt) -> approved -> submit -> END; rejected -> END
+          -> preview (dry run: text and Connects cost) -> approval (interrupt) -> approved -> submit -> END; rejected -> END;
+          blocked edit -> approval again
 
 Every node runs through agent/graphs/guard.py: retries, dead-letter and the step and token
 budgets (C4, C7); a thread that stops early has `status` and the reason in `errors`.
@@ -52,7 +53,10 @@ def _after_compliance(state: GigBidState) -> str:
 
 
 def _after_approval(state: GigBidState) -> str:
-    return "submit" if state.get("approval_status") == "approved" else END
+    status = state.get("approval_status")
+    if status == "blocked_after_edit":  # back to the user with the reason, to fix and approve
+        return "approval"
+    return "submit" if status == "approved" else END
 
 
 def build_bid_graph(checkpointer: Any = None, store: Any = None) -> Any:
@@ -72,6 +76,6 @@ def build_bid_graph(checkpointer: Any = None, store: Any = None) -> Any:
     graph.add_conditional_edges("critic", halts(_after_critic), ["writer", "compliance", END])
     graph.add_conditional_edges("compliance", halts(_after_compliance), ["preview", END])
     graph.add_conditional_edges("preview", halts(lambda _: "approval"), ["approval", END])
-    graph.add_conditional_edges("approval", halts(_after_approval), ["submit", END])
+    graph.add_conditional_edges("approval", halts(_after_approval), ["approval", "submit", END])
     graph.add_edge("submit", END)
     return graph.compile(checkpointer=checkpointer, store=store)

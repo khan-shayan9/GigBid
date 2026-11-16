@@ -59,7 +59,9 @@ async def approval(state: GigBidState, config: RunnableConfig) -> GigBidState:
                                      draft.cover_letter, answer["cover_letter"],
                                      compliance_clean=True)
         draft = draft.model_copy(update={"cover_letter": answer["cover_letter"]})
-    return {"approval_status": "approved", "proposal_draft": draft.model_dump()}
+    return {"approval_status": "approved", "proposal_draft": draft.model_dump(),
+            # the sent text's verdict, not a blocked edit's from an earlier round
+            "compliance_verdict": check(draft.cover_letter, load_policy()).model_dump()}
 
 
 async def submit(state: GigBidState, config: RunnableConfig) -> GigBidState:

@@ -90,6 +90,9 @@ async def test_an_edit_is_rechecked_and_a_rejection_sends_nothing() -> None:
     edited = await graph.ainvoke(Command(resume={
         "action": "edit", "cover_letter": "Call me on +1 415 555 0100 [ai-cs-01]."}), config)
     assert edited["approval_status"] == "blocked_after_edit"
+    assert "__interrupt__" in edited and not mcp.tools("submit_proposal")  # back to the user
+    approved = await graph.ainvoke(Command(resume={"action": "approve"}), config)
+    assert approved["compliance_verdict"]["allowed"] and mcp.tools("submit_proposal")
     graph, config, mcp, _ = await arun(JOB, [GOOD, "[]"], thread="reject")
     rejected = await graph.ainvoke(Command(resume={"action": "reject", "reason": "too low"}),
                                    config)
