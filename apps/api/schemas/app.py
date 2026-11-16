@@ -103,6 +103,17 @@ class ReasonCount(BaseModel):
     count: int
 
 
+class CostLatency(BaseModel):
+    """Measured from this account's checkpoints (R8). USD cost is in the Langfuse traces."""
+    jobs_timed: int
+    p95_seconds_per_job: float | None = Field(
+        description="first segment: post in, to the decision or the approval pause")
+    proposals_timed: int
+    p95_seconds_per_proposal: float | None = Field(
+        description="first segment of runs that drafted a proposal")
+    p95_tokens_per_proposal: int | None = Field(description="model tokens, whole run")
+
+
 class Analytics(BaseModel):
     jobs_analysed: int
     decisions: dict[str, int]
@@ -112,7 +123,7 @@ class Analytics(BaseModel):
     connects_spent: int
     outcomes: dict[str, int]
     top_rejection_reasons: list[ReasonCount]
-    cost_and_latency: str = Field(description="why cost and latency are not shown yet")
+    cost_and_latency: CostLatency
 
 
 class MemoryItem(BaseModel):

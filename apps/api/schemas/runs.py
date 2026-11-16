@@ -83,6 +83,7 @@ class RunDetail(BaseModel):
     reply: str | None = None
     slots: list[Slot] = []
     sent: dict[str, Any] | None = None
+    trace_url: str | None = Field(None, description="The run's Langfuse trace; None when off")
 
 
 class RunSummary(BaseModel):

@@ -8,8 +8,10 @@ from typing import Any
 import pytest
 from fastapi.testclient import TestClient
 
+from agent.config import load_config
 from apps.api.auth.users import hash_password
 from apps.api.main import create_app
+from apps.api.services import insights, jobs
 from tests.e2e.fake_backend import PARAGRAPH, REPLY, FakeMarket, fake_overrides
 
 PASSWORD = secrets.token_hex(8)
@@ -66,6 +68,8 @@ def test_a_job_runs_to_approval_and_submits_once(client: TestClient, market: Fak
     assert not market.tools("submit_proposal")
     # A refresh reads the same pending approval back from the checkpoint.
     assert client.get("/runs?kind=bid").json()["runs"][0]["pending_approval"]
+    # Timed up to the approval pause, not through the human wait.
+    assert client.get("/analytics").json()["cost_and_latency"]["jobs_timed"] == 1
     assert client.post(f"/runs/{thread}/resume", json={"action": "approve"}).status_code == 202
     done = wait_idle(client, thread)
     assert done["approval_status"] == "approved" and done["submission"]["proposal"]["status"]
@@ -75,6 +79,8 @@ def test_a_job_runs_to_approval_and_submits_once(client: TestClient, market: Fak
     assert [(card["stage"], card["thread_id"]) for card in board] == [("submitted", thread)]
     stats = client.get("/analytics").json()
     assert stats["connects_spent"] == 4 and stats["approvals"] == {"approved": 1}
+    cost = stats["cost_and_latency"]
+    assert cost["jobs_timed"] == cost["proposals_timed"] == 1 and cost["p95_seconds_per_job"] >= 0
 
 
 def test_a_scam_is_skipped_and_ranked_below(client: TestClient) -> None:
@@ -171,3 +177,63 @@ def test_a_run_that_fails_before_its_first_checkpoint_says_so(
             break
         time.sleep(0.05)
     assert response.status_code == 502 and response.json()["detail"]["code"] == "run_failed"
+
+
+def test_scheduled_scouting_starts_runs_only_for_new_jobs(client: TestClient) -> None:
+    sign_in(client)
+    rt = client.app.state.runtime
+    client.post("/jobs/job-dash/skip")
+    assert client.portal.call(jobs.accounts, rt) == ["reviewer"]
+    assert client.portal.call(jobs.queue_new_jobs, rt, "reviewer", 1) == 1
+    wait_idle(client, CLINIC_THREAD)  # newest unseen job first; the skipped job never runs
+    assert client.portal.call(jobs.queue_new_jobs, rt, "reviewer", 5) == 1  # job-scam only
+    wait_idle(client, "reviewer:bid:job-scam")
+    assert client.portal.call(jobs.queue_new_jobs, rt, "reviewer", 5) == 0
+
+
+def test_outcomes_reach_memory_once_and_only_for_the_sender(client: TestClient,
+                                                           market: FakeMarket) -> None:
+    sign_in(client, "other")  # same persona, so it sees the same marketplace proposals
+    client.post("/auth/logout")
+    sign_in(client)
+    client.post("/jobs/job-clinic/analyse")
+    wait_idle(client, CLINIC_THREAD)
+    client.post(f"/runs/{CLINIC_THREAD}/resume", json={"action": "approve"})
+    wait_idle(client, CLINIC_THREAD)
+    rt = client.app.state.runtime
+    assert client.portal.call(insights.sync_outcomes, rt, "reviewer") == 0  # "submitted"
+    next(iter(market.proposals.values()))["status"] = "replied"
+    assert client.portal.call(insights.sync_outcomes, rt, "reviewer") == 1
+    assert client.portal.call(insights.sync_outcomes, rt, "reviewer") == 0
+    assert client.portal.call(insights.sync_outcomes, rt, "other") == 0
+    outcome = client.get("/memory").json()["items"]
+    assert [(item["kind"], "replied" in item["summary"]) for item in outcome] == [
+        ("outcome", True)]
+
+
+def test_a_preloaded_reviewer_skips_onboarding(market: FakeMarket,
+                                               monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("APP_SECRET_KEY", secrets.token_hex(16))
+    monkeypatch.setenv("APP_USERS", f"reviewer={hash_password(PASSWORD)}")
+    monkeypatch.setenv("API_PERSISTENCE", "memory")
+    monkeypatch.setenv("PRELOAD_PERSONAS", "reviewer=ai_ml_engineer")
+    with TestClient(create_app(**fake_overrides(market))) as client:
+        client.post("/auth/login", json={"username": "reviewer", "password": PASSWORD})
+        assert client.get("/auth/session").json()["profile"]["persona"] == "ai_ml_engineer"
+        assert client.get("/jobs").is_success
+
+
+def test_a_dead_lettered_run_replays_from_before_its_failure(
+        client: TestClient, market: FakeMarket, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setitem(load_config()["budgets"], "node_backoff_s", 0)
+    sign_in(client)
+    market.slow = 0.3  # the writer's evidence search: time to take the marketplace down
+    client.post("/jobs/job-clinic/analyse")
+    market.down = True
+    failed = wait_idle(client, CLINIC_THREAD)
+    assert failed["status"] == "dead_letter" and not failed["pending_approval"]
+    market.down, market.slow = False, 0.0
+    assert client.post(f"/runs/{CLINIC_THREAD}/retry").status_code == 202
+    done = wait_idle(client, CLINIC_THREAD)
+    assert done["pending_approval"] and not done["status"] and not done["errors"]
+    assert client.post(f"/runs/{CLINIC_THREAD}/retry").status_code == 409

@@ -1,31 +1,70 @@
-# API, GigSim (Phase 2), Postgres (pgvector) and Redis. Worker, MCP servers, web and Langfuse are
-# added in the phases that build them.
+# The whole stack: web (Next.js), API, Arq worker, GigSim, Postgres (pgvector) and Redis.
+# The MCP servers run as stdio subprocesses of the API and the worker. Tracing goes to Langfuse
+# Cloud when LANGFUSE_* keys are set in .env. Ports bind to localhost; the `public` profile
+# adds Caddy for HTTPS on a VPS.
+x-app: &app
+  build:
+    context: ..
+    dockerfile: infra/docker/api.Dockerfile
+  restart: unless-stopped
+  volumes:  # survive redeploys: uploads, embedding cache and audit log, the embedding model
+    - uploads:/app/data/uploads
+    - processed:/app/data/processed
+    - models:/var/cache/fastembed
+  env_file:
+    - path: ../.env
+      required: false
+  environment:
+    DATABASE_URL: postgresql+psycopg://gigbid:${POSTGRES_PASSWORD:-gigbid}@postgres:5432/gigbid
+    API_PERSISTENCE: postgres  # checkpointer and store in Postgres: approvals survive restarts
+    RUN_MODE: worker           # graph runs go to the worker through Redis
+    REDIS_URL: redis://redis:6379/0
+    GIGSIM_BASE_URL: http://gigsim:8081
+    FASTEMBED_CACHE_PATH: /var/cache/fastembed
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+    gigsim:
+      condition: service_healthy
+
 services:
-  api:
+  web:
+    restart: unless-stopped
     build:
       context: ..
-      dockerfile: infra/docker/api.Dockerfile
-    env_file:
-      - path: ../.env
-        required: false
-    environment:
-      DATABASE_URL: postgresql+psycopg://gigbid:${POSTGRES_PASSWORD:-gigbid}@postgres:5432/gigbid
-      API_PERSISTENCE: postgres  # checkpointer and store in Postgres: approvals survive restarts
-      REDIS_URL: redis://redis:6379/0
+      dockerfile: infra/docker/web.Dockerfile
     ports:
-      - "8000:8000"
+      - "127.0.0.1:3000:3000"
     depends_on:
-      postgres:
+      api:
         condition: service_healthy
-      redis:
-        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/login"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    <<: *app
+    ports:
+      - "127.0.0.1:8000:8000"
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 10s
       timeout: 5s
       retries: 5
 
+  worker:
+    <<: *app
+    command: ["arq", "worker.main.WorkerSettings"]
+    depends_on:  # the API creates the checkpoint and store tables first
+      api:
+        condition: service_healthy
+
   gigsim:
+    restart: unless-stopped
     build:
       context: ..
       dockerfile: infra/docker/gigsim.Dockerfile
@@ -35,7 +74,7 @@ services:
     environment:
       GIGSIM_DB_PATH: /var/lib/gigsim/gigsim.sqlite
     ports:
-      - "8081:8081"
+      - "127.0.0.1:8081:8081"
     volumes:
       - gigsimdata:/var/lib/gigsim
     healthcheck:
@@ -45,6 +84,7 @@ services:
       retries: 5
 
   postgres:
+    restart: unless-stopped
     image: pgvector/pgvector:pg16
     environment:
       POSTGRES_USER: gigbid
@@ -59,6 +99,7 @@ services:
       retries: 10
 
   redis:
+    restart: unless-stopped
     image: redis:7-alpine
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -66,6 +107,26 @@ services:
       timeout: 5s
       retries: 10
 
+  caddy:  # public HTTPS (VPS only): docker compose --profile public up -d
+    restart: unless-stopped
+    image: caddy:2-alpine
+    profiles: [public]
+    environment:
+      PUBLIC_DOMAIN: ${PUBLIC_DOMAIN:-localhost}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddydata:/data
+    depends_on:
+      web:
+        condition: service_healthy
+
 volumes:
   pgdata:
   gigsimdata:
+  caddydata:
+  uploads:
+  processed:
+  models:

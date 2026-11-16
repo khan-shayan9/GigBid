@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import { Empty, ErrorState, Loading } from "@/components/States";
 import { api, unwrap, type Schemas } from "@/lib/client";
 import { useLoad } from "@/lib/hooks";
@@ -18,6 +19,13 @@ const STAGES: [Schemas["PipelineCard"]["stage"], string][] = [
 
 export default function PipelinePage() {
   const board = useLoad(() => unwrap(api.GET("/pipeline"), true), "pipeline");
+  const { reload } = board;
+  // The board reloads when a run ends or the worker sees a new proposal outcome.
+  useEffect(() => {
+    const source = new EventSource("/api/pipeline/stream");
+    source.addEventListener("changed", () => reload());
+    return () => source.close();
+  }, [reload]);
   if (board.loading && !board.data) return <Loading what="the pipeline" />;
   if (board.error) return <ErrorState error={board.error} retry={board.reload} />;
   const cards = board.data!.cards;

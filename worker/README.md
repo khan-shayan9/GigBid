@@ -1,2 +1,5 @@
-TODO: Add scheduled scouting and long-running graph execution using Celery, Arq or Dramatiq
-with Redis. Ensure processing is idempotent across worker restarts.
+# Worker
+
+Arq worker (`worker/main.py`): runs graph segments the API hands over (`RUN_MODE=worker`),
+scouts saved searches on a schedule, and promotes proposal outcomes to memory.
+Run: `uv run arq worker.main.WorkerSettings`. See `docs/RUNBOOK.md`.

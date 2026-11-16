@@ -18,6 +18,7 @@ from apps.api.routers import (
     runs,
 )
 from apps.api.runtime import open_runtime
+from apps.api.services.profiles import preload_personas
 
 
 def create_app(**runtime_overrides: Any) -> FastAPI:
@@ -25,9 +26,10 @@ def create_app(**runtime_overrides: Any) -> FastAPI:
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         async with open_runtime(**runtime_overrides) as runtime:
             app.state.runtime = runtime
+            await preload_personas(runtime)
             yield
 
-    app = FastAPI(title="GigBid API", version="0.6.0", lifespan=lifespan)
+    app = FastAPI(title="GigBid API", version="0.7.0", lifespan=lifespan)
     install_error_handlers(app)
     for module in (auth, profile, jobs, runs, approvals, proposals, messages, analytics):
         app.include_router(module.router)

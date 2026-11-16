@@ -39,3 +39,28 @@ async def analyse(rt: Runtime, account: str, job_id: str) -> RunRef:
     async with rt.open_mcp(persona, ["marketplace"]) as mcp:
         job = await mcp.call("web", "get_job", {"job_id": job_id})
     return await runs.start(rt, account, persona, "bid", job_id, {"job": job})
+
+
+async def queue_new_jobs(rt: Runtime, account: str, limit: int) -> int:
+    """Scheduled scouting (worker): start bid runs for up to `limit` jobs not seen before.
+
+    A job is new when this account has no thread for it and has not skipped it; runs stop at
+    the approval interrupt, so nothing is sent without the user.
+    """
+    profile = await profiles.get_profile(rt, account)
+    if profile.persona is None:
+        return 0
+    async with rt.open_mcp(profile.persona, ["marketplace"]) as mcp:
+        jobs = await scout_jobs(mcp, profile.saved_searches, load_config()["api"]["inbox_limit"])
+    seen = {item.key for item in await rt.store.asearch((SKIPS, account), limit=1000)}
+    seen |= {run.subject for run in await runs.summaries(rt, account, "bid")}
+    fresh = [job for job in jobs if job["job_id"] not in seen][:limit]
+    for job in fresh:
+        await runs.start(rt, account, profile.persona, "bid", job["job_id"], {"job": job})
+    return len(fresh)
+
+
+async def accounts(rt: Runtime) -> list[str]:
+    """Accounts that finished onboarding (they have a persona)."""
+    found = await rt.store.asearch(profiles.PROFILE, limit=10_000)
+    return [item.key for item in found if item.value.get("persona")]

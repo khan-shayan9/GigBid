@@ -5,9 +5,9 @@ finished node and `interrupt` when the thread pauses for approval, then `end`. A
 connects to a thread with nothing running gets the snapshot and `end` straight away.
 """
 
-import asyncio
 import json
 from collections.abc import AsyncIterator
+from contextlib import AsyncExitStack
 from typing import Any
 
 from apps.api.runtime import Runtime
@@ -23,40 +23,47 @@ def _event(name: str, data: Any) -> str:
 async def open_run_stream(rt: Runtime, account: str, thread_id: str) -> AsyncIterator[str]:
     """Check access and read the snapshot now, so a refusal is a normal JSON error response."""
     runs.kind_of(account, thread_id)
-    queue: asyncio.Queue = asyncio.Queue()
-    listeners = rt.listeners.setdefault(thread_id, [])
-    listeners.append(queue)  # before the snapshot, so no event falls in between
+    stack = AsyncExitStack()
+    # Listen before reading the snapshot, so no event falls in between.
+    events = await stack.enter_async_context(rt.runs.listen(thread_id))
     try:
         snapshot = await runs.detail(rt, account, thread_id)
     except Exception:
-        _forget(rt, thread_id, queue)
+        await stack.aclose()
         raise
-    return _events(rt, thread_id, queue, snapshot.model_dump(mode="json"))
+    return _events(rt, thread_id, stack, events, snapshot.model_dump(mode="json"))
 
 
-async def _events(rt: Runtime, thread_id: str, queue: asyncio.Queue,
+async def open_pipeline_stream(rt: Runtime, account: str) -> AsyncIterator[str]:
+    """`ready`, then `changed` whenever a run ends or a proposal outcome arrives."""
+    stack = AsyncExitStack()
+    events = await stack.enter_async_context(rt.runs.listen(runs.pipeline_channel(account)))
+    return _pipeline_events(stack, events)
+
+
+async def _pipeline_events(stack: AsyncExitStack, events: Any) -> AsyncIterator[str]:
+    async with stack:
+        yield _event("ready", {})
+        while True:
+            event = await events.get(KEEPALIVE_S)
+            yield ": keepalive\n\n" if event is None else _event(event["type"], event)
+
+
+async def _events(rt: Runtime, thread_id: str, stack: AsyncExitStack, events: Any,
                   snapshot: dict[str, Any]) -> AsyncIterator[str]:
-    try:
+    async with stack:
         yield _event("snapshot", snapshot)
-        if thread_id not in rt.running:
+        if not snapshot["running"]:
             yield _event("end", {})
             return
         while True:
-            try:
-                event = await asyncio.wait_for(queue.get(), KEEPALIVE_S)
-            except TimeoutError:
+            event = await events.get(KEEPALIVE_S)
+            if event is None:
+                if not await rt.runs.is_running(thread_id):  # e.g. its worker died
+                    yield _event("end", {})
+                    return
                 yield ": keepalive\n\n"
                 continue
             yield _event(event["type"], event)
             if event == runs.END_EVENT:
                 return
-    finally:
-        _forget(rt, thread_id, queue)
-
-
-def _forget(rt: Runtime, thread_id: str, queue: asyncio.Queue) -> None:
-    listeners = rt.listeners.get(thread_id, [])
-    if queue in listeners:
-        listeners.remove(queue)
-    if not listeners:
-        rt.listeners.pop(thread_id, None)

@@ -1,0 +1,8 @@
+# Public HTTPS front for the web app (compose profile `public`). PUBLIC_DOMAIN must point at the
+# VPS; with no domain of your own, <vps-ip>.sslip.io works. Caddy gets the certificate itself.
+{$PUBLIC_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy web:3000 {
+		flush_interval -1
+	}
+}

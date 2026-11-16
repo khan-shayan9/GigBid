@@ -1,0 +1,183 @@
+{
+  "split": "dev",
+  "seed": 4016,
+  "jobs": 10,
+  "profile": "open",
+  "model": "openai/gpt-oss-120b",
+  "summary": {
+    "per_job_analysed": {
+      "jobs": 10,
+      "p50_seconds": 0.242,
+      "p95_seconds": 0.468
+    },
+    "per_proposal": {
+      "proposals": 3,
+      "p50_seconds": 35.719,
+      "p95_seconds": 36.67,
+      "p50_tokens": 5370,
+      "p95_tokens": 6498,
+      "mean_tokens_by_node": {
+        "verifier": 2727,
+        "writer": 2958
+      }
+    },
+    "token_budget_per_job": 12000,
+    "over_budget": 0,
+    "dead_lettered": 4,
+    "usd": null
+  },
+  "results": [
+    {
+      "job_id": "job-00304",
+      "persona": "fullstack_dev",
+      "decision": "bid",
+      "status": "",
+      "errors": [],
+      "seconds_to_decision": 0.36,
+      "seconds_to_approval": 8.082,
+      "drafted": true,
+      "revisions": 0,
+      "tokens_by_node": {
+        "writer": 2842,
+        "verifier": 2528
+      },
+      "tokens": 5370
+    },
+    {
+      "job_id": "job-00384",
+      "persona": "data_analyst",
+      "decision": "bid",
+      "status": "",
+      "errors": [],
+      "seconds_to_decision": 0.326,
+      "seconds_to_approval": 36.67,
+      "drafted": true,
+      "revisions": 0,
+      "tokens_by_node": {
+        "writer": 3753,
+        "verifier": 2745
+      },
+      "tokens": 6498
+    },
+    {
+      "job_id": "job-00194",
+      "persona": "data_analyst",
+      "decision": "skip",
+      "status": "",
+      "errors": [],
+      "seconds_to_decision": 0.404,
+      "seconds_to_approval": null,
+      "drafted": false,
+      "revisions": 0,
+      "tokens_by_node": {},
+      "tokens": 0
+    },
+    {
+      "job_id": "job-00680",
+      "persona": "ai_ml_engineer",
+      "decision": "bid",
+      "status": "",
+      "errors": [],
+      "seconds_to_decision": 0.468,
+      "seconds_to_approval": 35.719,
+      "drafted": true,
+      "revisions": 0,
+      "tokens_by_node": {
+        "writer": 2279,
+        "verifier": 2908
+      },
+      "tokens": 5187
+    },
+    {
+      "job_id": "job-00513",
+      "persona": "ai_ml_engineer",
+      "decision": "bid",
+      "status": "dead_letter",
+      "errors": [
+        "writer: OpenAIRateLimitError: Error code: 429 - Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[masked]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199529, Requested 3619. Please try again in 22m39.936s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing"
+      ],
+      "seconds_to_decision": 0.206,
+      "seconds_to_approval": null,
+      "drafted": false,
+      "revisions": 0,
+      "tokens_by_node": {},
+      "tokens": 0
+    },
+    {
+      "job_id": "job-00098",
+      "persona": "data_analyst",
+      "decision": "skip",
+      "status": "",
+      "errors": [],
+      "seconds_to_decision": 0.299,
+      "seconds_to_approval": null,
+      "drafted": false,
+      "revisions": 0,
+      "tokens_by_node": {},
+      "tokens": 0
+    },
+    {
+      "job_id": "job-00049",
+      "persona": "fullstack_dev",
+      "decision": "bid",
+      "status": "dead_letter",
+      "errors": [
+        "writer: OpenAIRateLimitError: Error code: 429 - Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[masked]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199527, Requested 3581. Please try again in 22m22.656s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing"
+      ],
+      "seconds_to_decision": 0.242,
+      "seconds_to_approval": null,
+      "drafted": false,
+      "revisions": 0,
+      "tokens_by_node": {},
+      "tokens": 0
+    },
+    {
+      "job_id": "job-00529",
+      "persona": "data_analyst",
+      "decision": "bid",
+      "status": "dead_letter",
+      "errors": [
+        "writer: OpenAIRateLimitError: Error code: 429 - Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[masked]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199526, Requested 3700. Please try again in 23m13.631999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing"
+      ],
+      "seconds_to_decision": 0.223,
+      "seconds_to_approval": null,
+      "drafted": false,
+      "revisions": 0,
+      "tokens_by_node": {},
+      "tokens": 0
+    },
+    {
+      "job_id": "job-00121",
+      "persona": "fullstack_dev",
+      "decision": "skip",
+      "status": "",
+      "errors": [],
+      "seconds_to_decision": 0.242,
+      "seconds_to_approval": null,
+      "drafted": false,
+      "revisions": 0,
+      "tokens_by_node": {},
+      "tokens": 0
+    },
+    {
+      "job_id": "job-00326",
+      "persona": "fullstack_dev",
+      "decision": "bid",
+      "status": "dead_letter",
+      "errors": [
+        "writer: OpenAIRateLimitError: Error code: 429 - Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[masked]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199524, Requested 3220. Please try again in 19m45.408s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing"
+      ],
+      "seconds_to_decision": 0.192,
+      "seconds_to_approval": null,
+      "drafted": false,
+      "revisions": 0,
+      "tokens_by_node": {},
+      "tokens": 0
+    }
+  ],
+  "scope": "In-process seed tools (no MCP start-up or GigSim network); real model calls including Groq free-tier rate-limit waits.",
+  "usd_note": "Not computed: model prices are not set yet.",
+  "dead_letter_errors": [
+    "writer: OpenAIRateLimitError: Error code: 429 - Rate limit reached for model `openai/gpt-oss-120b`"
+  ]
+}

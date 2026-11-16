@@ -1,4 +1,4 @@
-.PHONY: api-client web e2e eval-rag eval-table install dev api gigsim mcp-marketplace mcp-portfolio mcp-workspace draft-one test lint eval seed demo
+.PHONY: worker api-client web e2e eval-rag eval-table install dev api gigsim mcp-marketplace mcp-portfolio mcp-workspace draft-one test lint eval seed demo
 
 install:
 	uv sync --frozen
@@ -21,6 +21,10 @@ web:
 e2e:
 	cd apps/web && npx playwright test
 
+# Arq worker (needs RUN_MODE=worker, Postgres and Redis; see docs/RUNBOOK.md)
+worker:
+	uv run arq worker.main.WorkerSettings
+
 gigsim:
 	uv run uvicorn --factory gigsim.app:create_app --port 8081
 
@@ -42,8 +46,9 @@ test:
 lint:
 	uv run ruff check .
 
+# Smoke eval: 30 dev jobs up to the writer, no model calls; fails below the gates (CI).
 eval:
-	uv run python -m evals.runners.run_demo_eval
+	uv run python -m evals.runners.smoke_eval --check
 
 # Part B: every retrieval variant, the ablation, proposal quality and outcomes, then the table.
 # Model replies and reranker scores are cached in data/processed/eval_cache/, so a rerun is cheap.

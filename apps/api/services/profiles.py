@@ -64,3 +64,17 @@ async def upload(rt: Runtime, account: str, filename: str, content: bytes) -> Up
     except UploadRejected as error:
         raise ApiError(422, error.code, str(error)) from error
     return UploadOut(saved_as=saved, bytes=len(content))
+
+
+async def preload_personas(rt: Runtime) -> list[str]:
+    """Give accounts listed in PRELOAD_PERSONAS (`account=persona,...`) their persona at startup,
+    so a reviewer login lands straight in the inbox. Accounts that already have a profile keep it.
+    """
+    pairs = [pair.split("=", 1) for pair in os.environ.get("PRELOAD_PERSONAS", "").split(",")
+             if "=" in pair]
+    done = []
+    for account, persona in ((name.strip(), value.strip()) for name, value in pairs):
+        if await rt.store.aget(PROFILE, account) is None:
+            await save_profile(rt, account, ProfileIn(persona=persona))
+            done.append(account)
+    return done

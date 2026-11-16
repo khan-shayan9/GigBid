@@ -15,9 +15,7 @@
             "type": "integer"
           },
           "cost_and_latency": {
-            "description": "why cost and latency are not shown yet",
-            "title": "Cost And Latency",
-            "type": "string"
+            "$ref": "#/components/schemas/CostLatency"
           },
           "decisions": {
             "additionalProperties": {
@@ -226,6 +224,64 @@
           "upwork_connected"
         ],
         "title": "Connections",
+        "type": "object"
+      },
+      "CostLatency": {
+        "description": "Measured from this account's checkpoints (R8). USD cost is in the Langfuse traces.",
+        "properties": {
+          "jobs_timed": {
+            "title": "Jobs Timed",
+            "type": "integer"
+          },
+          "p95_seconds_per_job": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "first segment: post in, to the decision or the approval pause",
+            "title": "P95 Seconds Per Job"
+          },
+          "p95_seconds_per_proposal": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "first segment of runs that drafted a proposal",
+            "title": "P95 Seconds Per Proposal"
+          },
+          "p95_tokens_per_proposal": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "model tokens, whole run",
+            "title": "P95 Tokens Per Proposal"
+          },
+          "proposals_timed": {
+            "title": "Proposals Timed",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "jobs_timed",
+          "p95_seconds_per_job",
+          "proposals_timed",
+          "p95_seconds_per_proposal",
+          "p95_tokens_per_proposal"
+        ],
+        "title": "CostLatency",
         "type": "object"
       },
       "Critique": {
@@ -1528,6 +1584,18 @@
             "default": 0,
             "title": "Tokens Used",
             "type": "integer"
+          },
+          "trace_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The run's Langfuse trace; None when off",
+            "title": "Trace Url"
           }
         },
         "required": [
@@ -1884,7 +1952,7 @@
   },
   "info": {
     "title": "GigBid API",
-    "version": "0.6.0"
+    "version": "0.7.0"
   },
   "openapi": "3.1.0",
   "paths": {
@@ -2261,6 +2329,23 @@
           }
         },
         "summary": "Pipeline",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/pipeline/stream": {
+      "get": {
+        "operationId": "stream_pipeline_pipeline_stream_get",
+        "responses": {
+          "200": {
+            "content": {
+              "text/event-stream": {}
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Stream Pipeline",
         "tags": [
           "analytics"
         ]

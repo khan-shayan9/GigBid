@@ -102,3 +102,14 @@ test("the run viewer streams progress node by node while the agents work", async
   await expect(page.getByRole("region", { name: "Live" }).getByText("working…")).toBeVisible();
   await expect(page.getByText("paused: waiting for your approval")).toBeVisible({ timeout: 40_000 });
 });
+
+test("the pipeline board moves a card live when an approval elsewhere submits it", async ({ page }) => {
+  await signInOnboarded(page);
+  await openClinicDraft(page);
+  await page.getByRole("link", { name: "Pipeline" }).click();
+  await expect(page.getByRole("region", { name: "Awaiting approval" }).getByText("Clinic FAQ chatbot")).toBeVisible();
+  // Approved from another tab or device: this board is not reloaded by hand.
+  const thread = encodeURIComponent("reviewer:bid:job-clinic");
+  expect((await page.request.post(`/api/runs/${thread}/resume`, { data: { action: "approve" } })).status()).toBe(202);
+  await expect(page.getByRole("region", { name: "Submitted" }).getByText("Clinic FAQ chatbot")).toBeVisible();
+});

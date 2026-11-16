@@ -37,8 +37,13 @@ export default function RunViewerPage() {
             Proposal studio
           </Link>
         )}
-        {/* Trace links come with Langfuse tracing (Phase 7). */}
-        <span className="text-slate-500">Full trace: available once tracing is enabled.</span>
+        {run.trace_url ? (
+          <a className="btn-quiet" href={run.trace_url} target="_blank" rel="noreferrer">
+            Full trace (Langfuse)
+          </a>
+        ) : (
+          <span className="text-slate-500">Full trace: tracing is off on this server.</span>
+        )}
       </div>
       {run.errors.length > 0 && (
         <div role="alert" className="card border-red-200 bg-red-50 text-sm text-red-900">

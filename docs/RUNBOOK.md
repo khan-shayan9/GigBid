@@ -15,9 +15,10 @@
   `uv run python -m apps.api.auth.users <name> <password>`. `APP_SECRET_KEY` signs the session
   cookie. After sign-in, onboarding picks a persona (`api.personas` in `agent/config.yaml`).
 - **Runs:** graph threads are `<account>:bid:<job_id>` and `<account>:conv:<message_id>`. A run
-  segment (start, or the resume after an approval) runs as a task in the API process
-  (shortcut until the Phase 7 worker). `API_PERSISTENCE=memory` keeps checkpoints in memory, so
-  restarting the API loses them; `postgres` keeps them in `DATABASE_URL`.
+  segment (start, or the resume after an approval) runs in the Arq worker with
+  `RUN_MODE=worker`, or as a task in the API process with `inline` (local dev, tests).
+  `API_PERSISTENCE=memory` keeps checkpoints in memory, so restarting the API loses them;
+  `postgres` keeps them in `DATABASE_URL`.
 - **Streaming:** `GET /runs/{thread_id}/stream` sends a `snapshot` from the checkpoint, then one
   `node` event per finished node (LangGraph `updates` mode), `interrupt`, `end`. It sends
   `Cache-Control: no-transform` because Next.js gzip would otherwise buffer the stream.
@@ -33,7 +34,74 @@
 
 ## Docker
 `docker compose up` at the repo root (or `make dev`) starts the stack in `infra/docker-compose.yml`:
-the API on port 8000, Postgres with pgvector, and Redis. `GET /health` answers once the API is up.
+the web app on port 3000, the API on 8000, the Arq worker, GigSim on 8081, Postgres with
+pgvector, and Redis. Ports bind to 127.0.0.1. The API and the worker run with
+`API_PERSISTENCE=postgres` and `RUN_MODE=worker`; the MCP servers run as their stdio subprocesses.
+
+## Worker (Phase 7)
+- **Run:** `make worker` (`arq worker.main.WorkerSettings`), with the API's env plus
+  `RUN_MODE=worker`, `API_PERSISTENCE=postgres`, `DATABASE_URL` and `REDIS_URL`.
+- **Jobs:** `run_segment` runs one graph segment; its job id is `run:<thread_id>`, so a thread
+  never has two segments queued or running. What to run comes from the checkpoint, so a job
+  retried after a crash never replays an approval (`tests/integration/test_worker.py`).
+- **Run state in Redis:** `gigbid:running:<thread>` (expires after `worker.running_ttl_s`
+  without a finished node), `gigbid:failure:<thread>`, and pub/sub channel
+  `gigbid:events:<thread>` for the SSE bridge. `gigbid:events:pipeline:<account>` tells an open
+  pipeline board to reload.
+- **Schedules (UTC):** `scout` at `worker.scout_hours` starts bid runs for up to
+  `worker.scout_new_runs_per_account` unseen jobs per onboarded account (runs stop at the
+  approval interrupt). `sync_outcomes` every `worker.outcome_sync_minutes` promotes
+  replied/interview/hired/lost proposals to outcome memory, for proposals the account sent
+  from its own bid thread.
+- **Limits:** `worker.max_jobs` segments at once (Groq free tier), `worker.job_timeout_s` each.
+- **Token spend:** a drafted proposal used 5,187 to 6,498 tokens (3 measured,
+  `evals/results/cost_latency_dev.json`), and Groq's free tier caps `openai/gpt-oss-120b` at
+  200,000 tokens a day for the whole key; earlier work had used most of it, and it ran out
+  partway through that measurement (4 of 7 bid runs dead-lettered on 429s). The scheduled
+  scout can draft up to 18 proposals a day per account, so lower
+  `worker.scout_new_runs_per_account` or the scout hours before enabling it for several accounts.
+
+## Tracing (Langfuse Cloud)
+- Set `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY` and `LANGFUSE_BASE_URL` in `.env`; empty keys
+  turn tracing off. One trace per run thread (`agent/tracing.py`): its id is derived from the
+  thread id, so the first segment, the resume and any retry share it, and the run viewer links
+  to it. Every node is a span; model calls are generations with token counts. Emails, URLs and
+  phone numbers are masked before anything leaves (`data/pipeline/pii.py`).
+- Cost in USD needs each Groq model's price set in the Langfuse project (Settings, Models);
+  without prices Langfuse shows tokens only.
+
+## Evaluation gates
+- `make eval` runs `evals/runners/smoke_eval.py --check`: 30 seeded dev jobs through the bid
+  graph up to the writer (no model calls). It writes `evals/results/smoke_eval_dev.json` and
+  fails below the gates in `agent/config.yaml` `evals.smoke`. CI runs it (`eval-smoke` job).
+- `uv run python -m evals.runners.smoke_eval` also writes `evals/results/injection_dev.json`:
+  the injection attack success rate with the `injected_instructions` risk signal removed and as
+  shipped, on every dev injection job (decision level).
+- `uv run --env-file .env python -m evals.runners.injection_writer` (about 160,000 Groq tokens)
+  measures the writer level: each dev injection job drafted with and without the `<job_post>`
+  delimiters, judged by `agent/prompts/injection_judge.md`.
+- `uv run --env-file .env python -m evals.runners.cost_latency --jobs 10` measures latency and
+  tokens per job analysed and per proposal on the real models.
+
+## VPS deploy (Phase 7)
+The target is an Azure for Students VM: B2s (2 vCPU, 4 GB), Ubuntu 24.04 LTS.
+1. Create the VM with SSH key sign-in. In its network security group allow inbound 22 (your IP
+   only), 80 and 443. Then, on the VM:
+   - Docker: `curl -fsSL https://get.docker.com | sh` and `sudo usermod -aG docker $USER`
+     (sign out and in again).
+   - Swap, since 4 GB is tight while the web image builds:
+     `sudo fallocate -l 4G /swapfile && sudo chmod 600 /swapfile && sudo mkswap /swapfile &&
+     sudo swapon /swapfile && echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab`.
+   - Optionally give the VM a DNS name label in Azure (`<label>.<region>.cloudapp.azure.com`)
+     and use it as `PUBLIC_DOMAIN`.
+2. `git clone` the repo, `cp .env.example .env`, and fill in: `APP_ENV=production`,
+   `APP_SECRET_KEY` (random), `APP_USERS` (`uv run python -m apps.api.auth.users reviewer
+   <password>` on any machine), `PRELOAD_PERSONAS=reviewer=ai_ml_engineer`, `POSTGRES_PASSWORD`,
+   the GigSim and MCP tokens, `GROQ_API_KEY`, `OPENROUTER_API_KEY`, `TOKEN_ENCRYPTION_KEY` and the
+   Langfuse keys. Set `PUBLIC_DOMAIN` to a domain pointing at the VPS (or `<vps-ip>.sslip.io`).
+3. `docker compose --profile public up -d --build`. Caddy gets the certificate and serves the web
+  app on `https://$PUBLIC_DOMAIN`.
+4. Check: `docker compose ps` (all healthy), sign in as the reviewer, analyse one job.
 
 ## GigSim (marketplace simulator, port 8081)
 - **Run:** `make gigsim` (or `docker compose up gigsim`). Run from the repo root (default paths

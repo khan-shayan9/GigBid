@@ -25,11 +25,14 @@ function Counts({ title, counts }: { title: string; counts: Record<string, numbe
   );
 }
 
+const seconds = (value: number | null | undefined) => (value == null ? "none yet" : `${value.toFixed(1)} s`);
+
 export default function AnalyticsPage() {
   const stats = useLoad(() => unwrap(api.GET("/analytics"), true), "analytics");
   if (stats.loading && !stats.data) return <Loading what="analytics" />;
   if (stats.error) return <ErrorState error={stats.error} retry={stats.reload} />;
   const data = stats.data!;
+  const cost = data.cost_and_latency;
   return (
     <div className="space-y-4">
       <h1>Analytics</h1>
@@ -74,8 +77,18 @@ export default function AnalyticsPage() {
         )}
       </section>
       <section className="card" aria-labelledby="cost-h">
-        <h2 id="cost-h">Cost and latency per proposal</h2>
-        <p className="text-sm text-slate-600">{data.cost_and_latency}</p>
+        <h2 id="cost-h">Cost and latency</h2>
+        <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
+          <dt className="font-medium">p95 per job analysed</dt>
+          <dd>{seconds(cost.p95_seconds_per_job)} ({cost.jobs_timed} jobs)</dd>
+          <dt className="font-medium">p95 per proposal drafted</dt>
+          <dd>{seconds(cost.p95_seconds_per_proposal)} ({cost.proposals_timed} proposals)</dd>
+          <dt className="font-medium">p95 tokens per proposal</dt>
+          <dd>{cost.p95_tokens_per_proposal ?? "none yet"}</dd>
+        </dl>
+        <p className="mt-1 text-xs text-slate-500">
+          Measured from your runs&apos; checkpoints. Cost in USD per node is in each run&apos;s Langfuse trace.
+        </p>
       </section>
     </div>
   );

@@ -103,7 +103,7 @@ class Backend:
         if name == "search_evidence":
             hits = self.retriever.search(self.corpora[self.persona], args["requirement"],
                                          args.get("k", EVIDENCE_K), lambda item: True)
-            return {"items": [{"id": item.id, "title": item.title,
+            return {"items": [{"id": item.id, "title": item.title, "type": item.type,
                                "text": item.text[:EVIDENCE_CHARS], "score": score}
                               for item, score in hits]}
         if name == "get_market_rates":

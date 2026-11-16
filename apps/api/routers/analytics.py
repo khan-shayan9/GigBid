@@ -1,10 +1,12 @@
 """Pipeline board, analytics and the memory viewer."""
 
 from fastapi import APIRouter, Path
+from fastapi.responses import StreamingResponse
 
 from apps.api.deps import AccountDep, RuntimeDep
 from apps.api.schemas.app import Analytics, MemoryList, Pipeline
 from apps.api.services import insights
+from apps.api.streaming import open_pipeline_stream
 
 router = APIRouter(tags=["analytics"])
 
@@ -12,6 +14,15 @@ router = APIRouter(tags=["analytics"])
 @router.get("/pipeline", response_model=Pipeline)
 async def pipeline(account: AccountDep, rt: RuntimeDep) -> Pipeline:
     return await insights.pipeline(rt, account)
+
+
+@router.get("/pipeline/stream", response_class=StreamingResponse,
+            responses={200: {"content": {"text/event-stream": {}}}})
+async def stream_pipeline(account: AccountDep, rt: RuntimeDep) -> StreamingResponse:
+    events = await open_pipeline_stream(rt, account)
+    return StreamingResponse(events, media_type="text/event-stream",
+                             headers={"Cache-Control": "no-cache, no-transform",
+                                      "X-Accel-Buffering": "no"})
 
 
 @router.get("/analytics", response_model=Analytics)

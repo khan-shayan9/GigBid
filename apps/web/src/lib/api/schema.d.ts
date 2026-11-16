@@ -221,6 +221,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/pipeline/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Stream Pipeline */
+        get: operations["stream_pipeline_pipeline_stream_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/profile": {
         parameters: {
             query?: never;
@@ -387,11 +404,7 @@ export interface components {
             };
             /** Connects Spent */
             connects_spent: number;
-            /**
-             * Cost And Latency
-             * @description why cost and latency are not shown yet
-             */
-            cost_and_latency: string;
+            cost_and_latency: components["schemas"]["CostLatency"];
             /** Decisions */
             decisions: {
                 [key: string]: number;
@@ -473,6 +486,31 @@ export interface components {
             marketplace_mode: string;
             /** Upwork Connected */
             upwork_connected: boolean;
+        };
+        /**
+         * CostLatency
+         * @description Measured from this account's checkpoints (R8). USD cost is in the Langfuse traces.
+         */
+        CostLatency: {
+            /** Jobs Timed */
+            jobs_timed: number;
+            /**
+             * P95 Seconds Per Job
+             * @description first segment: post in, to the decision or the approval pause
+             */
+            p95_seconds_per_job: number | null;
+            /**
+             * P95 Seconds Per Proposal
+             * @description first segment of runs that drafted a proposal
+             */
+            p95_seconds_per_proposal: number | null;
+            /**
+             * P95 Tokens Per Proposal
+             * @description model tokens, whole run
+             */
+            p95_tokens_per_proposal: number | null;
+            /** Proposals Timed */
+            proposals_timed: number;
         };
         /** Critique */
         Critique: {
@@ -943,6 +981,11 @@ export interface components {
              * @default 0
              */
             tokens_used: number;
+            /**
+             * Trace Url
+             * @description The run's Langfuse trace; None when off
+             */
+            trace_url?: string | null;
         };
         /** RunList */
         RunList: {
@@ -1379,6 +1422,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Pipeline"];
+                };
+            };
+        };
+    };
+    stream_pipeline_pipeline_stream_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": unknown;
                 };
             };
         };
