@@ -123,8 +123,8 @@ flowchart LR
 | Client Liaison | Classifies client replies, offers interview slots and drafts responses | `agent/nodes/client_liaison.py` |
 | Router (X1) | In agency mode, picks the team member who fits the job best, before the bid graph runs | `agent/nodes/router.py` |
 
-The Analyst, Risk Assessor, Fit Matcher, Pricing and Critic are rule-based shortcuts (marked `shortcut:` in the
-code); the Writer, Verifier and Client Liaison's reply draft call models (the Liaison's intent
+The Analyst, Fit Matcher, Pricing and Critic are rule-based shortcuts (marked `shortcut:` in the
+code), and the Risk Assessor is rule-based by design (weighted patterns in config); the Writer, Verifier and Client Liaison's reply draft call models (the Liaison's intent
 classifier is rule-based too). The single-agent comparison
 (R&D C) is in `docs/RND_C.md`.
 

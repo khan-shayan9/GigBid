@@ -1,43 +1,227 @@
-<html><body style="font-family: sans-serif; font-size: 10pt">
-<h1>GigBid: R&amp;D Report (engineering design review)</h1>
-<p>AI-4016 Assignment II. Every number cites a file in <code>evals/results/</code> or a commit.</p>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>GigBid R&amp;D Report</title>
+<style>
+  @page { size: A4; margin: 16mm 15mm; }
+  body { font-family: "Segoe UI", Arial, sans-serif; font-size: 9.6pt; line-height: 1.38; color: #1a1a1a; }
+  h1 { font-size: 17pt; margin: 0 0 2pt; }
+  h2 { font-size: 12pt; margin: 13pt 0 4pt; border-bottom: 1px solid #bbb; padding-bottom: 2pt; break-after: avoid; }
+  h3 { font-size: 10pt; margin: 8pt 0 3pt; break-after: avoid; }
+  p { margin: 3pt 0 5pt; }
+  ul { margin: 2pt 0 5pt; padding-left: 16pt; }
+  li { margin: 1pt 0; }
+  table { border-collapse: collapse; margin: 4pt 0 6pt; width: 100%; font-size: 8.8pt; break-inside: avoid; }
+  th, td { border: 1px solid #aaa; padding: 2pt 4pt; text-align: left; vertical-align: top; }
+  th { background: #eee; }
+  td.n { text-align: right; white-space: nowrap; }
+  code { font-family: Consolas, monospace; font-size: 8.6pt; }
+  .meta { color: #555; font-size: 9pt; }
+  .src { color: #555; font-size: 8.4pt; }
+  pre { font-family: Consolas, monospace; font-size: 8pt; background: #f5f5f5; padding: 5pt; margin: 4pt 0; line-height: 1.25; break-inside: avoid; }
+</style></head><body>
+
+<h1>GigBid: R&amp;D Report</h1>
+<p class="meta">AI-4016 Assignment II, written as an engineering design review. Every number cites a file in
+<code>evals/results/</code>, a trace or a commit. All measurements are on the dev split; the held-out split has not been
+run. Repository: <code>github.com/khan-shayan9/GigBid</code>.</p>
 
 <h2>1. Problem and constraints</h2>
-<p>Freelancers spend hours scanning feeds, waste Connects on poor-fit jobs, send generic proposals and meet scams. GigBid scouts, assesses, drafts and handles replies; the freelancer decides. <b>Never automated:</b> sending a proposal or message, and spending Connects. Every write goes through a LangGraph <code>interrupt()</code> approval and an idempotency key. <b>Budgets</b> (<code>agent/config.yaml</code> <code>budgets</code>): 30 graph steps, 12,000 tokens per job, at most 2 Critic revisions, 2 node retries with backoff. Over budget a thread ends in <code>needs_attention</code>; a dependency that stays down ends it in <code>dead_letter</code>.</p>
+<p>A freelancer spends hours scanning job feeds, pays Connects to bid on jobs that were never a fit, sends generic
+proposals and meets scams. GigBid scouts saved searches on a schedule, assesses each job (requirements, client risk,
+portfolio fit), recommends bid or skip with a price, drafts a proposal whose claims cite portfolio evidence, and drafts
+replies to clients. The freelancer decides.</p>
+<p><b>Never automated:</b> sending a proposal or a message, and spending Connects. Every write goes through a LangGraph
+<code>interrupt()</code> that the user answers in the web app, and runs with an idempotency key. Also out of scope:
+scraping, browser automation, session cookies.</p>
+<p><b>Declared budgets.</b></p>
+<table>
+<tr><th>Budget</th><th>Declared</th><th>Where it is set or enforced</th></tr>
+<tr><td>Graph steps per job</td><td class="n">30</td><td><code>budgets.max_graph_steps</code>; over budget the thread ends in <code>needs_attention</code></td></tr>
+<tr><td>Tokens per job</td><td class="n">12,000</td><td><code>budgets.max_tokens_per_job</code>; same</td></tr>
+<tr><td>Critic revisions</td><td class="n">2</td><td><code>budgets.max_revisions</code></td></tr>
+<tr><td>p95 seconds per job analysed (up to the writer, in process)</td><td class="n">5</td><td>CI gate <code>evals.smoke.max_p95_seconds_per_job</code></td></tr>
+<tr><td>p95 latency and USD cost per proposal</td><td>not declared</td><td>only 3 proposals were measured before the Groq daily cap; no model prices in config</td></tr>
+</table>
 
 <h2>2. Architecture</h2>
-<p><b>Bid graph</b> (<code>agent/graphs/bid_graph.py</code>): Job Analyst, Risk Assessor and Fit Matcher run in parallel, then a decision node (the only bid/skip authority), Pricing, Writer, Verifier, Critic (at most 2 loops), Compliance Guard (the only node that can block), approval interrupt, submit. <b>Conversation graph</b>: intent classification (scam signals end the thread), Workspace slots, reply draft, compliance, approval, send. Hand-offs are Pydantic objects (<code>agent/handoffs.py</code>). <b>Marketplace port</b> with GigSim and live Upwork adapters behind the Marketplace MCP server. <b>MCP surface:</b> our Portfolio, Marketplace and Workspace servers plus GitHub and Upwork, with per-node tool allowlists (<code>docs/TOOLS.md</code>). <b>Stores:</b> Postgres checkpointer (<code>agent/checkpointing.py</code>), pgvector evidence index, LangGraph store for style and outcome memory written only by <code>agent/memory/promotion_rules.py</code>. The crash/resume test (<code>tests/integration/test_crash_resume.py</code>) kills the run after the marketplace accepted a submission; the resumed and replayed runs still submit exactly once, on MemorySaver locally and Postgres in CI.</p>
+<pre>Next.js web --JSON+SSE--> FastAPI --enqueue/resume--> Arq worker --> LangGraph (bid graph, conversation graph)
+                                                                        |  agent/mcp_client.py (per-node allowlists)
+                     Portfolio MCP (ours)  Marketplace MCP (ours)  Workspace MCP (ours)  GitHub MCP
+                                                  |
+                                           MarketplacePort --> GigSim (ours)  |  upwork_live adapter --> Upwork MCP
+Stores: Postgres (checkpointer, LangGraph store, pgvector), Redis (queue, run flags, events). Traces: Langfuse Cloud.</pre>
+<p><b>Bid graph</b> (<code>agent/graphs/bid_graph.py</code>): Job Analyst, Risk Assessor and Fit Matcher run in parallel;
+a decision node (the only bid or skip authority); Pricing; Writer; Verifier; Critic (sends the draft back at most twice);
+Compliance Guard (the only node that can block, with the reason shown in the UI); a dry-run preview; the approval
+interrupt; submit. <b>Conversation graph:</b> intent classification (a scam signal ends the thread), Workspace slots for
+interview requests, reply draft, compliance check, approval, send. Hand-offs are Pydantic objects
+(<code>agent/handoffs.py</code>).</p>
+<p><b>Marketplace port.</b> The Marketplace MCP server reaches the marketplace only through
+<code>MarketplacePort</code>; <code>marketplace.mode</code> picks GigSim or the live Upwork adapter (OAuth 2.1, tokens
+encrypted per user). <b>MCP surface:</b> Portfolio (3 read tools), Marketplace (7 read and 3 write tools with
+<code>dry_run</code>, idempotency keys, Bearer auth, a rate limiter and an audit log), Workspace (slots, holds, email
+drafts), plus GitHub (portfolio ingestion only) and Upwork (<code>docs/TOOLS.md</code>).</p>
+<p><b>Why each agent exists.</b> Each one owns a decision that a later step relies on: the Analyst turns untrusted text
+into a <code>JobSpec</code>; the Risk Assessor stops scams before any effort is spent; the Fit Matcher gives the decision
+a reason and the Writer its citations; the Verifier enforces R5 claim by claim; the Critic and Compliance Guard are
+separate because only Compliance may block. The Analyst, Fit Matcher, Pricing and Critic are rule-based shortcuts (marked <code>shortcut:</code> in code), and the
+Risk Assessor is rule-based by design (weighted patterns in config); the Writer, Verifier and the Client Liaison's reply call models.</p>
+<p><b>Persistence and memory.</b> The Postgres checkpointer saves every step; a crash after the marketplace accepted a
+submission still submits exactly once on resume and replay (<code>tests/integration/test_crash_resume.py</code>).
+Style and outcome memory are written only by <code>agent/memory/promotion_rules.py</code> (R7); no node reads them yet.
+<b>Production</b> (Phase 7): graph segments run in the Arq worker, scouting and outcome sync are crons, every thread is
+one Langfuse trace with node and tool spans and PII masked, and CI runs unit, contract and Playwright tests plus the
+30-job smoke eval with gates. Diagrams: <code>docs/ARCHITECTURE.md</code>.</p>
 
-<h2>3. R&amp;D A: tool granularity</h2>
-<p><b>Hypothesis:</b> coarse tools save tokens but hurt accuracy; per-node fine tools with rewritten descriptions are most accurate and nearly as cheap. <b>Setup:</b> 40 tasks with known calls, gpt-oss-20b, first call scored. <b>Results</b> (<code>rnd_a_tool_granularity_openai_gpt-oss-20b.json</code>):</p>
-<table border="1" cellpadding="3"><tr><th>Tool set</th><th>Selection</th><th>Arguments</th><th>End to end</th><th>Tokens/task</th></tr>
-<tr><td>fine (15)</td><td>0.95</td><td>0.947</td><td>0.90</td><td>2104</td></tr>
-<tr><td>coarse (3)</td><td>0.85</td><td>0.882</td><td>0.75</td><td>953</td></tr>
-<tr><td>allowlisted</td><td>1.00</td><td>0.80</td><td>0.80</td><td>680</td></tr>
-<tr><td>best</td><td>0.975</td><td>0.974</td><td>0.95</td><td>763</td></tr></table>
-<p><b>Conclusion:</b> coarse dispatchers cost accuracy (4 invented tool names). Allowlisting cut tokens by two thirds but dropped arguments (<code>dry_run</code>, filters); rewritten descriptions fixed that. We ship fine tools behind allowlists. Limits: one model, one run, our own tasks; "best" was written after seeing failures, so it is optimistic.</p>
+<h2>3. R&amp;D question A: tool granularity</h2>
+<p><b>Hypothesis:</b> coarse tools save tokens but cost accuracy; fine tools behind per-node allowlists, with rewritten
+descriptions, are the most accurate and nearly as cheap. <b>Setup:</b> 40 tasks with known correct calls, gpt-oss-20b,
+first call scored. <span class="src">Source: <code>rnd_a_tool_granularity_openai_gpt-oss-20b.json</code>.</span></p>
+<table><tr><th>Tool set</th><th>Selection</th><th>Arguments</th><th>End to end</th><th>Tokens per task</th></tr>
+<tr><td>Fine (15 tools)</td><td class="n">0.95</td><td class="n">0.947</td><td class="n">0.90</td><td class="n">2,104</td></tr>
+<tr><td>Coarse (3 dispatchers)</td><td class="n">0.85</td><td class="n">0.882</td><td class="n">0.75</td><td class="n">953</td></tr>
+<tr><td>Allowlisted</td><td class="n">1.00</td><td class="n">0.80</td><td class="n">0.80</td><td class="n">680</td></tr>
+<tr><td>Allowlisted + rewritten descriptions</td><td class="n">0.975</td><td class="n">0.974</td><td class="n">0.95</td><td class="n">763</td></tr></table>
+<p><b>Conclusion:</b> coarse dispatchers cost accuracy (the model invented 4 tool names). Allowlisting cut tokens by
+two thirds but dropped arguments such as <code>dry_run</code> and filters; rewritten descriptions fixed that. We ship fine
+tools behind allowlists. <b>Limits:</b> one model, one run, our own tasks; the rewritten descriptions were written after
+seeing failures, so that row is optimistic.</p>
 
-<h2>4. R&amp;D B: RAG variants</h2>
-<p><b>Hypotheses</b> (written before running): H1 decomposition + hybrid raises Recall@5 by 10 points on jobs with &ge;4 skills; H2 reranking raises MRR by 0.05. <b>Results</b> (60 gold dev jobs, <code>rag_retrieval_dev.json</code>): V0 0.219 / 0.285 (Recall@5 / MRR); V1 decomposition 0.297 / 0.412; V2 hybrid 0.258 / 0.316; V3 rerank 0.242 / 0.324; V8 corrective 0.117 / 0.183; V1+V2 0.294 / 0.355; V1+V2+V3 0.242 / 0.379. <b>H1 not supported</b> (+7.2 points). <b>H2 not supported</b> (+0.025 MRR; Recall@5 fell). Ablation (<code>rag_ablation_dev.json</code>): removing the reranker gives the best Recall@5 (0.294). By persona, V1 gains on data_analyst (0.283 to 0.475) and ai_ml_engineer, and slightly loses on fullstack_dev. <b>Claim verification</b> (<code>proposal_eval_dev.json</code>, 9 jobs per variant): unsupported claims per proposal 0.33 to 0.00 (V0) and 0.44 to 0.22 (V1). <b>Better retrieval did not raise the GigSim reply rate</b> (0.556 for both): simulated clients decide mostly on opening, named skills and budget. <b>Ships: V1.</b> Limits: small samples, held-out split not run, judge uncalibrated, gold labels favour lexical retrieval.</p>
+<h2>4. R&amp;D question B: RAG variants and claim verification</h2>
+<p><b>Hypotheses</b> (written before any run, <code>docs/RND_B.md</code>): H1, decomposition plus hybrid search raises
+Recall@5 by 10 points on jobs with four or more skills; H2, reranking raises MRR by 0.05.
+<b>Setup:</b> 60 dev jobs with gold evidence (20 per persona) plus 42 without; nomic-embed-text through fastembed; MiniLM-L-12
+reranker (ADR 0005). <span class="src">Sources: <code>rag_retrieval_dev.json</code>, <code>rag_ablation_dev.json</code>,
+<code>proposal_eval_dev.json</code>.</span></p>
+<table><tr><th>Variant</th><th>Recall@5</th><th>nDCG@10</th><th>MRR</th><th>Unsupported claims per proposal, before → after verification (9 jobs)</th><th>Judge 1–5 (uncalibrated)</th><th>GigSim reply rate</th></tr>
+<tr><td>V0 dense</td><td class="n">0.219</td><td class="n">0.271</td><td class="n">0.285</td><td>0.333 → 0.0</td><td class="n">2.75</td><td class="n">0.556</td></tr>
+<tr><td><b>V1 decomposition (shipped)</b></td><td class="n"><b>0.297</b></td><td class="n"><b>0.355</b></td><td class="n"><b>0.412</b></td><td>0.444 → 0.222</td><td class="n">3.0</td><td class="n">0.556</td></tr>
+<tr><td>V2 hybrid</td><td class="n">0.258</td><td class="n">0.307</td><td class="n">0.316</td><td colspan="3">not drafted</td></tr>
+<tr><td>V3 rerank</td><td class="n">0.242</td><td class="n">0.281</td><td class="n">0.324</td><td colspan="3">not drafted</td></tr>
+<tr><td>V8 corrective</td><td class="n">0.117</td><td class="n">0.139</td><td class="n">0.183</td><td colspan="3">not drafted</td></tr>
+<tr><td>V1 + V2 (ablation: no rerank)</td><td class="n">0.294</td><td class="n">0.328</td><td class="n">0.355</td><td colspan="3">not drafted</td></tr>
+<tr><td>V1 + V2 + V3</td><td class="n">0.242</td><td class="n">0.345</td><td class="n">0.379</td><td colspan="3">not drafted</td></tr></table>
+<p><b>H1 not supported</b> (+7.2 points). <b>H2 not supported</b> (+0.025 MRR, and Recall@5 fell). By persona, V1 gains
+on data_analyst (0.283 to 0.475) and ai_ml_engineer and slightly loses on fullstack_dev. <b>Better retrieval did not raise
+the GigSim reply rate</b> (0.556 for both): our simulated clients decide mostly on the opening, named skills and budget,
+not on which evidence is cited. Verification is not complete: on one V1 job the re-check counted more unsupported
+claims after verification than before (§8). <b>Ships: V1</b>, the best on all three retrieval metrics. <b>Limits:</b> small samples, the
+judge is not calibrated (30 hand labels outstanding), gold labels favour lexical retrieval.</p>
 
-<h2>5. R&amp;D C: single agent vs supervisor vs our graph</h2>
-<p>n = 7 dev jobs (Groq daily quota), both baselines on gpt-oss-120b (<code>rnd_c_dev.json</code>, <code>docs/RND_C.md</code>). Decision accuracy: ReAct 0.857, supervisor 0.857, our graph 0.143 in the first run (it bid on all 7). Cause: the Fit Matcher counted any search hit as coverage, and regex risk missed a fake-cheque scam and an injection aimed at AI writers. Fix (commit <code>bb621ff</code>): an evidence-score threshold of 0.65 chosen on 80 other dev jobs (<code>fit_threshold_dev.json</code>), plus two risk signals in config. Rerun: graph 0.571, scam and injection skipped, the bid job still bid. The supervisor never bid on the one bid job and flagged 2 non-scams as scams. No architecture called a write tool; only our graph guarantees that structurally. ReAct wins on budget/domain skips that fit and risk rules cannot see. Limits: n = 7, and the fix was tuned after seeing these jobs.</p>
+<h2>5. R&amp;D question C: single agent vs supervisor vs our graph</h2>
+<p>n = 7 dev jobs (Groq daily quota): 1 scam, 1 injection, 1 bid, 4 other skips. Both baselines on gpt-oss-120b.
+<span class="src">Source: <code>rnd_c_dev.json</code>, <code>docs/RND_C.md</code>.</span></p>
+<table><tr><th>Architecture</th><th>Decision accuracy</th><th>Bid recall</th><th>Scam skip</th><th>Injection skip</th><th>False scam flags</th><th>Mean tokens</th><th>p95 s</th></tr>
+<tr><td>ReAct, one agent</td><td class="n">0.857</td><td class="n">1.0</td><td class="n">1/1</td><td class="n">1/1</td><td class="n">0</td><td class="n">5,282</td><td class="n">48.1</td></tr>
+<tr><td><code>langgraph-supervisor</code></td><td class="n">0.857</td><td class="n">0.0</td><td class="n">1/1</td><td class="n">1/1</td><td class="n">2</td><td class="n">6,800</td><td class="n">101.0</td></tr>
+<tr><td>Our graph (to the decision)</td><td class="n">0.571</td><td class="n">1.0</td><td class="n">1/1</td><td class="n">1/1</td><td class="n">1</td><td class="n">0</td><td class="n">0.4</td></tr></table>
+<p>Our graph scored 0.143 on the first run (it bid on all 7). The Fit Matcher counted any search hit as coverage, and the
+regex risk missed a fake-cheque scam and an injection aimed at AI writers. Fix in commit <code>bb621ff</code>: an
+evidence-score threshold of 0.65 chosen on 80 other dev jobs (<code>fit_threshold_dev.json</code>) and two risk signals
+in config. <b>Conclusion:</b> on decision accuracy the LLM agents beat our rules (they read budget and domain cues our
+rules do not), at about 5,000 to 7,000 tokens and 50 to 100 s per job. Our graph is the only design that guarantees by
+structure that no write runs before approval, and it costs no tokens up to the writer. None of the three called a write
+tool. <b>Limits:</b> n = 7; the fix was tuned after seeing these jobs; this file predates the eval-backend fix
+(<code>dd91de9</code>).</p>
 
-<h2>6. The change request (policy v2)</h2>
-<p>The real 2 Nov text was not provided, so we assumed one (<code>data/policy_pack/v2.yaml</code>, <code>assumed: true</code>): an AI-assistance disclosure in proposals, and Connects surcharges (+4 for budget &ge; $1000, +2 for hourly max &ge; $60). Commit <code>3303de5</code> changed only config (<code>policy.version</code>, <code>GIGSIM_POLICY</code>), the writer and verifier prompts, and test fixtures; no node code. Measured (<code>policy_v2_diff.json</code>): Phase 4 drafts pass v1 100%, v2 0%, v2 with the disclosure line 100%; mean Connects on 522 dev jobs 4.32 to 4.96, 115 jobs cost more. It took about 15 minutes, which says the rules really are data.</p>
+<h2>6. The change request</h2>
+<p>The real text of the 2 Nov policy update was not provided, so we assumed one (<code>data/policy_pack/v2.yaml</code>,
+marked <code>assumed: true</code>): proposals must carry an AI-assistance disclosure, and Connects surcharges apply (+4 for
+budgets of $1,000 or more, +2 for an hourly maximum of $60 or more). <b>What we edited</b> (commit
+<code>3303de5</code>): config (<code>policy.version</code>, <code>GIGSIM_POLICY</code>), the writer and verifier prompts,
+and test fixtures. No node code and nothing under the frozen <code>gigsim/</code>. <b>Measured</b>
+(<code>policy_v2_diff.json</code>): of 18 Phase 4 drafts, 100% pass v1, 0% pass v2, 100% pass v2 once the disclosure
+line is added; mean Connects on 522 dev jobs rose from 4.32 to 4.96, and 115 jobs cost more. It took about 15 minutes,
+which says the policy and the costs really are data.</p>
 
-<h2>7. Failure analysis</h2>
-<table border="1" cellpadding="3"><tr><th>Category</th><th>Dev jobs (source)</th><th>Fix tried</th><th>Worked?</th></tr>
-<tr><td>Wrong bid (scam)</td><td>job-00219, graph (rnd_c_dev.csv at 8ccdf76)</td><td>fake-cheque risk signal</td><td>yes (skipped in rerun)</td></tr>
-<tr><td>Injection</td><td>job-00337, graph</td><td>AI-targeted injection signal</td><td>yes</td></tr>
-<tr><td>Wrong bid (poor fit)</td><td>job-00240, job-00184, job-00364, job-00632, graph</td><td>evidence-score threshold</td><td>partly: 00364 now skipped; 00240, 00184, 00632 still bid</td></tr>
-<tr><td>Wrong bid</td><td>job-00184, ReAct</td><td>none (baseline)</td><td>n/a</td></tr>
-<tr><td>Wrong skip</td><td>job-00520, supervisor</td><td>none (baseline)</td><td>n/a</td></tr>
-<tr><td>False scam flag</td><td>job-00184, job-00364, supervisor</td><td>none (baseline)</td><td>n/a</td></tr>
-<tr><td>Unsupported claim</td><td>job-00104 (V0), job-00486 (V1), proposal_eval_dev.json</td><td>claim verifier removes sentences</td><td>yes for 00104; 00486 kept 2 unsupported</td></tr>
-<tr><td>Compliance miss (under v2)</td><td>all 18 Phase 4 drafts</td><td>writer prompt v3 disclosure line</td><td>yes when the line is present (not re-run on the model)</td></tr></table>
+<h2>7. Signature extension: X1 agency mode</h2>
+<p><b>What we built.</b> A team of three freelancers (the three personas). With agency mode on, a new bid thread's first
+run segment runs the shipped Fit Matcher on every member's Portfolio server in parallel, and a router
+(<code>agent/nodes/router.py</code>) returns a <code>RouteDecision</code>: the highest fit score, then the stronger mean
+evidence score, then the first member listed. The bid graph then runs unchanged as that member (portfolio, GigSim user,
+Connects); approve and retry act as the thread's member. The router only picks a member; the decision node still decides
+bid or skip. Off by default. Design: ADR 0006; commit <code>4fcd2c1</code>. <b>Not built:</b> the brief's "drafts in
+that member's voice" (dropped: measuring it needs many LLM drafts under the Groq cap).</p>
+<p><b>How we measured it</b> (<code>evals/runners/agency_routing.py</code>, the same <code>fit_for</code> and
+<code>route</code> the API calls, no LLM). <span class="src">Source: <code>agency_routing_dev.json</code>.</span></p>
+<table><tr><th>Measure (dev)</th><th>n</th><th>Value</th></tr>
+<tr><td>Routed member is the labelled member</td><td class="n">170</td><td class="n">0.847</td></tr>
+<tr><td>Same, on jobs where members tie on fit</td><td class="n">28</td><td class="n">0.714</td></tr>
+<tr><td>Jobs labelled bid for one member and skip for another</td><td class="n">11</td><td class="n">0.909</td></tr>
+<tr><td>Best fixed-member baseline (always fullstack_dev) / random</td><td class="n">170</td><td class="n">0.341 / 0.333</td></tr>
+<tr><td>Bid F1: one persona per account (labelled pairs) → agency mode (jobs)</td><td class="n">565 → 522</td><td class="n">0.400 → 0.407</td></tr></table>
+<p><b>Finding (negative):</b> routing finds the right member, but bid quality does not change; it is set by the
+decision thresholds and risk signals, not by who bids. What agency mode adds is reach: one account bids across three
+fields. <b>Limits:</b> no dev job is labelled bid for two personas, so "right member" means the persona our pipeline
+assigned, which is partly circular; the tie-break was chosen after a scratch run on dev; routing time is untraced and
+unmeasured, and agency mode is not deployed (the VM's memory under one Portfolio process per member is unverified).</p>
 
-<h2>8. Safety and platform respect</h2>
-<p>Never: auto-send, auto-spend Connects, scrape, browser automation. Enforced by graph structure (submit only after an approved interrupt; edits re-checked by Compliance), idempotency keys, per-node tool allowlists, untrusted-text delimiting in prompts, PII masking, and Compliance patterns for contact details and off-platform asks. What still gets through: regex risk misses scams it has no pattern for, and the verifier left 2 unsupported claims in one V1 proposal.</p>
+<h2>8. Failure analysis</h2>
+<p>19 failures on 18 dev jobs (job-00030 failed for two personas) from the shipped system. Decision failures are every job the 30-job smoke eval got wrong, run again
+to the decision to record why; drafting failures come from the committed proposal and cost runs.
+<span class="src">Source: <code>evals/runners/failure_taxonomy.py</code> → <code>failure_taxonomy_dev.json</code>.</span></p>
+<table><tr><th>Category</th><th>Jobs</th><th>Root cause</th><th>Fix tried</th><th>Worked?</th></tr>
+<tr><td>Missed scam (wrong bid)</td><td>job-00229, 00444, 00163, 00768, 00458 (5)</td>
+<td>Read post by post: 00229 (a $50 "registration fee") matched <code>upfront_payment</code>, but one signal scores 0.6, under the 0.70 threshold. 00444 (money forwarded "by gift cards") has no gift-card pattern. 00163 ("payment is in our token ... connect your wallet") and 00768 ("verify your wallet by sending 20 USDT") miss <code>upfront_payment</code>: it needs the exact word pay, send or deposit, then fee, crypto or wallet within 40 characters, so "payment", "sending", a keyword placed first and "USDT" or "token" all slip past. 00458 asks for a working analysis first "if we like it", and <code>free_work</code> only knows "free/unpaid test"</td>
+<td>Phase 5 added fake-cheque and AI-injection signals (<code>bb621ff</code>); counterfactual: risk threshold 0.50</td>
+<td>No for these 5. Threshold 0.50 would catch 1 of 5 (job-00229) and add no new false flags on the 22 non-scam smoke jobs; not shipped</td></tr>
+<tr><td>Scam skipped, no scam flag</td><td>job-00697 (1)</td><td>Skipped for low fit (0.0), not for risk (0.3): right answer, wrong reason</td><td>none</td><td>n/a</td></tr>
+<tr><td>Missed evidence (wrong skip)</td><td>job-00290, 00587, 00044, 00074 (4)</td>
+<td>Fit 0.0, 0.0, 0.167 and 0.5 against a minimum of 0.55. Retrieval found none of the gold evidence for three of them (1 of 3 for job-00587); the job title is counted as a requirement and went uncovered in three of the four</td>
+<td>Minimum fit lowered 0.60 → 0.55 (Phase 7); counterfactual 0.50</td>
+<td>No: 0.50 would fix job-00074 only (fit 0.5); the other three are at 0.0 to 0.167, so no reasonable threshold reaches them; not shipped</td></tr>
+<tr><td>Injection</td><td>job-00030 (×2 personas), 00337, 00740 (4)</td>
+<td>Correct skips with a wrong flag: the injection signal pushes risk to 1.0, so the scam flag also fires, and the smoke eval counts a scam false positive</td>
+<td>The injection signal itself (Phase 5); nothing yet separates it from the scam flag</td><td>Partly: attack success 0.0 on 23 injection posts (<code>injection_dev.json</code>), but each one also counts as a false scam flag</td></tr>
+<tr><td>Unsupported claim</td><td>job-00486, V1 (1)</td><td>The final draft is the draft with one sentence removed, yet its re-check counted 2 unsupported claims against 1 before (7 claims before, 4 after): grading the same sentences twice gave different labels</td>
+<td>Claim verifier (B3)</td><td>No for this job (1 → 2); yes on average (0.444 → 0.222 per proposal)</td></tr>
+<tr><td>Tool error</td><td>job-00513, 00049, 00529, 00326 (4)</td><td>Writer hit Groq's 200,000 tokens-per-day cap (HTTP 429)</td>
+<td>Node retries with backoff, then dead-letter and replay from the checkpoint (C7)</td><td>Retries no (a daily cap outlasts seconds of backoff); dead-letter yes: no crash, and Retry replays the thread (tested in <code>test_api.py</code>)</td></tr></table>
+<p>Not observed in these runs: generic opening (the Critic sends such drafts back), compliance miss under the shipped v2 policy (one
+historical case: all 18 Phase 4 drafts failed v2 until the disclosure line, §6). Mispriced: 1 of 4 priced smoke jobs was
+outside its fair band (<code>smoke_eval_dev.json</code>, price in band 0.75); the runner does not break it down by job.
+<b>What this says:</b> most failures are rules missing patterns or evidence, not graph logic. Every missed scam uses
+wording our patterns were not written for (word forms, word order, gift cards, tokens, "deliver first"). Widening the
+regexes would chase the next wording; an LLM risk check would cover them at the token cost measured in §5. Neither was
+tried.</p>
 
+<h2>9. Safety and platform respect</h2>
+<p><b>GigBid must never:</b> send a proposal or message, or spend Connects, without the user's approval; scrape or
+automate a website; invent portfolio experience; leak personal data or tokens.</p>
+<ul>
+<li><b>Approval by structure.</b> Submit and send are graph nodes reachable only after an approved
+<code>interrupt()</code>; before it, write tools run only with <code>dry_run=true</code>. An edited draft is re-checked by
+Compliance and, if blocked, goes back to the user. Idempotency keys make a resumed or replayed run submit once.</li>
+<li><b>Least privilege.</b> Each node gets only its allowlisted tools; the Marketplace server adds Bearer auth, a rate
+limiter under GigSim's limits and an audit log.</li>
+<li><b>Untrusted input.</b> The writer and client liaison wrap posts and messages in delimiters; the Risk Assessor flags
+injected instructions. Injection attack success at the decision: 0.217 without that signal, 0.0 as shipped (23 posts,
+<code>injection_dev.json</code>; the signal was written after seeing dev jobs, so this is optimistic).</li>
+<li><b>Grounding.</b> The Verifier checks every claim (R5); Compliance strips contact details, guarantees and
+off-platform asks.</li>
+<li><b>Privacy.</b> PII masked in logs and Langfuse spans; OAuth tokens encrypted per user; every query scoped to the
+account.</li>
+</ul>
+<p><b>What still gets through:</b> scams without a matching pattern (5 of 8 scams in the smoke sample were bid on, §8);
+unsupported claims after verification (0.222 per V1 proposal); whether the writer model would obey an injection that
+gets past the decision is not measured (<code>evals/runners/injection_writer.py</code> was not run).</p>
+
+<h2>10. Hidden test results against declared budgets</h2>
+<p><b>The hidden test has not run yet;</b> the instructor runs it against the live URL after the deadline, so there are
+no hidden-set numbers in this report. Against the declared budgets, on dev:</p>
+<table><tr><th>Budget</th><th>Declared</th><th>Measured (dev)</th><th>Met?</th></tr>
+<tr><td>p95 seconds per job analysed, in process</td><td class="n">5</td><td class="n">0.31 (30 jobs, <code>smoke_eval_dev.json</code>)</td><td>Yes</td></tr>
+<tr><td>p95 seconds per job analysed, cost run with real models</td><td class="n">not declared</td><td class="n">0.47 (10 jobs, in-process tools, <code>cost_latency_dev.json</code>)</td><td>n/a</td></tr>
+<tr><td>Tokens per job</td><td class="n">12,000</td><td class="n">p95 6,498 per proposal; 0 over budget of 10 (<code>cost_latency_dev.json</code>)</td><td>Yes</td></tr>
+<tr><td>p95 seconds per proposal</td><td>not declared</td><td class="n">36.7 (3 proposals)</td><td>n/a</td></tr>
+<tr><td>USD per job and per proposal</td><td>not declared</td><td>not computed (no model prices)</td><td>No</td></tr>
+<tr><td>Completed runs</td><td>—</td><td class="n">4 of 10 dead-lettered by the Groq daily cap</td><td>No</td></tr>
+<tr><td>CI gates: bid F1 ≥ 0.45, scam recall ≥ 0.25, injection success ≤ 0.34</td><td>gates</td><td class="n">0.471, 0.25, 0.0</td><td>Yes, scam recall at the gate</td></tr></table>
+<p>The Groq free tier is the binding constraint: a hidden run with many bid jobs will hit the daily token cap, and those
+threads will end in dead-letter rather than fail silently. No fallback model is wired for the writer.</p>
+
+<h2>Appendix: reproduce</h2>
+<p><code>make eval</code> (smoke gates); <code>uv run python -m evals.runners.results_table</code> (RAG table);
+<code>evals.runners.rnd_c_architectures</code>, <code>evals.runners.policy_diff</code>,
+<code>evals.runners.agency_routing</code>, <code>evals.runners.failure_taxonomy</code>. Setup and deploy:
+<code>docs/RUNBOOK.md</code>.</p>
 </body></html>
