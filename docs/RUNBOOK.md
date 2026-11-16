@@ -99,7 +99,10 @@ The target is an Azure for Students VM: B2s (2 vCPU, 4 GB), Ubuntu 24.04 LTS.
    <password>` on any machine), `PRELOAD_PERSONAS=reviewer=ai_ml_engineer`, `POSTGRES_PASSWORD`,
    the GigSim and MCP tokens, `GROQ_API_KEY`, `OPENROUTER_API_KEY`, `TOKEN_ENCRYPTION_KEY` and the
    Langfuse keys. Set `PUBLIC_DOMAIN` to a domain pointing at the VPS (or `<vps-ip>.sslip.io`).
-3. `docker compose --profile public up -d --build`. Caddy gets the certificate and serves the web
+   Or let `bash infra/setup_vps.sh <domain>` write `.env` (it asks only for the Groq and
+   OpenRouter keys and the reviewer password) and start the stack.
+3. `docker compose -f infra/docker-compose.yml --env-file .env --profile public up -d --build`
+   from the repo root (`--env-file` so compose reads `POSTGRES_PASSWORD` and `PUBLIC_DOMAIN`). Caddy gets the certificate and serves the web
   app on `https://$PUBLIC_DOMAIN`.
 4. Check: `docker compose ps` (all healthy), sign in as the reviewer, analyse one job.
 
